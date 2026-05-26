@@ -784,8 +784,19 @@ let isOnline = false;
 
 function save(){
   if(fbRef && isOnline){
+    // Ensure entries is always a proper array before saving
+    if(db.entries && !Array.isArray(db.entries)){
+      db.entries = Object.values(db.entries);
+    }
     fbRef.set(db).catch(e=>console.error('Save error:',e));
   }
+}
+
+function ensureArray(){
+  if(!db.entries) db.entries=[];
+  else if(!Array.isArray(db.entries)) db.entries=Object.values(db.entries);
+  // Filter out null/undefined entries
+  db.entries=db.entries.filter(e=>e&&e.id);
 }
 
 function showOnlineStatus(online){
@@ -2015,14 +2026,10 @@ fbRef.on('value', snapshot => {
   const data = snapshot.val();
   if(data){
     db = data;
-    // Convert entries from object to array if needed
-    if(db.entries && !Array.isArray(db.entries)){
-      db.entries = Object.values(db.entries);
-    }
-    if(!db.entries) db.entries = [];
   } else {
     db = {entries:[]};
   }
+  ensureArray();
   showOnlineStatus(true);
   renderAll();
 }, error => {
