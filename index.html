@@ -720,9 +720,12 @@ function getTestDays(ndays){
 }
 
 function addDays(dateStr, n){
-  const d = new Date(dateStr+'T00:00:00');
-  d.setDate(d.getDate()+n);
-  return d.toISOString().split('T')[0];
+  const parts = dateStr.split('-');
+  const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])+n);
+  const yr = d.getFullYear();
+  const mo = String(d.getMonth()+1).padStart(2,'0');
+  const dy = String(d.getDate()).padStart(2,'0');
+  return yr+'-'+mo+'-'+dy;
 }
 
 function fmtDate(str){
