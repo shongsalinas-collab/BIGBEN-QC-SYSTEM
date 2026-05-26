@@ -1033,9 +1033,11 @@ function initMoldDateSelector(){
   const currentVal=sel.value;
   // Find closest date to today that has entries
   const todayEntries=sorted.find(d=>d>=todayStr&&db.entries.filter(e=>addDays(e.date,1)===d).length>0)||todayStr;
-  sel.innerHTML=sorted.map(d=>{
+  const allCount=db.entries.length;
+  sel.innerHTML=`<option value="all" ${(!currentVal||currentVal==='all')?'selected':''}>All Dates (${allCount})</option>`+
+  sorted.map(d=>{
     const count=db.entries.filter(e=>addDays(e.date,1)===d).length;
-    const isSelected=currentVal?d===currentVal:d===todayEntries;
+    const isSelected=currentVal&&currentVal!=='all'?d===currentVal:false;
     return `<option value="${d}" ${isSelected?'selected':''}>${fmtDate(d)}${count>0?' ('+count+')':''}</option>`;
   }).join('');
   renderMold();
@@ -1044,14 +1046,16 @@ function initMoldDateSelector(){
 function renderMold(){
   const sel=document.getElementById('mold-filter-date');
   const filterDate=sel?sel.value:'';
-  const rows=filterDate
-    ? db.entries.filter(e=>addDays(e.date,1)===filterDate)
-    : [];
+  const rows=filterDate==='all'
+    ? [...db.entries].sort((a,b)=>addDays(a.date,1).localeCompare(addDays(b.date,1)))
+    : filterDate
+      ? db.entries.filter(e=>addDays(e.date,1)===filterDate)
+      : [];
   const tbody=document.getElementById('mold-tbody');
   const empty=document.getElementById('mold-empty');
   const countEl=document.getElementById('mold-count');
   const headerDate=document.getElementById('mold-header-date');
-  if(headerDate) headerDate.textContent=filterDate?'— Collection Date: '+fmtDate(filterDate):'';
+  if(headerDate) headerDate.textContent=filterDate==='all'?'— All Dates':filterDate?'— Collection Date: '+fmtDate(filterDate):'';
   if(!rows.length){
     if(tbody) tbody.innerHTML='';
     if(empty) empty.style.display='block';
@@ -1059,7 +1063,7 @@ function renderMold(){
     return;
   }
   if(empty) empty.style.display='none';
-  if(countEl) countEl.textContent=rows.length+' collection(s) scheduled';
+  if(countEl) countEl.textContent=rows.length+' collection(s) ' + (filterDate==='all'?'total':'scheduled');
   tbody.innerHTML=rows.map((e,i)=>{
     const area=e.moldArea||e.area||getArea(e.location||'');
     const areaBadge=area==='Manila Area'?'badge-manila':area==='Bulacan Area'?'badge-bulacan':'badge-pending';
@@ -1135,7 +1139,9 @@ function saveMoldField(id,field,val){
 function printMold(){
   const sel=document.getElementById('mold-filter-date');
   const filterDate=sel?sel.value:'';
-  const rows=filterDate?db.entries.filter(e=>addDays(e.date,1)===filterDate):[];
+  const rows=filterDate==='all'
+    ? [...db.entries].sort((a,b)=>addDays(a.date,1).localeCompare(addDays(b.date,1)))
+    : filterDate?db.entries.filter(e=>addDays(e.date,1)===filterDate):[];
 
   const tableRows=rows.map((e,i)=>{
     const area=e.moldArea||e.area||getArea(e.location||'');
@@ -1196,7 +1202,7 @@ table.data tr:nth-child(even) td{background:#fdf8f8}
     <td class="title">
       <h1>BIG BEN READY MIX CONCRETE</h1>
       <h2>CYLINDER MOLD COLLECTION SCHEDULE</h2>
-      <p>Collection Date: <strong>${fmtDate(filterDate)}</strong></p>
+      <p>Collection Date: <strong>${filterDate==='all'?'All Dates':fmtDate(filterDate)}</strong></p>
     </td>
     <td class="doc-no">SP-QA-02<br>F-QA-2.1</td>
   </tr>
