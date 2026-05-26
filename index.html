@@ -190,7 +190,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           <div class="form-group"><label>Required Slump Min (")</label><input type="number" id="f-slump-min" placeholder='e.g. 6' step="0.5" oninput="checkAutoReject()"></div>
           <div class="form-group"><label>Required Slump Max (")</label><input type="number" id="f-slump-max" placeholder='e.g. 8' step="0.5" oninput="checkAutoReject()"></div>
           <div class="form-group"><label>Actual Slump (")</label><input type="number" id="f-actual-slump" placeholder="Actual reading" step="0.5" oninput="checkAutoReject()"></div>
-          <div class="form-group"><label>Required Temperature (°C)</label><input type="text" id="f-temp" placeholder="e.g. 32" oninput="checkAutoReject()"></div>
+          <div class="form-group"><label>Max. Allowed Temp (°C)</label><input type="number" id="f-temp" placeholder="e.g. 32" oninput="checkAutoReject()"></div>
           <div class="form-group"><label>Actual Temperature (°C)</label><input type="text" id="f-actual-temp" placeholder="Actual reading" oninput="checkAutoReject()"></div>
         </div>
         <div id="auto-reject-alert" style="display:none;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:4px;padding:8px 12px;margin-top:8px;font-size:12px;font-weight:600;color:#C62828"></div>
@@ -289,7 +289,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Slump Min</th>
               <th>Slump Max</th>
               <th>Act. Slump</th>
-              <th>Req. Temp</th>
+              <th>Max Temp (°C)</th>
               <th>Act. Temp</th>
               <th>Volume (m³)</th>
               <th>DR No.</th>
