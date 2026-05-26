@@ -1032,7 +1032,6 @@ function renderMaster(){
     <tr class="${e.rejected?'rejected':''}">
       <td>${i+1}</td>
       <td>${fmtDate(e.date)}</td>
-      <td>${e.mixer||'—'}</td>
       <td><strong>${e.client}</strong>${e.rejected?`<br><span class="badge badge-rejected">${e.autoRejected?'AUTO-':''}REJECTED: ${e.rejectReason}</span>`:''}</td>
       <td>${e.location||'—'}</td>
       <td>${e.design||'—'}</td>
@@ -1040,22 +1039,14 @@ function renderMaster(){
       <td>${e.days||'—'}</td>
       <td>${fmtTime(e.timeBatched)}</td>
       <td>${fmtTime(e.time)}</td>
-      <td>${e.standby?e.standby+' hrs':'—'}</td>
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
       <td>${e.samples||'—'}</td>
       <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
       <td>${e.kind||'—'}</td>
       <td>${e.slip||'—'}</td>
-      <td>${e.slumpMin?e.slumpMin+'"':'—'}</td>
-      <td>${e.slumpMax?e.slumpMax+'"':'—'}</td>
-      <td>${e.actualSlump?`<span style="color:${checkSlumpColor(e)}">${e.actualSlump}"</span>`:'—'}</td>
-      <td>${e.temp||'—'}</td>
-      <td>${e.actualTemp?`<span style="color:${checkTempColor(e)}">${e.actualTemp}°C</span>`:'—'}</td>
       <td>${e.vol||'—'}</td>
-      <td>${e.drNo||'—'}</td>
-      <td>${e.volRejected||'—'}</td>
-      <td>${e.rejected?'<span class="badge badge-fail">Rejected</span>':'<span class="badge badge-pass">Accepted</span>'}</td>
+      <td><input type="text" value="${e.remarks||''}" onchange="saveRemarks(${e.id},this.value)" style="width:120px;font-size:11px;padding:3px 6px;border:1px solid #ddd;border-radius:3px" placeholder="Notes..."></td>
       <td class="no-print"><button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">✕</button></td>
     </tr>`).join('');
 }
