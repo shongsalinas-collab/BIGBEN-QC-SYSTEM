@@ -2014,6 +2014,10 @@ fbRef.on('value', snapshot => {
   const data = snapshot.val();
   if(data){
     db = data;
+    // Convert entries from object to array if needed
+    if(db.entries && !Array.isArray(db.entries)){
+      db.entries = Object.values(db.entries);
+    }
     if(!db.entries) db.entries = [];
   } else {
     db = {entries:[]};
