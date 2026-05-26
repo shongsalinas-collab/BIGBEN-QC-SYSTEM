@@ -381,28 +381,20 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <table class="data-table" id="mold-table" style="min-width:900px">
           <thead>
             <tr>
-              <th rowspan="2" style="width:30px">#</th>
-              <th rowspan="2">Pouring Date</th>
-              <th rowspan="2">Area</th>
-              <th rowspan="2">Client</th>
-              <th rowspan="2">Location</th>
-              <th rowspan="2">Design</th>
-              <th rowspan="2">Time Finish</th>
-              <th rowspan="2">Structure</th>
-              <th rowspan="2">Site Coordinator</th>
-              <th rowspan="2">Collection Date</th>
-              <th rowspan="2">Curing Location</th>
-              <th rowspan="2">No. of Samples</th>
-              <th rowspan="2">Type of Mold</th>
-              <th rowspan="2">Size of Mold</th>
-              <th colspan="2" style="text-align:center;background:#8B2222">ISSUED</th>
-              <th colspan="2" style="text-align:center;background:#4A0F0F">DELIVERED</th>
-            </tr>
-            <tr>
-              <th style="background:#8B2222;font-size:10px">QTY</th>
-              <th style="background:#8B2222;font-size:10px">DATE</th>
-              <th style="background:#4A0F0F;font-size:10px">QTY</th>
-              <th style="background:#4A0F0F;font-size:10px">DATE</th>
+              <th>#</th>
+              <th>Pouring Date</th>
+              <th>Area</th>
+              <th>Client</th>
+              <th>Location</th>
+              <th>Design</th>
+              <th>Time Finish</th>
+              <th>Structure</th>
+              <th>Site Coordinator</th>
+              <th>Collection Date</th>
+              <th>Curing Location</th>
+              <th>No. of Samples</th>
+              <th>Type of Mold</th>
+              <th>Size of Mold</th>
             </tr>
           </thead>
           <tbody id="mold-tbody"></tbody>
@@ -1105,10 +1097,6 @@ function renderMold(){
           <option value="Beam" ${moldSize==='Beam'?'selected':''}>Beam</option>
         </select>
       </td>
-      <td style="text-align:center">${qty}</td>
-      <td></td>
-      <td style="text-align:center">${qty}</td>
-      <td></td>
     </tr>`;
   }).join('');
 }
