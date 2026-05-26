@@ -178,6 +178,16 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           <div class="form-group span2"><label>Location</label><input type="text" id="f-location" placeholder="Address / site location"></div>
           <div class="form-group"><label>Structure</label><input type="text" id="f-structure" placeholder="e.g. SOG, Footing"></div>
           <div class="form-group"><label>Site Coordinator</label><input type="text" id="f-coord" placeholder="Name"></div>
+          <div class="form-group"><label>Testing Coordinator</label>
+            <select id="f-testing-coord">
+              <option value="">-- Assign --</option>
+              <option>Dio Balili</option>
+              <option>Joshua Facun</option>
+              <option>Roni Aguilar</option>
+              <option>Teodoro Taysa</option>
+              <option>JM Buitizon</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -322,6 +332,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Time Finish</th>
               <th>Structure</th>
               <th>Site Coord.</th>
+              <th>Testing Coord.</th>
               <th>Samples</th>
               <th>Sample Remarks</th>
               <th>Kind</th>
@@ -963,7 +974,7 @@ function loadSettingsUI(){
 }
 
 function clearForm(){
-  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-sample-remarks','f-sample-remarks-other','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
+  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-testing-coord','f-samples','f-sample-remarks','f-sample-remarks-other','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
   });
@@ -1001,6 +1012,7 @@ function addEntry(){
     mixer:document.getElementById('f-mixer').value,
     structure:document.getElementById('f-structure').value,
     coord:document.getElementById('f-coord').value,
+    testingCoord:document.getElementById('f-testing-coord').value,
     samples:document.getElementById('f-samples').value,
     sampleRemarks:(document.getElementById('f-sample-remarks').value==='Others'?document.getElementById('f-sample-remarks-other').value:document.getElementById('f-sample-remarks').value),
     kind:document.getElementById('f-kind').value,
@@ -1058,6 +1070,7 @@ function editEntry(id){
   document.getElementById('f-time').value=e.time||'';
   document.getElementById('f-structure').value=e.structure||'';
   document.getElementById('f-coord').value=e.coord||'';
+  document.getElementById('f-testing-coord').value=e.testingCoord||'';
   document.getElementById('f-samples').value=e.samples||'';
   document.getElementById('f-sample-remarks').value=e.sampleRemarks||'';
   toggleSampleRemarks();
@@ -1118,6 +1131,7 @@ function updateEntry(id){
     timeBatched, time:timeFinish, standby,
     structure:document.getElementById('f-structure').value,
     coord:document.getElementById('f-coord').value,
+    testingCoord:document.getElementById('f-testing-coord').value,
     samples:document.getElementById('f-samples').value,
     sampleRemarks:(document.getElementById('f-sample-remarks').value==='Others'?document.getElementById('f-sample-remarks-other').value:document.getElementById('f-sample-remarks').value),
     kind:document.getElementById('f-kind').value,
@@ -1222,6 +1236,7 @@ function renderMaster(){
       <td>${fmtTime(e.time)}</td>
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
+      <td>${e.testingCoord?`<span style='font-size:11px;color:#1565C0;font-weight:600'>${e.testingCoord}</span>`:'<span style="color:#ccc">—</span>'}</td>
       <td>${e.samples||'—'}</td>
       <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
       <td>${e.kind||'—'}</td>
