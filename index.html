@@ -1020,21 +1020,17 @@ function renderMaster(){
 function initMoldDateSelector(){
   const sel=document.getElementById('mold-filter-date');
   if(!sel) return;
-  // Get all unique collection dates from entries
   const dates=new Set();
+  // Only add dates that have actual entries (pouring date + 24hrs)
   db.entries.forEach(e=>{
     if(e.date) dates.add(addDays(e.date,1));
   });
-  // Also add next 14 days
-  const today=new Date();
-  for(let i=0;i<14;i++){
-    const d=new Date(today);
-    d.setDate(d.getDate()+i);
-    dates.add(d.toISOString().split('T')[0]);
-  }
-  const sorted=[...dates].sort();
   const todayStr=new Date().toISOString().split('T')[0];
-  sel.innerHTML=sorted.map(d=>`<option value="${d}" ${d===todayStr?'selected':''}>${fmtDate(d)}</option>`).join('');
+  // Always include today
+  dates.add(todayStr);
+  const sorted=[...dates].sort();
+  const currentVal=sel.value;
+  sel.innerHTML=sorted.map(d=>`<option value="${d}" ${(currentVal?d===currentVal:d===todayStr)?'selected':''}>${fmtDate(d)}${db.entries.filter(e=>addDays(e.date,1)===d).length>0?' ('+db.entries.filter(e=>addDays(e.date,1)===d).length+')':''}</option>`).join('');
   renderMold();
 }
 
