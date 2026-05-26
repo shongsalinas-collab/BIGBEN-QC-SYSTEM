@@ -1575,6 +1575,11 @@ function renderTesting(){
   const filterDate=document.getElementById('test-date-filter').value;
   const panel2=document.getElementById('testing-panels');
   const empty2=document.getElementById('test-empty');
+  // Debug - show entry dates
+  if(filterDate&&db.entries&&db.entries.length>0){
+    const debugInfo=db.entries.map(e=>`${e.client}: date="${e.date}" days="${e.days}" addDays7="${addDays(normalizeDate(e.date),7)}"`).join('<br>');
+    if(panel2) panel2.innerHTML=`<div style="background:#fff3cd;padding:10px;font-size:11px;margin-bottom:10px"><strong>Debug:</strong><br>${debugInfo}<br><br>Filter date: ${filterDate}</div>`;
+  }
   if(!filterDate){
     if(panel2) panel2.innerHTML='';
     if(empty2){empty2.style.display='block';empty2.textContent='Select a date to view testing schedule.';}
