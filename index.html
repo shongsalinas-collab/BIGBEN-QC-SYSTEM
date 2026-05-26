@@ -1077,7 +1077,16 @@ function updateEntry(id){
 
 function toggleCollected(id){
   const e=db.entries.find(x=>x.id===id);
-  if(e){e.collected=!e.collected;save();renderMonitoring();}
+  if(e){
+    e.collected=!e.collected;
+    if(e.collected){
+      e.collectedDate=new Date().toISOString().split('T')[0];
+    } else {
+      e.collectedDate='';
+    }
+    save();
+    renderMonitoring();
+  }
 }
 
 // ===== RENDER MASTER =====
@@ -1695,7 +1704,7 @@ function saveCuring(id,val){
 }
 
 function renderAll(){
-  renderMaster();initMoldDateSelector();renderMonitoring();renderTesting();renderTestMon();renderKPI();loadSettingsUI();
+  renderMaster();initMoldDateSelector();initMonthFilter();renderMonitoring();renderTesting();renderTestMon();renderKPI();loadSettingsUI();
 }
 
 // Set today's date defaults
