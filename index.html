@@ -820,12 +820,28 @@ function getTestDays(ndays){
 }
 
 function addDays(dateStr, n){
-  const parts = dateStr.split('-');
-  const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])+n);
-  const yr = d.getFullYear();
-  const mo = String(d.getMonth()+1).padStart(2,'0');
-  const dy = String(d.getDate()).padStart(2,'0');
-  return yr+'-'+mo+'-'+dy;
+  if(!dateStr) return '';
+  let yr,mo,dy;
+  if(dateStr.includes('/')){
+    // MM/DD/YYYY format
+    const p=dateStr.split('/');
+    mo=parseInt(p[0]);dy=parseInt(p[1]);yr=parseInt(p[2]);
+  } else {
+    // YYYY-MM-DD format
+    const p=dateStr.split('-');
+    yr=parseInt(p[0]);mo=parseInt(p[1]);dy=parseInt(p[2]);
+  }
+  const d=new Date(yr,mo-1,dy+n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function normalizeDate(dateStr){
+  if(!dateStr) return '';
+  if(dateStr.includes('/')){
+    const p=dateStr.split('/');
+    return parseInt(p[2])+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');
+  }
+  return dateStr;
 }
 
 function fmtDate(str){
@@ -1572,7 +1588,8 @@ function renderTesting(){
     const matches=db.entries.filter(e=>{
       if(e.rejected) return false;
       const testDays=getTestDays(e.days);
-      return testDays.includes(d) && addDays(e.date,d)===filterDate;
+      const entryDate=normalizeDate(e.date);
+      return testDays.includes(d) && addDays(entryDate,d)===filterDate;
     });
     if(matches.length){
       found=true;
@@ -1646,7 +1663,8 @@ function printTesting(){
     const matches=db.entries.filter(e=>{
       if(e.rejected) return false;
       const testDays=getTestDays(e.days);
-      return testDays.includes(d) && addDays(e.date,d)===filterDate;
+      const entryDate=normalizeDate(e.date);
+      return testDays.includes(d) && addDays(entryDate,d)===filterDate;
     });
     if(matches.length){
       sectionsHtml+=`<div style="margin-bottom:14px">
