@@ -803,11 +803,19 @@ const SAMPLE_LIMITS = {'01 Days':[1],'03 Days':[3],'07 Days':[7],'14 Days':[14],
 
 // Test schedule: for each No. of Days, what day tests are done
 function getTestDays(ndays){
-  if(ndays==='01 Days') return [1];
-  if(ndays==='03 Days') return [3];
-  if(ndays==='07 Days') return [7];
-  if(ndays==='14 Days') return [3,7,14];
-  if(ndays==='28 Days') return [7,14,28];
+  if(!ndays) return [28];
+  const n=ndays.trim();
+  if(n==='01 Days'||n==='1 Days'||n==='01Days') return [1];
+  if(n==='03 Days'||n==='3 Days'||n==='03Days') return [3];
+  if(n==='07 Days'||n==='7 Days'||n==='07Days') return [7];
+  if(n==='14 Days'||n==='14Days') return [3,7,14];
+  if(n==='28 Days'||n==='28Days') return [7,14,28];
+  // Fallback - check if contains number
+  if(n.includes('01')||n.includes('1 ')) return [1];
+  if(n.includes('03')||n.includes('3 ')) return [3];
+  if(n.includes('07')||n.includes('7 ')) return [7];
+  if(n.includes('14')) return [3,7,14];
+  if(n.includes('28')) return [7,14,28];
   return [28];
 }
 
