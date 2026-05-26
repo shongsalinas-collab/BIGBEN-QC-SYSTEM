@@ -338,51 +338,94 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
 <!-- ===== SHEET 2: MOLD COLLECTION SCHEDULE ===== -->
 <div id="tab-mold" class="tab-content">
-  <div class="print-date-header" id="mold-print-header"></div>
-  <div class="panel">
-    <div class="panel-header">
-      Cylinder Mold Collection Schedule
-      <div style="display:flex;gap:6px" class="no-print">
-        <label style="color:#fff;font-size:11px;display:flex;align-items:center;gap:4px">
-          Collection Date: <input type="date" id="mold-filter-date" onchange="renderMold()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none;margin-left:4px">
-        </label>
-        <button class="btn btn-sm btn-print" onclick="printSheet('mold')">🖨 Print</button>
-      </div>
+
+  <!-- SCREEN VIEW -->
+  <div class="no-print">
+    <div class="filter-bar" style="margin-bottom:12px">
+      <label style="font-weight:700;color:var(--maroon)">📅 Collection Date:</label>
+      <select id="mold-filter-date" onchange="renderMold()" style="font-size:13px;padding:5px 10px;border:1px solid var(--maroon);border-radius:4px;color:var(--maroon);font-weight:600"></select>
+      <button class="btn btn-print" onclick="printMold()">🖨 Print Schedule</button>
+      <span style="font-size:11px;color:#888;margin-left:8px" id="mold-count"></span>
     </div>
-    <div class="panel-body" style="padding:0">
-      <div class="table-wrap">
-        <table class="data-table">
+  </div>
+
+  <!-- PRINTABLE AREA -->
+  <div id="mold-print-area">
+    <!-- Print Header -->
+    <div id="mold-print-header" style="display:none;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <td style="width:120px;vertical-align:middle">
+            <div style="background:var(--maroon);color:#fff;padding:8px 12px;font-weight:900;font-size:18px;border-radius:4px;display:inline-block">BB</div>
+          </td>
+          <td style="text-align:center;vertical-align:middle">
+            <div style="font-size:16px;font-weight:700;color:var(--maroon)">BIG BEN READY MIX CONCRETE</div>
+            <div style="font-size:13px;font-weight:600;margin-top:2px">CYLINDER MOLD COLLECTION SCHEDULE</div>
+            <div style="font-size:12px;color:#666;margin-top:2px" id="mold-print-date-label"></div>
+          </td>
+          <td style="width:120px;text-align:right;vertical-align:top;font-size:10px;color:#666">
+            SP-QA-02<br>F-QA-2.1
+          </td>
+        </tr>
+      </table>
+      <div style="height:2px;background:var(--maroon);margin:8px 0"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="panel">
+      <div class="panel-header no-print">
+        Mold Collection Schedule
+        <span id="mold-header-date" style="font-size:12px;font-weight:400;opacity:.9"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="mold-table" style="min-width:900px">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Pouring Date</th>
-              <th>Area</th>
-              <th>Client Name</th>
-              <th>Location</th>
-              <th>Design</th>
-              <th>Time</th>
-              <th>Structure</th>
-              <th>Field Tech</th>
-              <th>Collection Date (18-48hr)</th>
-              <th>No. of Days</th>
-              <th>CURING</th>
-              <th colspan="2">6×12</th>
-              <th colspan="2">4×8</th>
-              <th colspan="2">BEAM</th>
+              <th rowspan="2" style="width:30px">#</th>
+              <th rowspan="2">Pouring Date</th>
+              <th rowspan="2">Area</th>
+              <th rowspan="2">Client</th>
+              <th rowspan="2">Location</th>
+              <th rowspan="2">Design</th>
+              <th rowspan="2">Time Finish</th>
+              <th rowspan="2">Structure</th>
+              <th rowspan="2">Site Coordinator</th>
+              <th rowspan="2">Collection Date</th>
+              <th rowspan="2">Curing Location</th>
+              <th rowspan="2">No. of Samples</th>
+              <th rowspan="2">Type of Mold</th>
+              <th rowspan="2">Size of Mold</th>
+              <th colspan="2" style="text-align:center;background:#8B2222">ISSUED</th>
+              <th colspan="2" style="text-align:center;background:#4A0F0F">DELIVERED</th>
             </tr>
-            <tr style="background:#8B2222">
-              <th colspan="12"></th>
-              <th style="font-size:10px">Plant / Site</th>
-              <th style="font-size:10px">Issue</th><th style="font-size:10px">Del</th>
-              <th style="font-size:10px">Issue</th><th style="font-size:10px">Del</th>
-              <th style="font-size:10px">Issue</th><th style="font-size:10px">Del</th>
-              <th style="font-size:10px">Issue</th><th style="font-size:10px">Del</th>
+            <tr>
+              <th style="background:#8B2222;font-size:10px">QTY</th>
+              <th style="background:#8B2222;font-size:10px">DATE</th>
+              <th style="background:#4A0F0F;font-size:10px">QTY</th>
+              <th style="background:#4A0F0F;font-size:10px">DATE</th>
             </tr>
           </thead>
           <tbody id="mold-tbody"></tbody>
         </table>
       </div>
-      <div id="mold-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No entries — add pouring records in Sheet 1 first.</div>
+      <div id="mold-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No mold collections scheduled for this date.</div>
+    </div>
+
+    <!-- Print Footer -->
+    <div id="mold-print-footer" style="display:none;margin-top:20px">
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <td style="width:33%;text-align:center;padding-top:40px;border-top:1px solid #333;font-size:11px">Prepared by</td>
+          <td style="width:33%;text-align:center;padding-top:40px;border-top:1px solid #333;font-size:11px">Checked by</td>
+          <td style="width:33%;text-align:center;padding-top:40px;border-top:1px solid #333;font-size:11px">Noted by</td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:10px;color:#666">Testing Coordinator</td>
+          <td style="text-align:center;font-size:10px;color:#666">QC Supervisor</td>
+          <td style="text-align:center;font-size:10px;color:#666">R&D Supervisor</td>
+        </tr>
+      </table>
+      <div style="margin-top:10px;font-size:9px;color:#999;text-align:center">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
     </div>
   </div>
 </div>
@@ -974,47 +1017,125 @@ function renderMaster(){
 }
 
 // ===== RENDER MOLD COLLECTION =====
+function initMoldDateSelector(){
+  const sel=document.getElementById('mold-filter-date');
+  if(!sel) return;
+  // Get all unique collection dates from entries
+  const dates=new Set();
+  db.entries.forEach(e=>{
+    if(e.date) dates.add(addDays(e.date,1));
+  });
+  // Also add next 14 days
+  const today=new Date();
+  for(let i=0;i<14;i++){
+    const d=new Date(today);
+    d.setDate(d.getDate()+i);
+    dates.add(d.toISOString().split('T')[0]);
+  }
+  const sorted=[...dates].sort();
+  const todayStr=new Date().toISOString().split('T')[0];
+  sel.innerHTML=sorted.map(d=>`<option value="${d}" ${d===todayStr?'selected':''}>${fmtDate(d)}</option>`).join('');
+  renderMold();
+}
+
 function renderMold(){
-  const filterDate=document.getElementById('mold-filter-date').value;
+  const sel=document.getElementById('mold-filter-date');
+  const filterDate=sel?sel.value:'';
   const rows=filterDate
-    ? db.entries.filter(e=>addDays(e.date,1)===filterDate||addDays(e.date,2)===filterDate)
-    : db.entries.slice(0,50);
+    ? db.entries.filter(e=>addDays(e.date,1)===filterDate)
+    : [];
   const tbody=document.getElementById('mold-tbody');
   const empty=document.getElementById('mold-empty');
-  if(!rows.length){tbody.innerHTML='';empty.style.display='block';}
-  else{
-    empty.style.display='none';
-    tbody.innerHTML=rows.map((e,i)=>{
-      const area=e.area||getArea(e.location||'');
-      const areaBadge=area==='Manila Area'?'badge-manila':'badge-bulacan';
-      const collectDate=addDays(e.date,1);
-      const qty=parseInt(e.samples)||0;
-      const is6x12=e.kind==='6x12';const is4x8=e.kind==='4x8';const isBeam=e.kind==='Beam';
-      return `<tr>
-        <td>${i+1}</td>
-        <td>${fmtDate(e.date)}</td>
-        <td><span class="badge ${areaBadge}">${area||'—'}</span></td>
-        <td><strong>${e.client}</strong></td>
-        <td>${e.location||'—'}</td>
-        <td>${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
-        <td>${fmtTime(e.time)}</td>
-        <td>${e.structure||'—'}</td>
-        <td>${e.coord||'—'}</td>
-        <td><span class="badge badge-demold">${fmtDate(collectDate)}</span></td>
-        <td>${e.days||'—'}</td>
-        <td><select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveCuring(${e.id},this.value)">
-          <option value="">--</option>
-          <option value="Plant" ${(e.curing||'')==='Plant'?'selected':''}>Plant</option>
-          <option value="Site" ${(e.curing||'')==='Site'?'selected':''}>Site</option>
-        </select></td>
-        <td>${is6x12?qty:''}</td><td></td>
-        <td>${is4x8?qty:''}</td><td></td>
-        <td>${isBeam?qty:''}</td><td></td>
-      </tr>`;
-    }).join('');
+  const countEl=document.getElementById('mold-count');
+  const headerDate=document.getElementById('mold-header-date');
+  if(headerDate) headerDate.textContent=filterDate?'— '+fmtDate(filterDate):'';
+  if(!rows.length){
+    if(tbody) tbody.innerHTML='';
+    if(empty) empty.style.display='block';
+    if(countEl) countEl.textContent='No collections scheduled';
+    return;
   }
+  if(empty) empty.style.display='none';
+  if(countEl) countEl.textContent=rows.length+' collection(s) scheduled';
+  tbody.innerHTML=rows.map((e,i)=>{
+    const area=e.moldArea||e.area||getArea(e.location||'');
+    const areaBadge=area==='Manila Area'?'badge-manila':area==='Bulacan Area'?'badge-bulacan':'badge-pending';
+    const collectDate=addDays(e.date,1);
+    const qty=parseInt(e.samples)||0;
+    // Mold type/size
+    const moldType=e.moldType||'Cylinder';
+    const moldSize=e.moldSize||e.kind||'—';
+    const curingLoc=e.curingLoc||e.curing||'';
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${fmtDate(e.date)}</td>
+      <td>
+        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldArea',this.value)">
+          <option value="">--</option>
+          <option value="Manila Area" ${area==='Manila Area'?'selected':''}>Manila Area</option>
+          <option value="Bulacan Area" ${area==='Bulacan Area'?'selected':''}>Bulacan Area</option>
+          <option value="Others" ${area==='Others'?'selected':''}>Others</option>
+        </select>
+        ${(e.moldAreaOther&&area==='Others')?`<div style="font-size:10px;color:#666">${e.moldAreaOther}</div>`:''}
+      </td>
+      <td><strong>${e.client}</strong></td>
+      <td style="font-size:11px">${e.location||'—'}</td>
+      <td style="font-size:11px">${e.design||'—'} ${e.agg||''}</td>
+      <td>${fmtTime(e.time)}</td>
+      <td>${e.structure||'—'}</td>
+      <td>${e.coord||'—'}</td>
+      <td><strong style="color:var(--maroon)">${fmtDate(collectDate)}</strong></td>
+      <td>
+        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'curingLoc',this.value)">
+          <option value="">--</option>
+          <option value="Site" ${curingLoc==='Site'?'selected':''}>Site</option>
+          <option value="Plant" ${curingLoc==='Plant'?'selected':''}>Plant</option>
+          <option value="Others" ${curingLoc==='Others'?'selected':''}>Others</option>
+        </select>
+      </td>
+      <td style="text-align:center"><strong>${qty}</strong></td>
+      <td>
+        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldType',this.value)">
+          <option value="Cylinder" ${moldType==='Cylinder'?'selected':''}>Cylinder</option>
+          <option value="Beam" ${moldType==='Beam'?'selected':''}>Beam</option>
+          <option value="Others" ${moldType==='Others'?'selected':''}>Others</option>
+        </select>
+      </td>
+      <td>
+        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldSize',this.value)">
+          <option value="">--</option>
+          <option value="6x12" ${moldSize==='6x12'?'selected':''}>6×12</option>
+          <option value="4x8" ${moldSize==='4x8'?'selected':''}>4×8</option>
+          <option value="Beam" ${moldSize==='Beam'?'selected':''}>Beam</option>
+        </select>
+      </td>
+      <td style="text-align:center">${qty}</td>
+      <td></td>
+      <td style="text-align:center">${qty}</td>
+      <td></td>
+    </tr>`;
+  }).join('');
+}
+
+function saveMoldField(id,field,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e[field]=val;save();}
+}
+
+function printMold(){
+  // Show print header/footer
   const h=document.getElementById('mold-print-header');
-  if(h) h.textContent=filterDate?'CYLINDER MOLD COLLECTION — '+fmtDate(filterDate):'CYLINDER MOLD COLLECTION SCHEDULE';
+  const f=document.getElementById('mold-print-footer');
+  const lbl=document.getElementById('mold-print-date-label');
+  const sel=document.getElementById('mold-filter-date');
+  if(h) h.style.display='block';
+  if(f) f.style.display='block';
+  if(lbl&&sel) lbl.textContent='Collection Date: '+fmtDate(sel.value);
+  window.print();
+  setTimeout(()=>{
+    if(h) h.style.display='none';
+    if(f) f.style.display='none';
+  },1000);
 }
 
 // ===== RENDER MONITORING =====
@@ -1345,7 +1466,7 @@ function saveCuring(id,val){
 }
 
 function renderAll(){
-  renderMaster();renderMold();renderMonitoring();renderTesting();renderTestMon();renderKPI();loadSettingsUI();
+  renderMaster();initMoldDateSelector();renderMonitoring();renderTesting();renderTestMon();renderKPI();loadSettingsUI();
 }
 
 // Set today's date defaults
