@@ -146,7 +146,6 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           <div class="form-group"><label>Date of Pouring</label><input type="date" id="f-date"></div>
           <div class="form-group"><label>Time Batched</label><input type="time" id="f-time-batched" title="Time concrete was loaded at plant"></div>
           <div class="form-group"><label>Time Finish</label><input type="time" id="f-time"></div>
-          <div class="form-group"><label>Transit Mixer No.</label><input type="text" id="f-mixer" placeholder="e.g. TM-01"></div>
           <div class="form-group span2"><label>Client Name</label><input type="text" id="f-client" placeholder="Client name"></div>
           <div class="form-group span2"><label>Location</label><input type="text" id="f-location" placeholder="Address / site location"></div>
           <div class="form-group"><label>Structure</label><input type="text" id="f-structure" placeholder="e.g. SOG, Footing"></div>
@@ -236,6 +235,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <label style="color:var(--red)" id="reject-detail-label">Actual Reading</label>
             <input type="text" id="f-reject-detail" placeholder="Actual reading">
           </div>
+          <div class="form-group"><label style="color:var(--red)">Transit Mixer No.</label><input type="text" id="f-mixer" placeholder="e.g. TM-01"></div>
           <div class="form-group"><label style="color:var(--red)">DR No.</label><input type="text" id="f-dr-no" placeholder="Delivery Receipt No."></div>
           <div class="form-group"><label style="color:var(--red)">Volume Rejected (cu.m.)</label><input type="number" id="f-vol-rejected" step="0.5" placeholder="0.0"></div>
         </div>
@@ -548,14 +548,14 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px">KPI 1 — Fresh Concrete Acceptance Rate</div>
           <div class="panel-body">
-            <div style="font-size:11px;color:#666;margin-bottom:8px">Formula: (Total Vol Rejected ÷ Total Vol) × 100%</div>
+            <div style="font-size:11px;color:#666;margin-bottom:8px">Formula: (Total Vol Accepted ÷ Total Vol) × 100% | Target: ≥95%</div>
             <div style="font-size:32px;font-weight:700;color:var(--maroon)" id="kpi1-val">—</div>
-            <div style="font-size:11px;color:#666;margin-top:4px" id="kpi1-sub">Rejection rate this month</div>
+            <div style="font-size:11px;color:#666;margin-top:4px" id="kpi1-sub">Acceptance rate this month</div>
             <div style="margin-top:10px">
               <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden">
                 <div id="kpi1-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: &lt;5%</span><span>100%</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: ≥95%</span><span>100%</span></div>
             </div>
           </div>
         </div>
@@ -1201,8 +1201,9 @@ function renderKPI(){
   });
   
   const totalVol=entries.reduce((a,e)=>a+(e.vol||0),0);
-  const rejVol=entries.filter(e=>e.rejected).reduce((a,e)=>a+(e.vol||0),0);
-  const kpi1=totalVol?((rejVol/totalVol)*100).toFixed(1):null;
+  const rejVol=entries.reduce((a,e)=>a+(parseFloat(e.volRejected)||0),0);
+  const acceptedVol=totalVol-rejVol;
+  const kpi1=totalVol?((acceptedVol/totalVol)*100).toFixed(1):null;
   
   const tested=entries.filter(e=>!e.rejected&&e.testResults&&e.testResults.length>0);
   const failed=tested.filter(e=>{
@@ -1225,13 +1226,15 @@ function renderKPI(){
   document.getElementById('kpi-cards').innerHTML=`
     <div class="kpi-card"><div class="kpi-label">Total Poured</div><div class="kpi-value">${entries.length}</div><div class="kpi-sub">Entries this month</div></div>
     <div class="kpi-card"><div class="kpi-label">Total Volume</div><div class="kpi-value">${totalVol.toFixed(1)}</div><div class="kpi-sub">Cubic meters</div></div>
-    <div class="kpi-card"><div class="kpi-label">Rejected Deliveries</div><div class="kpi-value kpi-bad">${entries.filter(e=>e.rejected).length}</div><div class="kpi-sub">${rejVol.toFixed(1)} m³ rejected</div></div>
+    <div class="kpi-card"><div class="kpi-label">Rejected Volume</div><div class="kpi-value kpi-bad">${rejVol.toFixed(1)}</div><div class="kpi-sub">m³ rejected this month</div></div>
     <div class="kpi-card"><div class="kpi-label">Samples Pending Test</div><div class="kpi-value kpi-warn">${entries.filter(e=>!e.rejected&&(!e.testResults||!e.testResults.length)).length}</div><div class="kpi-sub">Awaiting results</div></div>
   `;
   
   document.getElementById('kpi1-val').textContent=kpi1!==null?kpi1+'%':'N/A';
-  document.getElementById('kpi1-sub').textContent=`Rejection: ${rejVol.toFixed(1)} m³ / ${totalVol.toFixed(1)} m³ total`;
+  document.getElementById('kpi1-val').className='kpi-value '+(kpi1>=95?'kpi-good':kpi1>=80?'kpi-warn':'kpi-bad');
+  document.getElementById('kpi1-sub').textContent=`Accepted: ${acceptedVol.toFixed(1)} m³ / Total: ${totalVol.toFixed(1)} m³ | Rejected: ${rejVol.toFixed(1)} m³`;
   document.getElementById('kpi1-bar').style.width=(kpi1||0)+'%';
+  document.getElementById('kpi1-bar').style.background=kpi1>=95?'var(--green)':kpi1>=80?'var(--orange)':'var(--red)';
   
   document.getElementById('kpi2-val').textContent=kpi2!==null?kpi2+'%':'N/A';
   document.getElementById('kpi2-sub').textContent=`${failed.length} failed / ${tested.length} tested`;
