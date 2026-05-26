@@ -1373,6 +1373,105 @@ table.data tr:nth-child(even) td{background:#fdf8f8}
 }
 
 // ===== RENDER MONITORING =====
+function printMonitoring(){
+  const areaF=document.getElementById('mon-area-filter').value;
+  const statusF=document.getElementById('mon-status-filter').value;
+  let rows=db.entries.filter(e=>{
+    if(areaF&&(e.moldArea||e.area)!==areaF) return false;
+    if(statusF==='collected'&&!e.collected) return false;
+    if(statusF==='pending'&&e.collected) return false;
+    return true;
+  });
+  const todayStr=new Date().toISOString().split('T')[0];
+  const tableRows=rows.map((e,i)=>{
+    const area=e.moldArea||e.area||'—';
+    const curingLoc=e.curingLoc||e.curing||'—';
+    const deadline=addDays(e.date,2);
+    const collectedDate=e.collectedDate||'';
+    let timeReturn='Pending';
+    if(e.collected&&collectedDate){timeReturn=collectedDate<=deadline?'On Time':'Late';}
+    else if(!e.collected&&todayStr>deadline){timeReturn='Overdue';}
+    const rowBg=e.collected?'background:#f0f0f0;':'';
+    return `<tr style="${rowBg}">
+      <td>${e.collected?'✅ Collected':'⏳ Pending'}</td>
+      <td>${e.slip||'—'}</td>
+      <td>${fmtDate(e.date)}</td>
+      <td>${area}</td>
+      <td><strong>${e.client}</strong></td>
+      <td>${e.location||'—'}</td>
+      <td>${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
+      <td>${e.structure||'—'}</td>
+      <td>${e.coord||'—'}</td>
+      <td>${e.samples||'—'} (${e.kind||'—'})</td>
+      <td>${e.sampleRemarks||'—'}</td>
+      <td>${curingLoc}</td>
+      <td>${timeReturn}</td>
+    </tr>`;
+  }).join('');
+
+  const printHTML=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Mold Monitoring</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:10px;padding:14px}
+.header-table{width:100%;border-collapse:collapse;margin-bottom:10px}
+.divider{height:2px;background:#6B1A1A;margin:8px 0 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+table.data{width:100%;border-collapse:collapse;font-size:9px}
+table.data th{background:#6B1A1A;color:#fff;padding:5px 6px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;white-space:nowrap}
+table.data td{padding:4px 6px;border-bottom:1px solid #ddd;vertical-align:middle}
+table.data tr:nth-child(even) td{background:#fdf8f8}
+.footer{margin-top:24px}
+.footer table{width:100%;border-collapse:collapse}
+.footer td{text-align:center;padding-top:30px;border-top:1px solid #333;font-size:10px}
+.role{font-size:9px;color:#666;margin-top:2px}
+.conf{margin-top:10px;font-size:8px;color:#999;text-align:center}
+@page{margin:.8cm;size:landscape}
+</style>
+</head>
+<body>
+<table class="header-table">
+  <tr>
+    <td style="width:90px;vertical-align:middle"><img src="${MAROON_URL}" style="width:80px;height:80px;object-fit:contain"></td>
+    <td style="text-align:center;vertical-align:middle">
+      <div style="font-size:14px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
+      <div style="font-size:11px;font-weight:600;margin-top:3px">MOLD MONITORING</div>
+      <div style="font-size:10px;color:#666;margin-top:2px">Date Printed: ${fmtDate(new Date().toISOString().split('T')[0])}</div>
+    </td>
+    <td style="width:90px;text-align:right;font-size:9px;color:#666;vertical-align:top">SP-QA-02<br>F-QA-2.1</td>
+  </tr>
+</table>
+<div class="divider"></div>
+<table class="data">
+  <thead>
+    <tr>
+      <th>Status</th><th>Slip No.</th><th>Pouring Date</th><th>Area</th>
+      <th>Client</th><th>Location</th><th>Design</th><th>Structure</th>
+      <th>Site Coord.</th><th>Samples &amp; Kind</th><th>Sample Remarks</th>
+      <th>Curing Location</th><th>Time Return</th>
+    </tr>
+  </thead>
+  <tbody>${tableRows}</tbody>
+</table>
+<div class="footer">
+  <table>
+    <tr>
+      <td>Prepared by<div class="role">Testing Coordinator</div></td>
+      <td>Checked by<div class="role">QC Supervisor</div></td>
+      <td>Noted by<div class="role">R&D Supervisor</div></td>
+    </tr>
+  </table>
+  <div class="conf">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+</div>
+</body></html>`;
+
+  const w=window.open('','_blank','width=1000,height=700');
+  w.document.write(printHTML);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{w.print();},600);
+}
+
 function renderMonitoring(){
   const areaF=document.getElementById('mon-area-filter').value;
   const statusF=document.getElementById('mon-status-filter').value;
