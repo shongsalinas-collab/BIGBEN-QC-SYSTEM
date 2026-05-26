@@ -1672,7 +1672,6 @@ function renderTesting(){
   let html='';
   DAY_NUMS.forEach((d,idx)=>{
     const matches=db.entries.filter(e=>{
-      if(e.rejected) return false;
       const testDays=getTestDays(e.days);
       const entryDate=normalizeDate(e.date||"");
       return testDays.includes(d) && addDays(entryDate,d)===filterDate;
@@ -1747,7 +1746,6 @@ function printTesting(){
   let sectionsHtml='';
   DAY_NUMS.forEach((d,idx)=>{
     const matches=db.entries.filter(e=>{
-      if(e.rejected) return false;
       const testDays=getTestDays(e.days);
       const entryDate=normalizeDate(e.date||"");
       return testDays.includes(d) && addDays(entryDate,d)===filterDate;
