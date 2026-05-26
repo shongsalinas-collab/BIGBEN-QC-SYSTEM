@@ -77,24 +77,18 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
 
 /* PRINT */
 @media print{
-  /* Hide everything by default */
-  body > *{display:none!important}
-  /* Only show what's being printed */
-  .printing-mold #mold-print-area,
-  .printing-mold #mold-print-area *{display:block!important}
-  .printing-mold #mold-print-area table{display:table!important}
-  .printing-mold #mold-print-area thead{display:table-header-group!important}
-  .printing-mold #mold-print-area tbody{display:table-row-group!important}
-  .printing-mold #mold-print-area tr{display:table-row!important}
-  .printing-mold #mold-print-area th,
-  .printing-mold #mold-print-area td{display:table-cell!important}
-  /* Hide dropdowns in print - show text instead */
-  .printing-mold select{display:none!important}
-  .printing-mold .print-text{display:inline!important}
-  .printing-mold .no-print{display:none!important}
-  /* Style */
-  .printing-mold .data-table th{background:var(--maroon)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .printing-mold .panel-header{background:var(--maroon)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print{display:none!important}
+  .nav-tabs{display:none!important}
+  .app-header{display:none!important}
+  .filter-bar{display:none!important}
+  .tab-content{display:none!important}
+  #tab-mold{display:block!important}
+  #mold-print-header{display:block!important}
+  #mold-print-footer{display:block!important}
+  .panel-header{background:var(--maroon)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .data-table th{background:var(--maroon)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  select{display:none!important}
+  .print-text{display:inline!important}
   body{background:#fff;font-size:11px}
   @page{margin:1cm;size:landscape}
 }
