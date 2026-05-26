@@ -291,7 +291,6 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <tr>
               <th>#</th>
               <th>Pouring Date</th>
-              <th>Mixer No.</th>
               <th>Client</th>
               <th>Location</th>
               <th>Design (PSI)</th>
@@ -299,22 +298,14 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>No. of Days</th>
               <th>Time Batched</th>
               <th>Time Finish</th>
-              <th>Standby</th>
               <th>Structure</th>
               <th>Site Coord.</th>
               <th>Samples</th>
               <th>Sample Remarks</th>
               <th>Kind</th>
               <th>Slip No.</th>
-              <th>Slump Min</th>
-              <th>Slump Max</th>
-              <th>Act. Slump</th>
-              <th>Max Temp (°C)</th>
-              <th>Act. Temp</th>
               <th>Volume (m³)</th>
-              <th>DR No.</th>
-              <th>Vol Rejected</th>
-              <th>Status</th>
+              <th>Remarks</th>
               <th class="no-print">Actions</th>
             </tr>
           </thead>
@@ -960,7 +951,8 @@ function addEntry(){
     collected:false,
     testResults:[],
     testDates:{},
-    area:getArea(document.getElementById('f-location').value)
+    area:getArea(document.getElementById('f-location').value),
+    remarks:''
   };
   db.entries.unshift(entry);
   save();
@@ -999,6 +991,11 @@ function toggleSampleRemarks(){
     if(slipWrap) slipWrap.style.opacity='1';
     if(slipInput){slipInput.disabled=false;slipInput.placeholder='Slip No.';}
   }
+}
+
+function saveRemarks(id,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e.remarks=val;save();}
 }
 
 function checkTempColor(e){
