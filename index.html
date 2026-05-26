@@ -1393,7 +1393,7 @@ function printMonitoring(){
     else if(!e.collected&&todayStr>deadline){timeReturn='Overdue';}
     const rowBg=e.collected?'background:#f0f0f0;':'';
     return `<tr style="${rowBg}">
-      <td>${e.collected?'✅ Collected':'⏳ Pending'}</td>
+      <td>${e.collected?'Collected':'Pending'}</td>
       <td>${e.slip||'—'}</td>
       <td>${fmtDate(e.date)}</td>
       <td>${area}</td>
@@ -1410,66 +1410,66 @@ function printMonitoring(){
   }).join('');
 
   const printHTML=`<!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<title>Mold Monitoring</title>
+<html><head><meta charset="UTF-8"><title>Mold Monitoring</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;font-size:10px;padding:14px}
-.header-table{width:100%;border-collapse:collapse;margin-bottom:10px}
 .divider{height:2px;background:#6B1A1A;margin:8px 0 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 table.data{width:100%;border-collapse:collapse;font-size:9px}
-table.data th{background:#6B1A1A;color:#fff;padding:5px 6px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;white-space:nowrap}
-table.data td{padding:4px 6px;border-bottom:1px solid #ddd;vertical-align:middle}
-table.data tr:nth-child(even) td{background:#fdf8f8}
-.footer{margin-top:24px}
+table.data th{background:#6B1A1A;color:#fff;padding:5px 6px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+table.data td{padding:4px 6px;border-bottom:1px solid #ddd}
+.footer{margin-top:20px}
 .footer table{width:100%;border-collapse:collapse}
-.footer td{text-align:center;padding-top:30px;border-top:1px solid #333;font-size:10px}
-.role{font-size:9px;color:#666;margin-top:2px}
-.conf{margin-top:10px;font-size:8px;color:#999;text-align:center}
-@page{margin:.8cm;size:landscape}
-</style>
-</head>
+.footer td{text-align:center;padding-top:28px;border-top:1px solid #333;font-size:10px}
+.no-print{margin-bottom:12px}
+@media print{.no-print{display:none!important}@page{margin:.8cm;size:landscape}}
+</style></head>
 <body>
-<table class="header-table">
+<div class="no-print" style="text-align:center;padding:10px">
+  <button onclick="window.print()" style="background:#6B1A1A;color:#fff;padding:10px 30px;border:none;border-radius:4px;font-size:14px;cursor:pointer;font-weight:700">🖨️ PRINT</button>
+  <button onclick="window.close()" style="background:#888;color:#fff;padding:10px 20px;border:none;border-radius:4px;font-size:14px;cursor:pointer;margin-left:10px">✕ Close</button>
+</div>
+<table style="width:100%;border-collapse:collapse;margin-bottom:10px">
   <tr>
-    <td style="width:90px;vertical-align:middle"><img src="${MAROON_URL}" style="width:80px;height:80px;object-fit:contain"></td>
-    <td style="text-align:center;vertical-align:middle">
+    <td style="width:90px"><img src="${MAROON_URL}" style="width:75px;height:75px;object-fit:contain"></td>
+    <td style="text-align:center">
       <div style="font-size:14px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
       <div style="font-size:11px;font-weight:600;margin-top:3px">MOLD MONITORING</div>
-      <div style="font-size:10px;color:#666;margin-top:2px">Date Printed: ${fmtDate(new Date().toISOString().split('T')[0])}</div>
+      <div style="font-size:10px;color:#666;margin-top:2px">Date Printed: ${fmtDate(todayStr)}</div>
     </td>
     <td style="width:90px;text-align:right;font-size:9px;color:#666;vertical-align:top">SP-QA-02<br>F-QA-2.1</td>
   </tr>
 </table>
 <div class="divider"></div>
 <table class="data">
-  <thead>
-    <tr>
-      <th>Status</th><th>Slip No.</th><th>Pouring Date</th><th>Area</th>
-      <th>Client</th><th>Location</th><th>Design</th><th>Structure</th>
-      <th>Site Coord.</th><th>Samples &amp; Kind</th><th>Sample Remarks</th>
-      <th>Curing Location</th><th>Time Return</th>
-    </tr>
-  </thead>
+  <thead><tr>
+    <th>Status</th><th>Slip No.</th><th>Pouring Date</th><th>Area</th>
+    <th>Client</th><th>Location</th><th>Design</th><th>Structure</th>
+    <th>Site Coord.</th><th>Samples & Kind</th><th>Remarks</th>
+    <th>Curing</th><th>Time Return</th>
+  </tr></thead>
   <tbody>${tableRows}</tbody>
 </table>
 <div class="footer">
-  <table>
-    <tr>
-      <td>Prepared by<div class="role">Testing Coordinator</div></td>
-      <td>Checked by<div class="role">QC Supervisor</div></td>
-      <td>Noted by<div class="role">R&D Supervisor</div></td>
-    </tr>
-  </table>
-  <div class="conf">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+  <table><tr>
+    <td>Prepared by<br><small>Testing Coordinator</small></td>
+    <td>Checked by<br><small>QC Supervisor</small></td>
+    <td>Noted by<br><small>R&D Supervisor</small></td>
+  </tr></table>
+  <div style="margin-top:10px;font-size:8px;color:#999;text-align:center">STRICTLY CONFIDENTIAL – For use of BIG BEN only.</div>
 </div>
 </body></html>`;
 
-  const w=window.open('','_blank','width=1000,height=700');
-  w.document.write(printHTML);
-  w.document.close();
-  w.focus();
-  setTimeout(()=>{w.print();},600);
+  // Use iframe instead of new window to avoid popup blocker
+  let iframe=document.getElementById('print-iframe');
+  if(!iframe){
+    iframe=document.createElement('iframe');
+    iframe.id='print-iframe';
+    iframe.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;background:#fff';
+    document.body.appendChild(iframe);
+  }
+  iframe.srcdoc=printHTML;
+  iframe.style.display='block';
 }
 
 function renderMonitoring(){
