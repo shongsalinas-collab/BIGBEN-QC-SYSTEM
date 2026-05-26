@@ -135,6 +135,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 </style>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -643,11 +644,10 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Pouring Date</th>
               <th>Client</th>
               <th>Location</th>
-              <th>Design (PSI)</th>
+              <th>Design</th>
               <th>No. of Days</th>
               <th>Structure</th>
-              <th>Samples</th>
-              <th>Kind</th>
+              <th>Samples & Kind</th>
               <th>Fresh Concrete</th>
               <th>Day 1 PSI</th>
               <th>Day 2 PSI</th>
@@ -1863,10 +1863,10 @@ function renderTestMon(){
     
     const r1=r[0]||'';const r2=r[1]||'';const r3=r[2]||'';
     return `<tr>
-      <td>${fmtDate(e.date)}</td>
+      <td>${fmtDate(normalizeDate(e.date))}</td>
       <td><strong>${e.client}</strong></td>
       <td style="font-size:11px">${e.location||'—'}</td>
-      <td>${e.design||'—'} ${e.agg||''}</td>
+      <td style="font-size:11px">${e.design||'—'} ${e.agg||''}</td>
       <td>${e.agg||'—'}</td>
       <td>${e.days||'—'}</td>
       <td>${e.structure||'—'}</td>
