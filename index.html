@@ -432,18 +432,18 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   </div>
 </div>
 
+
+
 <!-- ===== SHEET 3: MOLD MONITORING ===== -->
 <div id="tab-monitoring" class="tab-content">
   <div class="panel">
     <div class="panel-header">
       Mold Monitoring
-      <div style="display:flex;gap:6px" class="no-print">
-        <button class="btn btn-sm btn-print" onclick="printSheet('monitoring')">🖨 Print</button>
-      </div>
+      <button class="btn btn-sm btn-print no-print" onclick="window.print()">🖨 Print</button>
     </div>
     <div class="panel-body" style="padding:0">
       <div class="filter-bar no-print">
-        <label>Filter by area:</label>
+        <label>Area:</label>
         <select id="mon-area-filter" onchange="renderMonitoring()">
           <option value="">All</option>
           <option>Manila Area</option>
@@ -452,29 +452,27 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <label>Status:</label>
         <select id="mon-status-filter" onchange="renderMonitoring()">
           <option value="">All</option>
-          <option value="collected">Collected ✓</option>
-          <option value="uncollected">Not Yet Collected</option>
+          <option value="collected">Collected</option>
+          <option value="pending">Pending</option>
         </select>
       </div>
       <div class="table-wrap">
-        <table class="data-table">
+        <table class="data-table" id="mon-table">
           <thead>
             <tr>
-              <th>Collected?</th>
+              <th>Status</th>
+              <th>Slip No.</th>
               <th>Pouring Date</th>
               <th>Area</th>
               <th>Client</th>
               <th>Location</th>
               <th>Design</th>
-              <th>Aggregates</th>
-              <th>No. of Days</th>
               <th>Structure</th>
               <th>Site Coord.</th>
-              <th>Samples</th>
+              <th>No. of Sample &amp; Kind</th>
               <th>Sample Remarks</th>
-              <th>Kind</th>
-              <th>Collection Due</th>
-              <th>Slip No.</th>
+              <th>Curing Location</th>
+              <th>Time Return</th>
             </tr>
           </thead>
           <tbody id="mon-tbody"></tbody>
