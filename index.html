@@ -1377,33 +1377,61 @@ function renderMonitoring(){
   const areaF=document.getElementById('mon-area-filter').value;
   const statusF=document.getElementById('mon-status-filter').value;
   let rows=db.entries.filter(e=>{
-    if(areaF&&e.area!==areaF) return false;
+    if(areaF&&(e.moldArea||e.area)!==areaF) return false;
     if(statusF==='collected'&&!e.collected) return false;
-    if(statusF==='uncollected'&&e.collected) return false;
+    if(statusF==='pending'&&e.collected) return false;
     return true;
   });
   const tbody=document.getElementById('mon-tbody');
   const empty=document.getElementById('mon-empty');
   if(!rows.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=rows.map(e=>`
-    <tr>
-      <td style="text-align:center"><input type="checkbox" ${e.collected?'checked':''} onchange="toggleCollected(${e.id})" title="${e.collected?'Collected':'Not yet collected'}"></td>
-      <td>${fmtDate(e.date)}</td>
-      <td><span class="badge ${e.area==='Manila Area'?'badge-manila':'badge-bulacan'}">${e.area||'—'}</span></td>
-      <td><strong>${e.client}</strong></td>
-      <td>${e.location||'—'}</td>
-      <td>${e.design||'—'}</td>
-      <td>${e.agg||'—'}</td>
-      <td>${e.days||'—'}</td>
-      <td>${e.structure||'—'}</td>
-      <td>${e.coord||'—'}</td>
-      <td>${e.samples||'—'}</td>
-      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
-      <td>${e.kind||'—'}</td>
-      <td>${fmtDate(addDays(e.date,1))}</td>
-      <td>${e.slip||'—'}</td>
-    </tr>`).join('');
+  const todayStr=new Date().toISOString().split('T')[0];
+  tbody.innerHTML=rows.map(e=>{
+    const area=e.moldArea||e.area||'—';
+    const areaBadge=area==='Manila Area'?'badge-manila':area==='Bulacan Area'?'badge-bulacan':'badge-pending';
+    const deadline=addDays(e.date,2);
+    const collectedDate=e.collectedDate||'';
+    const curingLoc=e.curingLoc||e.curing||'';
+    // Time Return
+    let timeReturn='—';let timeStyle='';
+    if(e.collected&&collectedDate){
+      if(collectedDate<=deadline){timeReturn='✅ On Time';timeStyle='color:var(--green);font-weight:600';}
+      else{timeReturn='⚠️ Late';timeStyle='color:var(--red);font-weight:600';}
+    } else if(!e.collected){
+      if(todayStr>deadline){timeReturn='⚠️ Overdue';timeStyle='color:var(--red);font-weight:600';}
+      else{timeReturn='⏳ Pending';timeStyle='color:var(--orange)';}
+    }
+    const rowStyle=e.collected?'background:#f0f0f0;':'background:#fff;';
+    const textStyle=e.collected?'color:#999;':'';
+    return `<tr style="${rowStyle}">
+      <td style="white-space:nowrap">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" ${e.collected?'checked':''} onchange="toggleCollected(${e.id})" style="width:16px;height:16px;cursor:pointer;accent-color:var(--maroon)">
+          <span style="font-size:12px;font-weight:600;${e.collected?'color:#888':'color:var(--orange)'}">${e.collected?'Collected':'Pending'}</span>
+        </label>
+      </td>
+      <td style="${textStyle}">${e.slip||'—'}</td>
+      <td style="${textStyle}">${fmtDate(e.date)}</td>
+      <td><span class="badge ${areaBadge}">${area}</span></td>
+      <td><strong style="${textStyle}">${e.client}</strong></td>
+      <td style="font-size:11px;${textStyle}">${e.location||'—'}</td>
+      <td style="font-size:11px;${textStyle}">${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
+      <td style="${textStyle}">${e.structure||'—'}</td>
+      <td style="${textStyle}">${e.coord||'—'}</td>
+      <td style="text-align:center;${textStyle}"><strong>${e.samples||'—'}</strong> <span style="font-size:11px;color:#666">(${e.kind||'—'})</span></td>
+      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:'—'}</td>
+      <td>
+        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'curingLoc',this.value)">
+          <option value="">--</option>
+          <option value="Plant" ${curingLoc==='Plant'?'selected':''}>Plant</option>
+          <option value="Site" ${curingLoc==='Site'?'selected':''}>Site</option>
+          <option value="Others" ${curingLoc==='Others'?'selected':''}>Others</option>
+        </select>
+      </td>
+      <td style="${timeStyle}">${timeReturn}</td>
+    </tr>`;
+  }).join('');
 }
 
 // ===== RENDER TESTING SCHEDULE =====
