@@ -128,6 +128,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <button class="nav-tab" onclick="showTab('testing')">🧪 Sheet 4: Testing Schedule</button>
   <button class="nav-tab" onclick="showTab('testmon')">📊 Sheet 5: Testing Monitoring</button>
   <button class="nav-tab" onclick="showTab('kpi')">📈 KPI Dashboard</button>
+  <button class="nav-tab" onclick="showTab('settings')">⚙️ Settings</button>
 </div>
 
 <!-- ===== SHEET 1: MASTER LIST ===== -->
@@ -138,55 +139,87 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       <button class="btn btn-sm" style="background:#fff;color:var(--maroon)" onclick="toggleForm()">▼ Show / Hide Form</button>
     </div>
     <div class="panel-body form-section" id="entry-form">
-      <div class="form-grid">
-        <div class="form-group"><label>Date of Pouring</label><input type="date" id="f-date"></div>
-        <div class="form-group"><label>Client Name</label><input type="text" id="f-client" placeholder="Client name"></div>
-        <div class="form-group span2"><label>Location</label><input type="text" id="f-location" placeholder="Address / site location"></div>
-        <div class="form-group"><label>Design (PSI)</label><input type="text" id="f-design" placeholder="e.g. 3000"></div>
-        <div class="form-group"><label>Size of Aggregates</label>
-          <select id="f-agg">
-            <option value="">-- Select --</option>
-            <option>Agg – G1"</option>
-            <option>Agg – 3/4"</option>
-            <option>Agg – 3/8"</option>
-            <option value="others">Others (specify below)</option>
-          </select>
+      <!-- ROW 1: Basic Info -->
+      <div style="background:#fdf8f8;border:1px solid #e0c8c8;border-radius:4px;padding:10px;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;color:var(--maroon);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">📋 Pouring Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Date of Pouring</label><input type="date" id="f-date"></div>
+          <div class="form-group"><label>Time Batched</label><input type="time" id="f-time-batched" title="Time concrete was loaded at plant"></div>
+          <div class="form-group"><label>Time Finish</label><input type="time" id="f-time"></div>
+          <div class="form-group"><label>Transit Mixer No.</label><input type="text" id="f-mixer" placeholder="e.g. TM-01"></div>
+          <div class="form-group span2"><label>Client Name</label><input type="text" id="f-client" placeholder="Client name"></div>
+          <div class="form-group span2"><label>Location</label><input type="text" id="f-location" placeholder="Address / site location"></div>
+          <div class="form-group"><label>Structure</label><input type="text" id="f-structure" placeholder="e.g. SOG, Footing"></div>
+          <div class="form-group"><label>Site Coordinator</label><input type="text" id="f-coord" placeholder="Name"></div>
         </div>
-        <div class="form-group" id="f-agg-other-wrap" style="display:none"><label>Other Aggregate Size</label><input type="text" id="f-agg-other" placeholder="Specify"></div>
-        <div class="form-group"><label>No. of Days</label>
-          <select id="f-days">
-            <option value="">-- Select --</option>
-            <option>01 Days</option>
-            <option>03 Days</option>
-            <option>07 Days</option>
-            <option>14 Days</option>
-            <option>28 Days</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Time Finish</label><input type="time" id="f-time"></div>
-        <div class="form-group"><label>Structure</label><input type="text" id="f-structure" placeholder="e.g. SOG, Footing"></div>
-        <div class="form-group"><label>Site Coordinator</label><input type="text" id="f-coord" placeholder="Name"></div>
-        <div class="form-group"><label>No. of Samples</label><input type="number" id="f-samples" min="1" placeholder="e.g. 3"></div>
-        <div class="form-group"><label>Kind of Sample</label>
-          <select id="f-kind">
-            <option value="">-- Select --</option>
-            <option>6x12</option>
-            <option>4x8</option>
-            <option>Beam</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Borrower Slip No.</label><input type="text" id="f-slip" placeholder="Slip No."></div>
-        <div class="form-group"><label>Required Slump</label><input type="text" id="f-slump" placeholder="e.g. 4 inches"></div>
-        <div class="form-group"><label>Required Temperature</label><input type="text" id="f-temp" placeholder="e.g. 32°C max"></div>
-        <div class="form-group"><label>Volume (cu.m.)</label><input type="number" id="f-vol" step="0.5" placeholder="0.0"></div>
       </div>
 
+      <!-- ROW 2: Mix Design -->
+      <div style="background:#f8fbf8;border:1px solid #c8dcc8;border-radius:4px;padding:10px;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;color:#2E7D32;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🧱 Mix Design</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Design (PSI)</label><input type="text" id="f-design" placeholder="e.g. 3000"></div>
+          <div class="form-group"><label>Size of Aggregates</label>
+            <select id="f-agg">
+              <option value="">-- Select --</option>
+              <option>Agg – G1"</option>
+              <option>Agg – 3/4"</option>
+              <option>Agg – 3/8"</option>
+              <option value="others">Others (specify below)</option>
+            </select>
+          </div>
+          <div class="form-group" id="f-agg-other-wrap" style="display:none"><label>Other Aggregate Size</label><input type="text" id="f-agg-other" placeholder="Specify"></div>
+          <div class="form-group"><label>No. of Days</label>
+            <select id="f-days">
+              <option value="">-- Select --</option>
+              <option>01 Days</option>
+              <option>03 Days</option>
+              <option>07 Days</option>
+              <option>14 Days</option>
+              <option>28 Days</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Volume (cu.m.)</label><input type="number" id="f-vol" step="0.5" placeholder="0.0"></div>
+        </div>
+      </div>
+
+      <!-- ROW 3: QC Requirements -->
+      <div style="background:#f8f8fb;border:1px solid #c8c8e0;border-radius:4px;padding:10px;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;color:#1565C0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🌡️ QC Requirements & Fresh Concrete</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Required Slump</label><input type="text" id="f-slump" placeholder="e.g. 4" oninput="checkAutoReject()"></div>
+          <div class="form-group"><label>Actual Slump</label><input type="text" id="f-actual-slump" placeholder="Actual reading" oninput="checkAutoReject()"></div>
+          <div class="form-group"><label>Required Temperature (°C)</label><input type="text" id="f-temp" placeholder="e.g. 32" oninput="checkAutoReject()"></div>
+          <div class="form-group"><label>Actual Temperature (°C)</label><input type="text" id="f-actual-temp" placeholder="Actual reading" oninput="checkAutoReject()"></div>
+        </div>
+        <div id="auto-reject-alert" style="display:none;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:4px;padding:8px 12px;margin-top:8px;font-size:12px;font-weight:600;color:#C62828"></div>
+      </div>
+
+      <!-- ROW 4: Samples -->
+      <div style="background:#fffbf5;border:1px solid #e0d8c8;border-radius:4px;padding:10px;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;color:#E65100;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🧪 Sample Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>No. of Samples</label><input type="number" id="f-samples" min="1" placeholder="e.g. 3"></div>
+          <div class="form-group"><label>Kind of Sample</label>
+            <select id="f-kind">
+              <option value="">-- Select --</option>
+              <option>6x12</option>
+              <option>4x8</option>
+              <option>Beam</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Borrower Slip No.</label><input type="text" id="f-slip" placeholder="Slip No."></div>
+        </div>
+      </div>
+
+      <!-- REJECTION SECTION -->
       <div style="margin-bottom:10px">
         <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--red);cursor:pointer">
-          <input type="checkbox" id="f-rejected" onchange="toggleRejection()"> Mark as Rejected Concrete
+          <input type="checkbox" id="f-rejected" onchange="toggleRejection()"> ⛔ Mark as Rejected Concrete
         </label>
       </div>
       <div class="rejection-block" id="rejection-block" style="display:none">
+        <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;text-transform:uppercase">Rejection Details</div>
         <div class="form-grid">
           <div class="form-group">
             <label style="color:var(--red)">Reason of Rejection</label>
@@ -194,12 +227,16 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <option value="">-- Select Reason --</option>
               <option value="Temperature">Temperature</option>
               <option value="Slump">Slump</option>
+              <option value="Overmix">Overmix (Standby Time)</option>
+              <option value="Others">Others (specify)</option>
             </select>
           </div>
           <div class="form-group" id="f-reject-detail-wrap" style="display:none">
             <label style="color:var(--red)" id="reject-detail-label">Actual Reading</label>
             <input type="text" id="f-reject-detail" placeholder="Actual reading">
           </div>
+          <div class="form-group"><label style="color:var(--red)">DR No.</label><input type="text" id="f-dr-no" placeholder="Delivery Receipt No."></div>
+          <div class="form-group"><label style="color:var(--red)">Volume Rejected (cu.m.)</label><input type="number" id="f-vol-rejected" step="0.5" placeholder="0.0"></div>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px">
@@ -234,20 +271,27 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <tr>
               <th>#</th>
               <th>Pouring Date</th>
+              <th>Mixer No.</th>
               <th>Client</th>
               <th>Location</th>
               <th>Design (PSI)</th>
               <th>Aggregates</th>
               <th>No. of Days</th>
+              <th>Time Batched</th>
               <th>Time Finish</th>
+              <th>Standby</th>
               <th>Structure</th>
               <th>Site Coord.</th>
               <th>Samples</th>
               <th>Kind</th>
               <th>Slip No.</th>
-              <th>Slump</th>
-              <th>Temp.</th>
+              <th>Req. Slump</th>
+              <th>Act. Slump</th>
+              <th>Req. Temp</th>
+              <th>Act. Temp</th>
               <th>Volume (m³)</th>
+              <th>DR No.</th>
+              <th>Vol Rejected</th>
               <th>Status</th>
               <th class="no-print">Actions</th>
             </tr>
@@ -256,6 +300,36 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         </table>
       </div>
       <div id="master-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No entries yet. Add a pouring entry above.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS TAB ===== -->
+<div id="tab-settings" class="tab-content">
+  <div class="panel">
+    <div class="panel-header">⚙️ QC Requirements Settings</div>
+    <div class="panel-body">
+      <div style="font-size:12px;color:#666;margin-bottom:16px">These values are used for auto-reject detection and KPI computation. Changes apply immediately to all new entries.</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Max Temperature (°C)</label><input type="number" id="s-max-temp" placeholder="e.g. 32" style="font-size:15px;font-weight:600"></div>
+        <div class="form-group"><label>Min Slump (inches)</label><input type="number" id="s-min-slump" step="0.5" placeholder="e.g. 2"></div>
+        <div class="form-group"><label>Max Slump (inches)</label><input type="number" id="s-max-slump" step="0.5" placeholder="e.g. 6"></div>
+        <div class="form-group"><label>Max Standby Time (hours)</label><input type="number" id="s-max-standby" placeholder="e.g. 4" style="font-size:15px;font-weight:600"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-maroon" onclick="saveSettings()">💾 Save Settings</button>
+        <button class="btn btn-outline" onclick="loadSettingsUI()">↺ Reset</button>
+      </div>
+      <div id="settings-saved" style="display:none;margin-top:10px;color:var(--green);font-weight:600;font-size:12px">✅ Settings saved!</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">📋 Current Requirements Summary</div>
+    <div class="panel-body">
+      <table class="data-table" style="max-width:500px">
+        <thead><tr><th>Parameter</th><th>Limit</th><th>Auto-Reject if...</th></tr></thead>
+        <tbody id="settings-summary"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -638,14 +712,88 @@ function toggleRejection(){
 function toggleRejectDetail(){
   const reason=document.getElementById('f-reject-reason').value;
   const wrap=document.getElementById('f-reject-detail-wrap');
-  if(reason){
-    wrap.style.display='flex';
-    document.getElementById('reject-detail-label').textContent=reason==='Temperature'?'Actual Temperature':'Actual Slump';
-  } else wrap.style.display='none';
+  if(reason==='Temperature'){wrap.style.display='flex';document.getElementById('reject-detail-label').textContent='Actual Temperature (°C)';}
+  else if(reason==='Slump'){wrap.style.display='flex';document.getElementById('reject-detail-label').textContent='Actual Slump (inches)';}
+  else if(reason==='Overmix'){wrap.style.display='flex';document.getElementById('reject-detail-label').textContent='Standby Time (hours)';}
+  else if(reason==='Others'){wrap.style.display='flex';document.getElementById('reject-detail-label').textContent='Specify Reason';}
+  else wrap.style.display='none';
+}
+
+function calcStandby(batched, finish){
+  if(!batched||!finish) return null;
+  const [bh,bm]=batched.split(':').map(Number);
+  const [fh,fm]=finish.split(':').map(Number);
+  let mins=(fh*60+fm)-(bh*60+bm);
+  if(mins<0) mins+=24*60;
+  return (mins/60).toFixed(1);
+}
+
+function getSettings(){
+  const s=db.settings||{};
+  return {
+    maxTemp:parseFloat(s.maxTemp)||32,
+    minSlump:parseFloat(s.minSlump)||2,
+    maxSlump:parseFloat(s.maxSlump)||6,
+    maxStandby:parseFloat(s.maxStandby)||4
+  };
+}
+
+function checkAutoRejectLogic(actualTemp,actualSlump,standby,settings){
+  if(!settings) settings=getSettings();
+  const reasons=[];
+  if(actualTemp&&actualTemp>settings.maxTemp) reasons.push(`Temperature ${actualTemp}°C > ${settings.maxTemp}°C max`);
+  if(actualSlump&&(actualSlump<settings.minSlump||actualSlump>settings.maxSlump)) reasons.push(`Slump ${actualSlump}" out of range ${settings.minSlump}"-${settings.maxSlump}"`);
+  if(standby&&parseFloat(standby)>settings.maxStandby) reasons.push(`Overmix ${standby}hrs > ${settings.maxStandby}hrs max`);
+  return {rejected:reasons.length>0, reason:reasons[0]||'', detail:reasons.join('; ')};
+}
+
+function checkAutoReject(){
+  const settings=getSettings();
+  const actualTemp=parseFloat(document.getElementById('f-actual-temp').value)||null;
+  const actualSlump=parseFloat(document.getElementById('f-actual-slump').value)||null;
+  const timeBatched=document.getElementById('f-time-batched').value;
+  const timeFinish=document.getElementById('f-time').value;
+  const standby=calcStandby(timeBatched,timeFinish);
+  const result=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings);
+  const alert=document.getElementById('auto-reject-alert');
+  if(result.rejected){
+    alert.style.display='block';
+    alert.innerHTML='⚠️ AUTO-REJECT DETECTED: '+result.detail;
+    document.getElementById('f-rejected').checked=true;
+    document.getElementById('rejection-block').style.display='block';
+  } else {
+    alert.style.display='none';
+  }
+}
+
+function saveSettings(){
+  if(!db.settings) db.settings={};
+  db.settings.maxTemp=document.getElementById('s-max-temp').value;
+  db.settings.minSlump=document.getElementById('s-min-slump').value;
+  db.settings.maxSlump=document.getElementById('s-max-slump').value;
+  db.settings.maxStandby=document.getElementById('s-max-standby').value;
+  save();
+  loadSettingsUI();
+  document.getElementById('settings-saved').style.display='block';
+  setTimeout(()=>document.getElementById('settings-saved').style.display='none',2000);
+}
+
+function loadSettingsUI(){
+  const s=getSettings();
+  document.getElementById('s-max-temp').value=s.maxTemp;
+  document.getElementById('s-min-slump').value=s.minSlump;
+  document.getElementById('s-max-slump').value=s.maxSlump;
+  document.getElementById('s-max-standby').value=s.maxStandby;
+  const tbody=document.getElementById('settings-summary');
+  if(tbody) tbody.innerHTML=`
+    <tr><td>Temperature</td><td>Max ${s.maxTemp}°C</td><td>Actual > ${s.maxTemp}°C</td></tr>
+    <tr><td>Slump</td><td>${s.minSlump}" – ${s.maxSlump}"</td><td>Actual &lt; ${s.minSlump}" or &gt; ${s.maxSlump}"</td></tr>
+    <tr><td>Standby Time (Overmix)</td><td>Max ${s.maxStandby} hours</td><td>Standby > ${s.maxStandby} hrs</td></tr>
+  `;
 }
 
 function clearForm(){
-  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-structure','f-coord','f-samples','f-kind','f-slip','f-slump','f-temp','f-vol','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
+  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-kind','f-slip','f-slump','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
   });
@@ -662,24 +810,39 @@ function addEntry(){
   const aggVal=document.getElementById('f-agg').value;
   const agg=aggVal==='others'?document.getElementById('f-agg-other').value:aggVal;
   const isRejected=document.getElementById('f-rejected').checked;
+  const timeBatched=document.getElementById('f-time-batched').value;
+  const timeFinish=document.getElementById('f-time').value;
+  const standby=calcStandby(timeBatched,timeFinish);
+  const settings=getSettings();
+  const actualTemp=parseFloat(document.getElementById('f-actual-temp').value)||null;
+  const actualSlump=parseFloat(document.getElementById('f-actual-slump').value)||null;
+  const autoRejected=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings);
+  const finalRejected=isRejected||autoRejected.rejected;
   const entry={
     id:Date.now(),
     date, client,
     location:document.getElementById('f-location').value,
     design:document.getElementById('f-design').value,
     agg, days:document.getElementById('f-days').value,
-    time:document.getElementById('f-time').value,
+    timeBatched, time:timeFinish,
+    standby,
+    mixer:document.getElementById('f-mixer').value,
     structure:document.getElementById('f-structure').value,
     coord:document.getElementById('f-coord').value,
     samples:document.getElementById('f-samples').value,
     kind:document.getElementById('f-kind').value,
     slip:document.getElementById('f-slip').value,
     slump:document.getElementById('f-slump').value,
+    actualSlump:document.getElementById('f-actual-slump').value,
     temp:document.getElementById('f-temp').value,
+    actualTemp:document.getElementById('f-actual-temp').value,
     vol:parseFloat(document.getElementById('f-vol').value)||0,
-    rejected:isRejected,
-    rejectReason:isRejected?document.getElementById('f-reject-reason').value:'',
-    rejectDetail:isRejected?document.getElementById('f-reject-detail').value:'',
+    volRejected:parseFloat(document.getElementById('f-vol-rejected').value)||0,
+    drNo:document.getElementById('f-dr-no').value,
+    rejected:finalRejected,
+    rejectReason:finalRejected?(isRejected?document.getElementById('f-reject-reason').value:autoRejected.reason):'',
+    rejectDetail:finalRejected?(isRejected?document.getElementById('f-reject-detail').value:autoRejected.detail):'',
+    autoRejected:autoRejected.rejected,
     collected:false,
     testResults:[],
     testDates:{},
@@ -709,6 +872,18 @@ function toggleCollected(id){
 }
 
 // ===== RENDER MASTER =====
+function checkTempColor(e){
+  const settings=getSettings();
+  const actual=parseFloat(e.actualTemp);
+  if(!actual) return '#222';
+  return actual>settings.maxTemp?'var(--red)':'var(--green)';
+}
+function checkSlumpColor(e){
+  const settings=getSettings();
+  const actual=parseFloat(e.actualSlump);
+  if(!actual) return '#222';
+  return (actual<settings.minSlump||actual>settings.maxSlump)?'var(--red)':'var(--green)';
+}
 function renderMaster(){
   const mon=document.getElementById('filter-month').value;
   const search=(document.getElementById('master-search').value||'').toLowerCase();
@@ -729,20 +904,27 @@ function renderMaster(){
     <tr class="${e.rejected?'rejected':''}">
       <td>${i+1}</td>
       <td>${fmtDate(e.date)}</td>
-      <td><strong>${e.client}</strong>${e.rejected?`<br><span class="badge badge-rejected">REJECTED: ${e.rejectReason}${e.rejectDetail?' ('+e.rejectDetail+')':''}</span>`:''}</td>
+      <td>${e.mixer||'—'}</td>
+      <td><strong>${e.client}</strong>${e.rejected?`<br><span class="badge badge-rejected">${e.autoRejected?'AUTO-':''}REJECTED: ${e.rejectReason}</span>`:''}</td>
       <td>${e.location||'—'}</td>
       <td>${e.design||'—'}</td>
       <td>${e.agg||'—'}</td>
       <td>${e.days||'—'}</td>
+      <td>${fmtTime(e.timeBatched)}</td>
       <td>${fmtTime(e.time)}</td>
+      <td>${e.standby?e.standby+' hrs':'—'}</td>
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
       <td>${e.samples||'—'}</td>
       <td>${e.kind||'—'}</td>
       <td>${e.slip||'—'}</td>
       <td>${e.slump||'—'}</td>
+      <td>${e.actualSlump?`<span style="color:${checkSlumpColor(e)}">${e.actualSlump}"</span>`:'—'}</td>
       <td>${e.temp||'—'}</td>
+      <td>${e.actualTemp?`<span style="color:${checkTempColor(e)}">${e.actualTemp}°C</span>`:'—'}</td>
       <td>${e.vol||'—'}</td>
+      <td>${e.drNo||'—'}</td>
+      <td>${e.volRejected||'—'}</td>
       <td>${e.rejected?'<span class="badge badge-fail">Rejected</span>':'<span class="badge badge-pass">Accepted</span>'}</td>
       <td class="no-print"><button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">✕</button></td>
     </tr>`).join('');
@@ -1086,7 +1268,7 @@ function saveCuring(id,val){
 }
 
 function renderAll(){
-  renderMaster();renderMold();renderMonitoring();renderTesting();renderTestMon();renderKPI();
+  renderMaster();renderMold();renderMonitoring();renderTesting();renderTestMon();renderKPI();loadSettingsUI();
 }
 
 // Set today's date defaults
