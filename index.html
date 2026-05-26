@@ -370,6 +370,15 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       <div id="settings-saved" style="display:none;margin-top:10px;color:var(--green);font-weight:600;font-size:12px">✅ Settings saved!</div>
     </div>
   </div>
+
+  <div class="panel">
+    <div class="panel-header" style="background:#C62828">🔧 Data Repair Tool</div>
+    <div class="panel-body">
+      <div style="font-size:12px;color:#666;margin-bottom:12px">Click this button to fix corrupted dates in the database. This will clean up any entries with malformed date formats.</div>
+      <button class="btn" style="background:#C62828;color:#fff" onclick="fixCorruptedDates()">🔧 Fix Corrupted Dates</button>
+      <div id="fix-result" style="display:none;margin-top:10px;font-size:12px;font-weight:600"></div>
+    </div>
+  </div>
   <div class="panel">
     <div class="panel-header">📋 Current Requirements Summary</div>
     <div class="panel-body">
@@ -1004,6 +1013,39 @@ function saveSettings(){
   loadSettingsUI();
   document.getElementById('settings-saved').style.display='block';
   setTimeout(()=>document.getElementById('settings-saved').style.display='none',2000);
+}
+
+function fixCorruptedDates(){
+  if(!db.entries||!db.entries.length){
+    document.getElementById('fix-result').style.display='block';
+    document.getElementById('fix-result').style.color='var(--orange)';
+    document.getElementById('fix-result').textContent='No entries found.';
+    return;
+  }
+  let fixed=0;
+  db.entries.forEach(e=>{
+    if(!e.date) return;
+    // Extract clean YYYY-MM-DD from corrupted strings like "2026-05-2614 Days"
+    const match=e.date.match(/^(\d{4}-\d{2}-\d{2})/);
+    if(match&&match[1]!==e.date){
+      e.date=match[1];
+      fixed++;
+    }
+    // Fix days field too if corrupted
+    if(e.days){
+      const daysMatch=e.days.match(/(\d{2} Days)/);
+      if(daysMatch&&daysMatch[1]!==e.days){
+        e.days=daysMatch[1];
+        fixed++;
+      }
+    }
+  });
+  save();
+  const el=document.getElementById('fix-result');
+  el.style.display='block';
+  el.style.color='var(--green)';
+  el.textContent='✅ Fixed '+fixed+' corrupted values! Refreshing...';
+  setTimeout(()=>{renderAll();},1000);
 }
 
 function loadSettingsUI(){
