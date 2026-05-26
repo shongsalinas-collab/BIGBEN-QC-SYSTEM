@@ -1133,26 +1133,104 @@ function saveMoldField(id,field,val){
 }
 
 function printMold(){
-  const h=document.getElementById('mold-print-header');
-  const f=document.getElementById('mold-print-footer');
-  const lbl=document.getElementById('mold-print-date-label');
   const sel=document.getElementById('mold-filter-date');
-  if(h) h.style.display='block';
-  if(f) f.style.display='block';
-  if(lbl&&sel) lbl.textContent='Collection Date: '+fmtDate(sel.value);
-  // Update print-text spans before printing
-  document.querySelectorAll('[data-print-select]').forEach(wrap=>{
-    const sel2=wrap.querySelector('select');
-    const txt=wrap.querySelector('.print-text');
-    if(sel2&&txt) txt.textContent=sel2.options[sel2.selectedIndex]?sel2.options[sel2.selectedIndex].text:'—';
-  });
-  document.body.classList.add('printing-mold');
-  window.print();
-  setTimeout(()=>{
-    document.body.classList.remove('printing-mold');
-    if(h) h.style.display='none';
-    if(f) f.style.display='none';
-  },1500);
+  const filterDate=sel?sel.value:'';
+  const rows=filterDate?db.entries.filter(e=>addDays(e.date,1)===filterDate):[];
+
+  const tableRows=rows.map((e,i)=>{
+    const area=e.moldArea||e.area||getArea(e.location||'');
+    const curingLoc=e.curingLoc||e.curing||'—';
+    const moldType=e.moldType||'Cylinder';
+    const moldSize=e.moldSize||e.kind||'—';
+    const qty=parseInt(e.samples)||0;
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${fmtDate(e.date)}</td>
+      <td>${area||'—'}</td>
+      <td><strong>${e.client}</strong></td>
+      <td>${e.location||'—'}</td>
+      <td>${e.design||''} ${e.agg||''}</td>
+      <td>${fmtTime(e.time)}</td>
+      <td>${e.structure||'—'}</td>
+      <td>${e.coord||'—'}</td>
+      <td><strong style="color:#6B1A1A">${fmtDate(addDays(e.date,1))}</strong></td>
+      <td>${curingLoc}</td>
+      <td style="text-align:center"><strong>${qty}</strong></td>
+      <td>${moldType}</td>
+      <td>${moldSize}</td>
+    </tr>`;
+  }).join('');
+
+  const printHTML=`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mold Collection Schedule - ${fmtDate(filterDate)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:11px;padding:16px}
+.header-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.logo{background:#6B1A1A;color:#fff;padding:8px 14px;font-weight:900;font-size:20px;border-radius:4px}
+.title{text-align:center}
+.title h1{font-size:15px;font-weight:700;color:#6B1A1A}
+.title h2{font-size:12px;font-weight:600;margin-top:3px}
+.title p{font-size:11px;color:#666;margin-top:2px}
+.doc-no{text-align:right;font-size:10px;color:#666}
+.divider{height:2px;background:#6B1A1A;margin:8px 0 14px}
+table.data{width:100%;border-collapse:collapse;font-size:10px}
+table.data th{background:#6B1A1A;color:#fff;padding:6px 8px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+table.data td{padding:5px 8px;border-bottom:1px solid #ddd;vertical-align:middle}
+table.data tr:nth-child(even) td{background:#fdf8f8}
+.footer{margin-top:30px}
+.footer table{width:100%;border-collapse:collapse}
+.footer td{text-align:center;padding-top:36px;border-top:1px solid #333;font-size:10px}
+.footer .role{font-size:9px;color:#666;margin-top:2px}
+.confidential{margin-top:12px;font-size:8px;color:#999;text-align:center}
+@page{margin:1cm;size:landscape}
+</style>
+</head>
+<body>
+<table class="header-table">
+  <tr>
+    <td style="width:80px"><div class="logo">BB</div></td>
+    <td class="title">
+      <h1>BIG BEN READY MIX CONCRETE</h1>
+      <h2>CYLINDER MOLD COLLECTION SCHEDULE</h2>
+      <p>Collection Date: <strong>${fmtDate(filterDate)}</strong></p>
+    </td>
+    <td class="doc-no">SP-QA-02<br>F-QA-2.1</td>
+  </tr>
+</table>
+<div class="divider"></div>
+<table class="data">
+  <thead>
+    <tr>
+      <th>#</th><th>Pouring Date</th><th>Area</th><th>Client</th><th>Location</th>
+      <th>Design</th><th>Time Finish</th><th>Structure</th><th>Site Coordinator</th>
+      <th>Collection Date</th><th>Curing Location</th><th>No. of Samples</th>
+      <th>Type of Mold</th><th>Size of Mold</th>
+    </tr>
+  </thead>
+  <tbody>${tableRows}</tbody>
+</table>
+<div class="footer">
+  <table>
+    <tr>
+      <td>Prepared by<div class="role">Testing Coordinator</div></td>
+      <td>Checked by<div class="role">QC Supervisor</div></td>
+      <td>Noted by<div class="role">R&D Supervisor</div></td>
+    </tr>
+  </table>
+  <div class="confidential">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+</div>
+</body>
+</html>`;
+
+  const w=window.open('','_blank','width=900,height=600');
+  w.document.write(printHTML);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{w.print();},500);
 }
 
 // ===== RENDER MONITORING =====
