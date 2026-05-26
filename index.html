@@ -821,32 +821,33 @@ function getTestDays(ndays){
 
 function addDays(dateStr, n){
   if(!dateStr) return '';
-  let yr,mo,dy;
-  if(dateStr.includes('/')){
-    // MM/DD/YYYY format
-    const p=dateStr.split('/');
-    mo=parseInt(p[0]);dy=parseInt(p[1]);yr=parseInt(p[2]);
-  } else {
-    // YYYY-MM-DD format
-    const p=dateStr.split('-');
-    yr=parseInt(p[0]);mo=parseInt(p[1]);dy=parseInt(p[2]);
-  }
-  const d=new Date(yr,mo-1,dy+n);
+  const clean=normalizeDate(dateStr);
+  const p=clean.split('-');
+  if(p.length<3) return '';
+  const d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])+n);
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 
 function normalizeDate(dateStr){
   if(!dateStr) return '';
-  if(dateStr.includes('/')){
-    const p=dateStr.split('/');
-    return parseInt(p[2])+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');
+  // Clean corrupted dates like "2026-05-2614 Days" -> "2026-05-26"
+  let s=dateStr.trim();
+  // Extract YYYY-MM-DD pattern
+  const isoMatch=s.match(/^(\d{4}-\d{2}-\d{2})/);
+  if(isoMatch) return isoMatch[1];
+  // Handle MM/DD/YYYY
+  if(s.includes('/')){
+    const p=s.split('/');
+    if(p.length>=3) return parseInt(p[2])+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');
   }
-  return dateStr;
+  return s;
 }
 
 function fmtDate(str){
   if(!str) return '—';
-  const d = new Date(str+'T00:00:00');
+  const clean=normalizeDate(str);
+  const d = new Date(clean+'T00:00:00');
+  if(isNaN(d.getTime())) return str;
   return d.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'});
 }
 
@@ -1588,7 +1589,7 @@ function renderTesting(){
     const matches=db.entries.filter(e=>{
       if(e.rejected) return false;
       const testDays=getTestDays(e.days);
-      const entryDate=normalizeDate(e.date);
+      const entryDate=normalizeDate(e.date||"");
       return testDays.includes(d) && addDays(entryDate,d)===filterDate;
     });
     if(matches.length){
@@ -1663,7 +1664,7 @@ function printTesting(){
     const matches=db.entries.filter(e=>{
       if(e.rejected) return false;
       const testDays=getTestDays(e.days);
-      const entryDate=normalizeDate(e.date);
+      const entryDate=normalizeDate(e.date||"");
       return testDays.includes(d) && addDays(entryDate,d)===filterDate;
     });
     if(matches.length){
