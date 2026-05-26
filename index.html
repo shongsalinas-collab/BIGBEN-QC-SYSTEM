@@ -784,18 +784,27 @@ let isOnline = false;
 
 function save(){
   if(fbRef && isOnline){
-    // Ensure entries is always a proper array before saving
-    if(db.entries && !Array.isArray(db.entries)){
-      db.entries = Object.values(db.entries);
-    }
-    fbRef.set(db).catch(e=>console.error('Save error:',e));
+    ensureArray();
+    // Save settings separately, entries as indexed object with _ prefix to preserve order
+    const saveData = {
+      settings: db.settings||{},
+      entries: {}
+    };
+    db.entries.forEach((e,i)=>{
+      if(e&&e.id) saveData.entries['e'+e.id]=e;
+    });
+    fbRef.set(saveData).catch(e=>console.error('Save error:',e));
   }
 }
 
 function ensureArray(){
-  if(!db.entries) db.entries=[];
-  else if(!Array.isArray(db.entries)) db.entries=Object.values(db.entries);
-  // Filter out null/undefined entries
+  if(!db.entries) {
+    db.entries=[];
+  } else if(!Array.isArray(db.entries)) {
+    db.entries=Object.values(db.entries).filter(e=>e&&e.id);
+    // Sort by id (timestamp) descending - newest first
+    db.entries.sort((a,b)=>(b.id||0)-(a.id||0));
+  }
   db.entries=db.entries.filter(e=>e&&e.id);
 }
 
