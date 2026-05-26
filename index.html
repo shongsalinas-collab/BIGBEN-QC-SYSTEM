@@ -227,7 +227,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <option>Beam</option>
             </select>
           </div>
-          <div class="form-group"><label>Borrower Slip No.</label><input type="text" id="f-slip" placeholder="Slip No."></div>
+          <div class="form-group" id="f-slip-wrap"><label>Borrower Slip No.</label><input type="text" id="f-slip" placeholder="Slip No."></div>
         </div>
       </div>
 
@@ -975,6 +975,16 @@ function toggleCollected(id){
 function toggleSampleRemarks(){
   const val=document.getElementById('f-sample-remarks').value;
   document.getElementById('f-sample-remarks-other-wrap').style.display=val==='Others'?'flex':'none';
+  // Hide Borrower Slip if Sample at Plant
+  const slipWrap=document.getElementById('f-slip-wrap');
+  const slipInput=document.getElementById('f-slip');
+  if(val==='Sample at Plant'){
+    if(slipWrap) slipWrap.style.opacity='0.4';
+    if(slipInput){slipInput.value='';slipInput.disabled=true;slipInput.placeholder='N/A - Sample at Plant';}
+  } else {
+    if(slipWrap) slipWrap.style.opacity='1';
+    if(slipInput){slipInput.disabled=false;slipInput.placeholder='Slip No.';}
+  }
 }
 
 function checkTempColor(e){
