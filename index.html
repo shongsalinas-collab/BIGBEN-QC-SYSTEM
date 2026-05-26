@@ -1092,7 +1092,7 @@ function addEntry(){
   const finalRejected=isRejected||autoRejected.rejected;
   const entry={
     id:Date.now(),
-    date, client,
+    date:normalizeDate(date), client,
     location:document.getElementById('f-location').value,
     design:document.getElementById('f-design').value,
     agg, days:document.getElementById('f-days').value,
