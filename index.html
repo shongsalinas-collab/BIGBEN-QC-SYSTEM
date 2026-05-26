@@ -972,6 +972,109 @@ function deleteEntry(id){
   renderAll();
 }
 
+function editEntry(id){
+  const e=db.entries.find(x=>x.id===id);
+  if(!e) return;
+  // Fill form with entry data
+  document.getElementById('f-date').value=e.date||'';
+  document.getElementById('f-client').value=e.client||'';
+  document.getElementById('f-location').value=e.location||'';
+  document.getElementById('f-design').value=e.design||'';
+  const aggEl=document.getElementById('f-agg');
+  const aggOpts=['Agg – G1"','Agg – 3/4"','Agg – 3/8"'];
+  if(aggOpts.includes(e.agg)){aggEl.value=e.agg;}
+  else if(e.agg){aggEl.value='others';document.getElementById('f-agg-other').value=e.agg;document.getElementById('f-agg-other-wrap').style.display='flex';}
+  document.getElementById('f-days').value=e.days||'';
+  document.getElementById('f-time-batched').value=e.timeBatched||'';
+  document.getElementById('f-time').value=e.time||'';
+  document.getElementById('f-structure').value=e.structure||'';
+  document.getElementById('f-coord').value=e.coord||'';
+  document.getElementById('f-samples').value=e.samples||'';
+  document.getElementById('f-sample-remarks').value=e.sampleRemarks||'';
+  toggleSampleRemarks();
+  document.getElementById('f-kind').value=e.kind||'';
+  document.getElementById('f-slip').value=e.slip||'';
+  document.getElementById('f-slump-min').value=e.slumpMin||'';
+  document.getElementById('f-slump-max').value=e.slumpMax||'';
+  document.getElementById('f-actual-slump').value=e.actualSlump||'';
+  document.getElementById('f-temp').value=e.temp||'';
+  document.getElementById('f-actual-temp').value=e.actualTemp||'';
+  document.getElementById('f-vol').value=e.vol||'';
+  document.getElementById('f-rejected').checked=e.rejected||false;
+  if(e.rejected){
+    document.getElementById('rejection-block').style.display='block';
+    document.getElementById('f-reject-reason').value=e.rejectReason||'';
+    toggleRejectDetail();
+    document.getElementById('f-reject-detail').value=e.rejectDetail||'';
+    document.getElementById('f-mixer').value=e.mixer||'';
+    document.getElementById('f-dr-no').value=e.drNo||'';
+    document.getElementById('f-vol-rejected').value=e.volRejected||'';
+  }
+  // Show form
+  document.getElementById('entry-form').style.display='block';
+  // Scroll to top
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Change Add button to Update
+  const addBtn=document.querySelector('[onclick="addEntry()"]');
+  if(addBtn){
+    addBtn.textContent='💾 Update Entry';
+    addBtn.setAttribute('onclick',`updateEntry(${id})`);
+  }
+}
+
+function updateEntry(id){
+  const idx=db.entries.findIndex(x=>x.id===id);
+  if(idx===-1) return;
+  const aggVal=document.getElementById('f-agg').value;
+  const agg=aggVal==='others'?document.getElementById('f-agg-other').value:aggVal;
+  const isRejected=document.getElementById('f-rejected').checked;
+  const timeBatched=document.getElementById('f-time-batched').value;
+  const timeFinish=document.getElementById('f-time').value;
+  const standby=calcStandby(timeBatched,timeFinish);
+  const settings=getSettings();
+  const actualTemp=parseFloat(document.getElementById('f-actual-temp').value)||null;
+  const actualSlump=parseFloat(document.getElementById('f-actual-slump').value)||null;
+  const slumpMin=document.getElementById('f-slump-min').value;
+  const slumpMax=document.getElementById('f-slump-max').value;
+  const autoRejected=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax);
+  const finalRejected=isRejected||autoRejected.rejected;
+  // Update entry preserving id and other fields
+  db.entries[idx]={
+    ...db.entries[idx],
+    date:document.getElementById('f-date').value,
+    client:document.getElementById('f-client').value.trim(),
+    location:document.getElementById('f-location').value,
+    design:document.getElementById('f-design').value,
+    agg, days:document.getElementById('f-days').value,
+    timeBatched, time:timeFinish, standby,
+    structure:document.getElementById('f-structure').value,
+    coord:document.getElementById('f-coord').value,
+    samples:document.getElementById('f-samples').value,
+    sampleRemarks:(document.getElementById('f-sample-remarks').value==='Others'?document.getElementById('f-sample-remarks-other').value:document.getElementById('f-sample-remarks').value),
+    kind:document.getElementById('f-kind').value,
+    slip:document.getElementById('f-slip').value,
+    slumpMin, slumpMax,
+    actualSlump:document.getElementById('f-actual-slump').value,
+    temp:document.getElementById('f-temp').value,
+    actualTemp:document.getElementById('f-actual-temp').value,
+    vol:parseFloat(document.getElementById('f-vol').value)||0,
+    volRejected:parseFloat(document.getElementById('f-vol-rejected').value)||0,
+    drNo:document.getElementById('f-dr-no').value,
+    rejected:finalRejected,
+    rejectReason:finalRejected?(isRejected?document.getElementById('f-reject-reason').value:autoRejected.reason):'',
+    rejectDetail:finalRejected?(isRejected?document.getElementById('f-reject-detail').value:autoRejected.detail):'',
+    autoRejected:autoRejected.rejected,
+    mixer:document.getElementById('f-mixer').value,
+    area:getArea(document.getElementById('f-location').value)
+  };
+  save();
+  clearForm();
+  // Restore Add button
+  const addBtn=document.querySelector('[onclick^="updateEntry"]');
+  if(addBtn){addBtn.textContent='➕ Add Entry';addBtn.setAttribute('onclick','addEntry()');}
+  renderAll();
+}
+
 function toggleCollected(id){
   const e=db.entries.find(x=>x.id===id);
   if(e){e.collected=!e.collected;save();renderMonitoring();}
@@ -1047,7 +1150,10 @@ function renderMaster(){
       <td>${e.slip||'—'}</td>
       <td>${e.vol||'—'}</td>
       <td><input type="text" value="${e.remarks||''}" onchange="saveRemarks(${e.id},this.value)" style="width:120px;font-size:11px;padding:3px 6px;border:1px solid #ddd;border-radius:3px" placeholder="Notes..."></td>
-      <td class="no-print"><button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">✕</button></td>
+      <td class="no-print" style="white-space:nowrap">
+        <button class="btn btn-sm" style="background:#1565C0;color:#fff;margin-right:4px" onclick="editEntry(${e.id})">✏️ Edit</button>
+        <button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">✕</button>
+      </td>
     </tr>`).join('');
 }
 
