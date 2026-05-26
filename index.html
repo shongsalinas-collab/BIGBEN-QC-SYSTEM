@@ -1575,6 +1575,11 @@ function renderTesting(){
             <th>NO. OF SAMPLE</th><th>VOL</th><th>REMARKS</th>
           </tr></thead>
           <tbody>${matches.map((e,i)=>{
+            // Auto-sync from Sheet 1 if no per-day override
+            if(!e['testingCoord_'+d]&&e.testingCoord){
+              e['testingCoord_'+d]=e.testingCoord;
+              save();
+            }
             const assignedCoord=e['testingCoord_'+d]||e.testingCoord||'';
             const coordOpts=TESTING_COORDS.map(c=>`<option value="${c}" ${assignedCoord===c?'selected':''}>${c}</option>`).join('');
             return `<tr>
