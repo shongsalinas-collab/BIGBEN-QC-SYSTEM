@@ -187,8 +187,9 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       <div style="background:#f8f8fb;border:1px solid #c8c8e0;border-radius:4px;padding:10px;margin-bottom:10px">
         <div style="font-size:10px;font-weight:700;color:#1565C0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🌡️ QC Requirements & Fresh Concrete</div>
         <div class="form-grid">
-          <div class="form-group"><label>Required Slump</label><input type="text" id="f-slump" placeholder="e.g. 4" oninput="checkAutoReject()"></div>
-          <div class="form-group"><label>Actual Slump</label><input type="text" id="f-actual-slump" placeholder="Actual reading" oninput="checkAutoReject()"></div>
+          <div class="form-group"><label>Required Slump Min (")</label><input type="number" id="f-slump-min" placeholder='e.g. 6' step="0.5" oninput="checkAutoReject()"></div>
+          <div class="form-group"><label>Required Slump Max (")</label><input type="number" id="f-slump-max" placeholder='e.g. 8' step="0.5" oninput="checkAutoReject()"></div>
+          <div class="form-group"><label>Actual Slump (")</label><input type="number" id="f-actual-slump" placeholder="Actual reading" step="0.5" oninput="checkAutoReject()"></div>
           <div class="form-group"><label>Required Temperature (°C)</label><input type="text" id="f-temp" placeholder="e.g. 32" oninput="checkAutoReject()"></div>
           <div class="form-group"><label>Actual Temperature (°C)</label><input type="text" id="f-actual-temp" placeholder="Actual reading" oninput="checkAutoReject()"></div>
         </div>
@@ -285,7 +286,8 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Samples</th>
               <th>Kind</th>
               <th>Slip No.</th>
-              <th>Req. Slump</th>
+              <th>Slump Min</th>
+              <th>Slump Max</th>
               <th>Act. Slump</th>
               <th>Req. Temp</th>
               <th>Act. Temp</th>
@@ -738,11 +740,14 @@ function getSettings(){
   };
 }
 
-function checkAutoRejectLogic(actualTemp,actualSlump,standby,settings){
+function checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax){
   if(!settings) settings=getSettings();
   const reasons=[];
   if(actualTemp&&actualTemp>settings.maxTemp) reasons.push(`Temperature ${actualTemp}°C > ${settings.maxTemp}°C max`);
-  if(actualSlump&&(actualSlump<settings.minSlump||actualSlump>settings.maxSlump)) reasons.push(`Slump ${actualSlump}" out of range ${settings.minSlump}"-${settings.maxSlump}"`);
+  // Use entry-specific slump range if provided, else use settings
+  const sMin=slumpMin?parseFloat(slumpMin):settings.minSlump;
+  const sMax=slumpMax?parseFloat(slumpMax):settings.maxSlump;
+  if(actualSlump&&(actualSlump<sMin||actualSlump>sMax)) reasons.push(`Slump ${actualSlump}" out of range ${sMin}"-${sMax}"`);
   if(standby&&parseFloat(standby)>settings.maxStandby) reasons.push(`Overmix ${standby}hrs > ${settings.maxStandby}hrs max`);
   return {rejected:reasons.length>0, reason:reasons[0]||'', detail:reasons.join('; ')};
 }
@@ -754,7 +759,9 @@ function checkAutoReject(){
   const timeBatched=document.getElementById('f-time-batched').value;
   const timeFinish=document.getElementById('f-time').value;
   const standby=calcStandby(timeBatched,timeFinish);
-  const result=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings);
+  const slumpMin=document.getElementById('f-slump-min').value;
+  const slumpMax=document.getElementById('f-slump-max').value;
+  const result=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax);
   const alert=document.getElementById('auto-reject-alert');
   if(result.rejected){
     alert.style.display='block';
@@ -787,13 +794,13 @@ function loadSettingsUI(){
   const tbody=document.getElementById('settings-summary');
   if(tbody) tbody.innerHTML=`
     <tr><td>Temperature</td><td>Max ${s.maxTemp}°C</td><td>Actual > ${s.maxTemp}°C</td></tr>
-    <tr><td>Slump</td><td>${s.minSlump}" – ${s.maxSlump}"</td><td>Actual &lt; ${s.minSlump}" or &gt; ${s.maxSlump}"</td></tr>
+    <tr><td>Slump (default range)</td><td>${s.minSlump}" – ${s.maxSlump}"</td><td>Actual &lt; min or &gt; max (per-entry range overrides this)</td></tr>
     <tr><td>Standby Time (Overmix)</td><td>Max ${s.maxStandby} hours</td><td>Standby > ${s.maxStandby} hrs</td></tr>
   `;
 }
 
 function clearForm(){
-  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-kind','f-slip','f-slump','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
+  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
   });
@@ -816,7 +823,9 @@ function addEntry(){
   const settings=getSettings();
   const actualTemp=parseFloat(document.getElementById('f-actual-temp').value)||null;
   const actualSlump=parseFloat(document.getElementById('f-actual-slump').value)||null;
-  const autoRejected=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings);
+  const slumpMin=document.getElementById('f-slump-min').value;
+  const slumpMax=document.getElementById('f-slump-max').value;
+  const autoRejected=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax);
   const finalRejected=isRejected||autoRejected.rejected;
   const entry={
     id:Date.now(),
@@ -832,7 +841,8 @@ function addEntry(){
     samples:document.getElementById('f-samples').value,
     kind:document.getElementById('f-kind').value,
     slip:document.getElementById('f-slip').value,
-    slump:document.getElementById('f-slump').value,
+    slumpMin:document.getElementById('f-slump-min').value,
+    slumpMax:document.getElementById('f-slump-max').value,
     actualSlump:document.getElementById('f-actual-slump').value,
     temp:document.getElementById('f-temp').value,
     actualTemp:document.getElementById('f-actual-temp').value,
@@ -882,7 +892,9 @@ function checkSlumpColor(e){
   const settings=getSettings();
   const actual=parseFloat(e.actualSlump);
   if(!actual) return '#222';
-  return (actual<settings.minSlump||actual>settings.maxSlump)?'var(--red)':'var(--green)';
+  const sMin=e.slumpMin?parseFloat(e.slumpMin):settings.minSlump;
+  const sMax=e.slumpMax?parseFloat(e.slumpMax):settings.maxSlump;
+  return (actual<sMin||actual>sMax)?'var(--red)':'var(--green)';
 }
 function renderMaster(){
   const mon=document.getElementById('filter-month').value;
@@ -918,7 +930,8 @@ function renderMaster(){
       <td>${e.samples||'—'}</td>
       <td>${e.kind||'—'}</td>
       <td>${e.slip||'—'}</td>
-      <td>${e.slump||'—'}</td>
+      <td>${e.slumpMin?e.slumpMin+'"':'—'}</td>
+      <td>${e.slumpMax?e.slumpMax+'"':'—'}</td>
       <td>${e.actualSlump?`<span style="color:${checkSlumpColor(e)}">${e.actualSlump}"</span>`:'—'}</td>
       <td>${e.temp||'—'}</td>
       <td>${e.actualTemp?`<span style="color:${checkTempColor(e)}">${e.actualTemp}°C</span>`:'—'}</td>
