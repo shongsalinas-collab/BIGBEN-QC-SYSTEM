@@ -207,6 +207,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div style="font-size:10px;font-weight:700;color:#E65100;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🧪 Sample Information</div>
         <div class="form-grid">
           <div class="form-group"><label>No. of Samples</label><input type="number" id="f-samples" min="1" placeholder="e.g. 3"></div>
+          <div class="form-group"><label>Sample Remarks</label><input type="text" id="f-sample-remarks" placeholder="e.g. SAP, Plant Sample"></div>
           <div class="form-group"><label>Kind of Sample</label>
             <select id="f-kind">
               <option value="">-- Select --</option>
@@ -291,6 +292,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Structure</th>
               <th>Site Coord.</th>
               <th>Samples</th>
+              <th>Sample Remarks</th>
               <th>Kind</th>
               <th>Slip No.</th>
               <th>Slump Min</th>
@@ -398,7 +400,6 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Structure</th>
               <th>Site Coordinator</th>
               <th>Collection Date</th>
-              <th>Curing Location</th>
               <th>No. of Samples</th>
               <th>Type of Mold</th>
               <th>Size of Mold</th>
@@ -468,6 +469,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Structure</th>
               <th>Site Coord.</th>
               <th>Samples</th>
+              <th>Sample Remarks</th>
               <th>Kind</th>
               <th>Collection Due</th>
               <th>Slip No.</th>
@@ -532,6 +534,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>No. of Days</th>
               <th>Structure</th>
               <th>Samples</th>
+              <th>Sample Remarks</th>
               <th>Kind</th>
               <th>Day 1 Result</th>
               <th>Day 2 Result</th>
@@ -875,7 +878,7 @@ function loadSettingsUI(){
 }
 
 function clearForm(){
-  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
+  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-sample-remarks','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
   });
@@ -914,6 +917,7 @@ function addEntry(){
     structure:document.getElementById('f-structure').value,
     coord:document.getElementById('f-coord').value,
     samples:document.getElementById('f-samples').value,
+    sampleRemarks:document.getElementById('f-sample-remarks').value,
     kind:document.getElementById('f-kind').value,
     slip:document.getElementById('f-slip').value,
     slumpMin:document.getElementById('f-slump-min').value,
@@ -1003,6 +1007,7 @@ function renderMaster(){
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
       <td>${e.samples||'—'}</td>
+      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
       <td>${e.kind||'—'}</td>
       <td>${e.slip||'—'}</td>
       <td>${e.slumpMin?e.slumpMin+'"':'—'}</td>
@@ -1072,7 +1077,6 @@ function renderMold(){
     // Mold type/size
     const moldType=e.moldType||'Cylinder';
     const moldSize=e.moldSize||e.kind||'—';
-    const curingLoc=e.curingLoc||e.curing||'';
     return `<tr>
       <td style="text-align:center">${i+1}</td>
       <td>${fmtDate(e.date)}</td>
@@ -1094,17 +1098,7 @@ function renderMold(){
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
       <td><strong style="color:var(--maroon)">${fmtDate(addDays(e.date,1))}</strong></td>
-      <td>
-        <div data-print-select>
-          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'curingLoc',this.value)">
-            <option value="">--</option>
-            <option value="Site" ${curingLoc==='Site'?'selected':''}>Site</option>
-            <option value="Plant" ${curingLoc==='Plant'?'selected':''}>Plant</option>
-            <option value="Others" ${curingLoc==='Others'?'selected':''}>Others</option>
-          </select>
-          <span class="print-text">${curingLoc||'—'}</span>
-        </div>
-      </td>
+
       <td style="text-align:center"><strong>${qty}</strong></td>
       <td>
         <div data-print-select>
@@ -1145,7 +1139,6 @@ function printMold(){
 
   const tableRows=rows.map((e,i)=>{
     const area=e.moldArea||e.area||getArea(e.location||'');
-    const curingLoc=e.curingLoc||e.curing||'—';
     const moldType=e.moldType||'Cylinder';
     const moldSize=e.moldSize||e.kind||'—';
     const qty=parseInt(e.samples)||0;
@@ -1160,7 +1153,6 @@ function printMold(){
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
       <td><strong style="color:#6B1A1A">${fmtDate(addDays(e.date,1))}</strong></td>
-      <td>${curingLoc}</td>
       <td style="text-align:center"><strong>${qty}</strong></td>
       <td>${moldType}</td>
       <td>${moldSize}</td>
@@ -1213,7 +1205,7 @@ table.data tr:nth-child(even) td{background:#fdf8f8}
     <tr>
       <th>#</th><th>Pouring Date</th><th>Area</th><th>Client</th><th>Location</th>
       <th>Design</th><th>Time Finish</th><th>Structure</th><th>Site Coordinator</th>
-      <th>Collection Date</th><th>Curing Location</th><th>No. of Samples</th>
+      <th>Collection Date</th><th>No. of Samples</th>
       <th>Type of Mold</th><th>Size of Mold</th>
     </tr>
   </thead>
@@ -1266,6 +1258,7 @@ function renderMonitoring(){
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
       <td>${e.samples||'—'}</td>
+      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
       <td>${e.kind||'—'}</td>
       <td>${fmtDate(addDays(e.date,1))}</td>
       <td>${e.slip||'—'}</td>
@@ -1369,6 +1362,7 @@ function renderTestMon(){
       <td>${e.days||'—'}</td>
       <td>${e.structure||'—'}</td>
       <td>${e.samples||'—'}</td>
+      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
       <td>${e.kind||'—'}</td>
       <td>${r1||'—'}</td>
       <td>${r2||'—'}</td>
