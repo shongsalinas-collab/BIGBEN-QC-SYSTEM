@@ -1032,7 +1032,6 @@ function renderTesting(){
   
   DAY_NUMS.forEach((d,idx)=>{
     const matches=db.entries.filter(e=>{
-      if(e.rejected) return false;
       const testDays=getTestDays(e.days);
       return testDays.includes(d) && addDays(e.date,d)===filterDate;
     });
@@ -1081,7 +1080,6 @@ function renderTestMon(){
   if(!mon) return;
   const [yr,mo]=mon.split('-').map(Number);
   let rows=db.entries.filter(e=>{
-    if(e.rejected) return false;
     const d=new Date(e.date+'T00:00:00');
     return d.getFullYear()===yr&&d.getMonth()+1===mo;
   });
@@ -1111,7 +1109,7 @@ function renderTestMon(){
     const r1=r[0]||'';const r2=r[1]||'';const r3=r[2]||'';
     return `<tr>
       <td>${fmtDate(e.date)}</td>
-      <td><strong>${e.client}</strong></td>
+      <td><strong>${e.client}</strong>${e.rejected?'<br><span class="badge badge-fail" style="font-size:9px">FRESH REJECTED</span>':''}</td>
       <td>${e.location||'—'}</td>
       <td>${e.design||'—'}</td>
       <td>${e.agg||'—'}</td>
@@ -1205,7 +1203,7 @@ function renderKPI(){
   const acceptedVol=totalVol-rejVol;
   const kpi1=totalVol?((acceptedVol/totalVol)*100).toFixed(1):null;
   
-  const tested=entries.filter(e=>!e.rejected&&e.testResults&&e.testResults.length>0);
+  const tested=entries.filter(e=>e.testResults&&e.testResults.length>0);
   const failed=tested.filter(e=>{
     const design=parseFloat(e.design)||0;
     const ave=e.testResults.reduce((a,b)=>a+b,0)/e.testResults.length;
@@ -1216,7 +1214,6 @@ function renderKPI(){
   
   const today=new Date().toISOString().split('T')[0];
   const due=entries.filter(e=>{
-    if(e.rejected) return false;
     const testDays=getTestDays(e.days);
     return testDays.some(d=>addDays(e.date,d)<=today);
   });
