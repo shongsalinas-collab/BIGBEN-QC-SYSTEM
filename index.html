@@ -595,11 +595,33 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
 <!-- ===== SHEET 5: TESTING MONITORING ===== -->
 <div id="tab-testmon" class="tab-content">
+  <!-- KPI Charts Row -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+    <div class="panel" style="margin:0">
+      <div class="panel-header" style="font-size:12px">Fresh Concrete — Acceptance vs Rejection</div>
+      <div class="panel-body" style="padding:10px">
+        <canvas id="chart-fresh" height="160"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="margin:0">
+      <div class="panel-header" style="font-size:12px">Rejection by Reason</div>
+      <div class="panel-body" style="padding:10px">
+        <canvas id="chart-reason" height="160"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="margin:0">
+      <div class="panel-header" style="font-size:12px">Compressive Strength — Pass vs Fail</div>
+      <div class="panel-body" style="padding:10px">
+        <canvas id="chart-strength" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+
   <div class="panel">
     <div class="panel-header">
       Testing Monitoring — Compressive Strength Results
       <div style="display:flex;gap:6px" class="no-print">
-        <button class="btn btn-sm btn-print" onclick="printSheet('testmon')">🖨 Print</button>
+        <button class="btn btn-sm btn-print" onclick="printTestMon()">🖨 Print</button>
       </div>
     </div>
     <div class="panel-body" style="padding:0">
@@ -622,19 +644,18 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Client</th>
               <th>Location</th>
               <th>Design (PSI)</th>
-              <th>Aggregates</th>
               <th>No. of Days</th>
               <th>Structure</th>
               <th>Samples</th>
-              <th>Sample Remarks</th>
               <th>Kind</th>
-              <th>Day 1 Result</th>
-              <th>Day 2 Result</th>
-              <th>Day 3 Result</th>
+              <th>Fresh Concrete</th>
+              <th>Day 1 PSI</th>
+              <th>Day 2 PSI</th>
+              <th>Day 3 PSI</th>
               <th>Ave PSI</th>
               <th>Result</th>
               <th>% of Design</th>
-              <th class="no-print">Log Results</th>
+              <th class="no-print">Log</th>
             </tr>
           </thead>
           <tbody id="testmon-tbody"></tbody>
@@ -1826,6 +1847,7 @@ function renderTestMon(){
     });
   }
   
+  renderCharts();
   const tbody=document.getElementById('testmon-tbody');
   const empty=document.getElementById('testmon-empty');
   if(!rows.length){tbody.innerHTML='';empty.style.display='block';return;}
@@ -1844,9 +1866,9 @@ function renderTestMon(){
     const r1=r[0]||'';const r2=r[1]||'';const r3=r[2]||'';
     return `<tr>
       <td>${fmtDate(e.date)}</td>
-      <td><strong>${e.client}</strong>${e.rejected?'<br><span class="badge badge-fail" style="font-size:9px">FRESH REJECTED</span>':''}</td>
-      <td>${e.location||'—'}</td>
-      <td>${e.design||'—'}</td>
+      <td><strong>${e.client}</strong></td>
+      <td style="font-size:11px">${e.location||'—'}</td>
+      <td>${e.design||'—'} ${e.agg||''}</td>
       <td>${e.agg||'—'}</td>
       <td>${e.days||'—'}</td>
       <td>${e.structure||'—'}</td>
@@ -2047,6 +2069,81 @@ function printSheet(which){
 function saveCuring(id,val){
   const e=db.entries.find(x=>x.id===id);
   if(e){e.curing=val;save();}
+}
+
+function printTestMon(){
+  window.print();
+}
+
+let chartFresh=null, chartReason=null, chartStrength=null;
+
+function renderCharts(){
+  const mon=document.getElementById('testmon-month')?document.getElementById('testmon-month').value:'';
+  if(!mon||!window.Chart) return;
+  const [yr,mo]=mon.split('-').map(Number);
+  const entries=db.entries.filter(e=>{
+    const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+    return d.getFullYear()===yr&&d.getMonth()+1===mo;
+  });
+
+  // Chart 1: Fresh Concrete Acceptance vs Rejection (Doughnut)
+  const accepted=entries.filter(e=>!e.rejected).length;
+  const rejected=entries.filter(e=>e.rejected).length;
+  const ctx1=document.getElementById('chart-fresh');
+  if(ctx1){
+    if(chartFresh) chartFresh.destroy();
+    chartFresh=new Chart(ctx1,{
+      type:'doughnut',
+      data:{
+        labels:['Accepted','Rejected'],
+        datasets:[{data:[accepted,rejected],backgroundColor:['#2E7D32','#C62828'],borderWidth:2}]
+      },
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' ('+Math.round(c.raw/(accepted+rejected||1)*100)+'%)';}}}}}
+    });
+  }
+
+  // Chart 2: Rejection by Reason (Bar)
+  const reasons={Temperature:0,Slump:0,Overmix:0,Others:0};
+  entries.filter(e=>e.rejected).forEach(e=>{
+    const r=e.rejectReason||'Others';
+    if(reasons[r]!==undefined) reasons[r]++;
+    else reasons['Others']++;
+  });
+  const ctx2=document.getElementById('chart-reason');
+  if(ctx2){
+    if(chartReason) chartReason.destroy();
+    chartReason=new Chart(ctx2,{
+      type:'bar',
+      data:{
+        labels:Object.keys(reasons),
+        datasets:[{label:'Count',data:Object.values(reasons),backgroundColor:['#E65100','#1565C0','#6A1B9A','#37474F'],borderRadius:4}]
+      },
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}}}}}
+    });
+  }
+
+  // Chart 3: Compressive Strength Pass vs Fail (Doughnut)
+  const tested=entries.filter(e=>e.testResults&&e.testResults.length>0);
+  const pass=tested.filter(e=>{
+    const design=parseFloat(e.design)||0;
+    const ave=e.testResults.reduce((a,b)=>a+b,0)/e.testResults.length;
+    const reqPct=DESIGN_PCT[e.days]||100;
+    return design&&(ave/design*100)>=reqPct;
+  }).length;
+  const fail=tested.length-pass;
+  const pending=entries.filter(e=>!e.testResults||!e.testResults.length).length;
+  const ctx3=document.getElementById('chart-strength');
+  if(ctx3){
+    if(chartStrength) chartStrength.destroy();
+    chartStrength=new Chart(ctx3,{
+      type:'doughnut',
+      data:{
+        labels:['Pass','Fail','Pending'],
+        datasets:[{data:[pass,fail,pending],backgroundColor:['#2E7D32','#C62828','#E65100'],borderWidth:2}]
+      },
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw;}}}}}
+    });
+  }
 }
 
 function renderAll(){
