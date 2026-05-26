@@ -832,24 +832,38 @@ function getSettings(){
 function checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax){
   if(!settings) settings=getSettings();
   const reasons=[];
-  if(actualTemp&&actualTemp>settings.maxTemp) reasons.push(`Temperature ${actualTemp}°C > ${settings.maxTemp}°C max`);
-  // Use entry-specific slump range if provided, else use settings
+  // Only check temperature if actual temp is entered
+  if(actualTemp!==null&&actualTemp!==''&&!isNaN(actualTemp)&&actualTemp>settings.maxTemp)
+    reasons.push(`Temperature ${actualTemp}°C > ${settings.maxTemp}°C max`);
+  // Only check slump if actual slump is entered
   const sMin=slumpMin?parseFloat(slumpMin):settings.minSlump;
   const sMax=slumpMax?parseFloat(slumpMax):settings.maxSlump;
-  if(actualSlump&&(actualSlump<sMin||actualSlump>sMax)) reasons.push(`Slump ${actualSlump}" out of range ${sMin}"-${sMax}"`);
-  if(standby&&parseFloat(standby)>settings.maxStandby) reasons.push(`Overmix ${standby}hrs > ${settings.maxStandby}hrs max`);
+  if(actualSlump!==null&&actualSlump!==''&&!isNaN(actualSlump)&&(actualSlump<sMin||actualSlump>sMax))
+    reasons.push(`Slump ${actualSlump}" out of range ${sMin}"-${sMax}"`);
+  // Only check standby if BOTH time batched and time finish are entered
+  const timeBatched=document.getElementById('f-time-batched')?document.getElementById('f-time-batched').value:'';
+  const timeFinish=document.getElementById('f-time')?document.getElementById('f-time').value:'';
+  if(standby!==null&&timeBatched&&timeFinish&&parseFloat(standby)>settings.maxStandby)
+    reasons.push(`Overmix ${standby}hrs > ${settings.maxStandby}hrs max`);
   return {rejected:reasons.length>0, reason:reasons[0]||'', detail:reasons.join('; ')};
 }
 
 function checkAutoReject(){
   const settings=getSettings();
-  const actualTemp=parseFloat(document.getElementById('f-actual-temp').value)||null;
-  const actualSlump=parseFloat(document.getElementById('f-actual-slump').value)||null;
+  const actualTempRaw=document.getElementById('f-actual-temp').value;
+  const actualSlumpRaw=document.getElementById('f-actual-slump').value;
+  const actualTemp=actualTempRaw!==''?parseFloat(actualTempRaw):null;
+  const actualSlump=actualSlumpRaw!==''?parseFloat(actualSlumpRaw):null;
   const timeBatched=document.getElementById('f-time-batched').value;
   const timeFinish=document.getElementById('f-time').value;
-  const standby=calcStandby(timeBatched,timeFinish);
+  const standby=(timeBatched&&timeFinish)?calcStandby(timeBatched,timeFinish):null;
   const slumpMin=document.getElementById('f-slump-min').value;
   const slumpMax=document.getElementById('f-slump-max').value;
+  // Only trigger if at least one actual value is entered
+  if(!actualTempRaw&&!actualSlumpRaw&&(!timeBatched||!timeFinish)){
+    document.getElementById('auto-reject-alert').style.display='none';
+    return;
+  }
   const result=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax);
   const alert=document.getElementById('auto-reject-alert');
   if(result.rejected){
