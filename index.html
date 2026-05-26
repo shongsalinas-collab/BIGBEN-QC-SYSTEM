@@ -77,16 +77,29 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
 
 /* PRINT */
 @media print{
-  .no-print,.nav-tabs,.app-header .btn,.form-section{display:none!important}
-  .tab-content{display:block!important;padding:4px}
-  .panel-header{background:var(--maroon)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .data-table th{background:var(--maroon)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* Hide everything by default */
+  body > *{display:none!important}
+  /* Only show what's being printed */
+  .printing-mold #mold-print-area,
+  .printing-mold #mold-print-area *{display:block!important}
+  .printing-mold #mold-print-area table{display:table!important}
+  .printing-mold #mold-print-area thead{display:table-header-group!important}
+  .printing-mold #mold-print-area tbody{display:table-row-group!important}
+  .printing-mold #mold-print-area tr{display:table-row!important}
+  .printing-mold #mold-print-area th,
+  .printing-mold #mold-print-area td{display:table-cell!important}
+  /* Hide dropdowns in print - show text instead */
+  .printing-mold select{display:none!important}
+  .printing-mold .print-text{display:inline!important}
+  .printing-mold .no-print{display:none!important}
+  /* Style */
+  .printing-mold .data-table th{background:var(--maroon)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .printing-mold .panel-header{background:var(--maroon)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{background:#fff;font-size:11px}
-  .panel{margin-bottom:8px;break-inside:avoid}
-  .print-date-header{display:block!important;text-align:center;font-size:16px;font-weight:700;margin-bottom:12px;color:var(--maroon)}
   @page{margin:1cm;size:landscape}
 }
 .print-date-header{display:none}
+.print-text{display:none}
 
 /* REJECTION FORM */
 .rejection-block{background:#fff5f5;border:1px solid #EF9A9A;border-radius:4px;padding:10px;margin-top:6px}
@@ -1066,13 +1079,15 @@ function renderMold(){
       <td style="text-align:center">${i+1}</td>
       <td>${fmtDate(e.date)}</td>
       <td>
-        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldArea',this.value)">
-          <option value="">--</option>
-          <option value="Manila Area" ${area==='Manila Area'?'selected':''}>Manila Area</option>
-          <option value="Bulacan Area" ${area==='Bulacan Area'?'selected':''}>Bulacan Area</option>
-          <option value="Others" ${area==='Others'?'selected':''}>Others</option>
-        </select>
-        ${(e.moldAreaOther&&area==='Others')?`<div style="font-size:10px;color:#666">${e.moldAreaOther}</div>`:''}
+        <div data-print-select>
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldArea',this.value)">
+            <option value="">--</option>
+            <option value="Manila Area" ${area==='Manila Area'?'selected':''}>Manila Area</option>
+            <option value="Bulacan Area" ${area==='Bulacan Area'?'selected':''}>Bulacan Area</option>
+            <option value="Others" ${area==='Others'?'selected':''}>Others</option>
+          </select>
+          <span class="print-text">${area||'—'}</span>
+        </div>
       </td>
       <td><strong>${e.client}</strong></td>
       <td style="font-size:11px">${e.location||'—'}</td>
@@ -1082,28 +1097,37 @@ function renderMold(){
       <td>${e.coord||'—'}</td>
       <td><strong style="color:var(--maroon)">${fmtDate(addDays(e.date,1))}</strong></td>
       <td>
-        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'curingLoc',this.value)">
-          <option value="">--</option>
-          <option value="Site" ${curingLoc==='Site'?'selected':''}>Site</option>
-          <option value="Plant" ${curingLoc==='Plant'?'selected':''}>Plant</option>
-          <option value="Others" ${curingLoc==='Others'?'selected':''}>Others</option>
-        </select>
+        <div data-print-select>
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'curingLoc',this.value)">
+            <option value="">--</option>
+            <option value="Site" ${curingLoc==='Site'?'selected':''}>Site</option>
+            <option value="Plant" ${curingLoc==='Plant'?'selected':''}>Plant</option>
+            <option value="Others" ${curingLoc==='Others'?'selected':''}>Others</option>
+          </select>
+          <span class="print-text">${curingLoc||'—'}</span>
+        </div>
       </td>
       <td style="text-align:center"><strong>${qty}</strong></td>
       <td>
-        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldType',this.value)">
-          <option value="Cylinder" ${moldType==='Cylinder'?'selected':''}>Cylinder</option>
-          <option value="Beam" ${moldType==='Beam'?'selected':''}>Beam</option>
-          <option value="Others" ${moldType==='Others'?'selected':''}>Others</option>
-        </select>
+        <div data-print-select>
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldType',this.value)">
+            <option value="Cylinder" ${moldType==='Cylinder'?'selected':''}>Cylinder</option>
+            <option value="Beam" ${moldType==='Beam'?'selected':''}>Beam</option>
+            <option value="Others" ${moldType==='Others'?'selected':''}>Others</option>
+          </select>
+          <span class="print-text">${moldType||'—'}</span>
+        </div>
       </td>
       <td>
-        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldSize',this.value)">
-          <option value="">--</option>
-          <option value="6x12" ${moldSize==='6x12'?'selected':''}>6×12</option>
-          <option value="4x8" ${moldSize==='4x8'?'selected':''}>4×8</option>
-          <option value="Beam" ${moldSize==='Beam'?'selected':''}>Beam</option>
-        </select>
+        <div data-print-select>
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldSize',this.value)">
+            <option value="">--</option>
+            <option value="6x12" ${moldSize==='6x12'?'selected':''}>6×12</option>
+            <option value="4x8" ${moldSize==='4x8'?'selected':''}>4×8</option>
+            <option value="Beam" ${moldSize==='Beam'?'selected':''}>Beam</option>
+          </select>
+          <span class="print-text">${moldSize||'—'}</span>
+        </div>
       </td>
     </tr>`;
   }).join('');
@@ -1115,7 +1139,6 @@ function saveMoldField(id,field,val){
 }
 
 function printMold(){
-  // Show print header/footer
   const h=document.getElementById('mold-print-header');
   const f=document.getElementById('mold-print-footer');
   const lbl=document.getElementById('mold-print-date-label');
@@ -1123,11 +1146,19 @@ function printMold(){
   if(h) h.style.display='block';
   if(f) f.style.display='block';
   if(lbl&&sel) lbl.textContent='Collection Date: '+fmtDate(sel.value);
+  // Update print-text spans before printing
+  document.querySelectorAll('[data-print-select]').forEach(wrap=>{
+    const sel2=wrap.querySelector('select');
+    const txt=wrap.querySelector('.print-text');
+    if(sel2&&txt) txt.textContent=sel2.options[sel2.selectedIndex]?sel2.options[sel2.selectedIndex].text:'—';
+  });
+  document.body.classList.add('printing-mold');
   window.print();
   setTimeout(()=>{
+    document.body.classList.remove('printing-mold');
     if(h) h.style.display='none';
     if(f) f.style.display='none';
-  },1000);
+  },1500);
 }
 
 // ===== RENDER MONITORING =====
