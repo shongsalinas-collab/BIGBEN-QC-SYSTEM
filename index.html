@@ -207,7 +207,18 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div style="font-size:10px;font-weight:700;color:#E65100;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🧪 Sample Information</div>
         <div class="form-grid">
           <div class="form-group"><label>No. of Samples</label><input type="number" id="f-samples" min="1" placeholder="e.g. 3"></div>
-          <div class="form-group"><label>Sample Remarks</label><input type="text" id="f-sample-remarks" placeholder="e.g. SAP, Plant Sample"></div>
+          <div class="form-group"><label>Sample Remarks</label>
+            <select id="f-sample-remarks" onchange="toggleSampleRemarks()">
+              <option value="">-- Select --</option>
+              <option value="Sample at Plant">Sample at Plant</option>
+              <option value="Sample at Site">Sample at Site</option>
+              <option value="Others">Others (specify)</option>
+            </select>
+          </div>
+          <div class="form-group" id="f-sample-remarks-other-wrap" style="display:none">
+            <label>Specify Remarks</label>
+            <input type="text" id="f-sample-remarks-other" placeholder="Specify...">
+          </div>
           <div class="form-group"><label>Kind of Sample</label>
             <select id="f-kind">
               <option value="">-- Select --</option>
@@ -878,7 +889,7 @@ function loadSettingsUI(){
 }
 
 function clearForm(){
-  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-sample-remarks','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
+  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-samples','f-sample-remarks','f-sample-remarks-other','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
   });
@@ -917,7 +928,7 @@ function addEntry(){
     structure:document.getElementById('f-structure').value,
     coord:document.getElementById('f-coord').value,
     samples:document.getElementById('f-samples').value,
-    sampleRemarks:document.getElementById('f-sample-remarks').value,
+    sampleRemarks:(document.getElementById('f-sample-remarks').value==='Others'?document.getElementById('f-sample-remarks-other').value:document.getElementById('f-sample-remarks').value),
     kind:document.getElementById('f-kind').value,
     slip:document.getElementById('f-slip').value,
     slumpMin:document.getElementById('f-slump-min').value,
@@ -961,6 +972,11 @@ function toggleCollected(id){
 }
 
 // ===== RENDER MASTER =====
+function toggleSampleRemarks(){
+  const val=document.getElementById('f-sample-remarks').value;
+  document.getElementById('f-sample-remarks-other-wrap').style.display=val==='Others'?'flex':'none';
+}
+
 function checkTempColor(e){
   const settings=getSettings();
   const actual=parseFloat(e.actualTemp);
