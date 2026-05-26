@@ -1013,16 +1013,21 @@ function initMoldDateSelector(){
   const sel=document.getElementById('mold-filter-date');
   if(!sel) return;
   const dates=new Set();
-  // Only add dates that have actual entries (pouring date + 24hrs)
+  // Collection date = pouring date + 1 day
   db.entries.forEach(e=>{
     if(e.date) dates.add(addDays(e.date,1));
   });
   const todayStr=new Date().toISOString().split('T')[0];
-  // Always include today
   dates.add(todayStr);
   const sorted=[...dates].sort();
   const currentVal=sel.value;
-  sel.innerHTML=sorted.map(d=>`<option value="${d}" ${(currentVal?d===currentVal:d===todayStr)?'selected':''}>${fmtDate(d)}${db.entries.filter(e=>addDays(e.date,1)===d).length>0?' ('+db.entries.filter(e=>addDays(e.date,1)===d).length+')':''}</option>`).join('');
+  // Find closest date to today that has entries
+  const todayEntries=sorted.find(d=>d>=todayStr&&db.entries.filter(e=>addDays(e.date,1)===d).length>0)||todayStr;
+  sel.innerHTML=sorted.map(d=>{
+    const count=db.entries.filter(e=>addDays(e.date,1)===d).length;
+    const isSelected=currentVal?d===currentVal:d===todayEntries;
+    return `<option value="${d}" ${isSelected?'selected':''}>${fmtDate(d)}${count>0?' ('+count+')':''}</option>`;
+  }).join('');
   renderMold();
 }
 
@@ -1036,7 +1041,7 @@ function renderMold(){
   const empty=document.getElementById('mold-empty');
   const countEl=document.getElementById('mold-count');
   const headerDate=document.getElementById('mold-header-date');
-  if(headerDate) headerDate.textContent=filterDate?'— '+fmtDate(filterDate):'';
+  if(headerDate) headerDate.textContent=filterDate?'— Collection Date: '+fmtDate(filterDate):'';
   if(!rows.length){
     if(tbody) tbody.innerHTML='';
     if(empty) empty.style.display='block';
@@ -1072,7 +1077,7 @@ function renderMold(){
       <td>${fmtTime(e.time)}</td>
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
-      <td><strong style="color:var(--maroon)">${fmtDate(collectDate)}</strong></td>
+      <td><strong style="color:var(--maroon)">${fmtDate(addDays(e.date,1))}</strong></td>
       <td>
         <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'curingLoc',this.value)">
           <option value="">--</option>
