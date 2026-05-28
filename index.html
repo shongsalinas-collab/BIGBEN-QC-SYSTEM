@@ -762,6 +762,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 </div>
 
 <script>
+const MAROON_URL="https://shongsalinas-collab.github.io/BIGBEN-QC-SYSTEM/logo-maroon.jpg";
 let db = {entries:[]};
 let currentModalId = null;
 let fbRef = null;
@@ -2058,7 +2059,7 @@ function printTestMon(){
   const mon=document.getElementById('testmon-month').value;
   const monLabel=mon?document.querySelector('#testmon-month option:checked').textContent:'All Months';
 
-  const MAROON_URL='https://shongsalinas-collab.github.io/BIGBEN-QC-SYSTEM/logo-maroon.jpg';
+  
   const printHTML=`<!DOCTYPE html>
 <html><head><meta charset="UTF-8">
 <title>Testing Monitoring - ${monLabel}</title>
@@ -2426,7 +2427,7 @@ function printTestMon(){
   const mon=document.getElementById('testmon-month').value;
   const monLabel=mon?document.querySelector('#testmon-month option:checked').textContent:'All Months';
 
-  const MAROON_URL='https://shongsalinas-collab.github.io/BIGBEN-QC-SYSTEM/logo-maroon.jpg';
+  
   const printHTML=`<!DOCTYPE html>
 <html><head><meta charset="UTF-8">
 <title>Testing Monitoring - ${monLabel}</title>
