@@ -335,7 +335,6 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Testing Coord.</th>
               <th>Samples</th>
               <th>Sample Remarks</th>
-              <th>Kind</th>
               <th>Slip No.</th>
               <th>Volume (m³)</th>
               <th>Remarks</th>
@@ -444,9 +443,8 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Structure</th>
               <th>Site Coordinator</th>
               <th>Collection Date</th>
-              <th>No. of Samples</th>
+              <th>Samples</th>
               <th>Type of Mold</th>
-              <th>Size of Mold</th>
             </tr>
           </thead>
           <tbody id="mold-tbody"></tbody>
@@ -1409,7 +1407,17 @@ function renderMold(){
       <td>${e.coord||'—'}</td>
       <td><strong style="color:var(--maroon)">${fmtDate(addDays(e.date,1))}</strong></td>
 
-      <td style="text-align:center"><strong>${qty}</strong></td>
+      <td style="text-align:center;white-space:nowrap">
+        <strong>${qty}</strong> <span style="font-size:11px;color:#666">(${moldSize||'—'})</span>
+        <div data-print-select style="display:none">
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldSize',this.value)">
+            <option value="">--</option>
+            <option value="6x12" ${moldSize==='6x12'?'selected':''}>6×12</option>
+            <option value="4x8" ${moldSize==='4x8'?'selected':''}>4×8</option>
+            <option value="Beam" ${moldSize==='Beam'?'selected':''}>Beam</option>
+          </select>
+        </div>
+      </td>
       <td>
         <div data-print-select>
           <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldType',this.value)">
@@ -1418,17 +1426,6 @@ function renderMold(){
             <option value="Others" ${moldType==='Others'?'selected':''}>Others</option>
           </select>
           <span class="print-text">${moldType||'—'}</span>
-        </div>
-      </td>
-      <td>
-        <div data-print-select>
-          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldSize',this.value)">
-            <option value="">--</option>
-            <option value="6x12" ${moldSize==='6x12'?'selected':''}>6×12</option>
-            <option value="4x8" ${moldSize==='4x8'?'selected':''}>4×8</option>
-            <option value="Beam" ${moldSize==='Beam'?'selected':''}>Beam</option>
-          </select>
-          <span class="print-text">${moldSize||'—'}</span>
         </div>
       </td>
     </tr>`;
