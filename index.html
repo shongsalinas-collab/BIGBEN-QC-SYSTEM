@@ -1854,12 +1854,10 @@ function renderTestMon(){
   if(!rows.length){if(container)container.innerHTML='';if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';
 
-  // All possible test days in order
   const ALL_TEST_DAYS=[1,3,7,14,21,28];
   const DAY_LABELS={1:'1 Days Testing',3:'3 Days Testing',7:'7 Days Testing',14:'14 Days Testing',21:'21 Days Testing',28:'28 Days Testing'};
   const bgColors={1:'#6B1A1A',3:'#8B2222',7:'#6B1A1A',14:'#8B2222',21:'#6B1A1A',28:'#8B2222'};
 
-  // Find which test days are needed across all rows
   const neededDays=new Set();
   rows.forEach(e=>{
     const testDays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];
@@ -1867,15 +1865,13 @@ function renderTestMon(){
   });
   const activeDays=ALL_TEST_DAYS.filter(d=>neededDays.has(d));
 
-  // Build headers
   let topHeaders='';
   let subHeaders='';
   activeDays.forEach(d=>{
     const bg=bgColors[d];
-    topHeaders+=`<th colspan="8" style="text-align:center;background:${bg};border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[d]}</th>`;
+    topHeaders+=`<th colspan="7" style="text-align:center;background:${bg};border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[d]}</th>`;
     subHeaders+=`
       <th style="font-size:9px;background:${bg};border-left:2px solid #fff">Test Date</th>
-      <th style="font-size:9px;background:${bg}">Samples Used</th>
       <th style="font-size:9px;background:${bg}">S1 PSI</th>
       <th style="font-size:9px;background:${bg}">S2 PSI</th>
       <th style="font-size:9px;background:${bg}">S3 PSI</th>
@@ -1894,7 +1890,7 @@ function renderTestMon(){
         <th rowspan="2" style="min-width:120px">Location</th>
         <th rowspan="2" style="min-width:60px">Structure</th>
         <th rowspan="2" style="min-width:130px">Design</th>
-        <th rowspan="2" style="min-width:70px">Total Samples</th>
+        <th rowspan="2" style="min-width:90px">Total Samples</th>
         <th rowspan="2" style="min-width:70px">Site Coord.</th>
         <th rowspan="2" style="min-width:70px">Testing Coord.</th>
         ${topHeaders}
@@ -1911,6 +1907,7 @@ function renderTestMon(){
     const totalSamples=parseInt(e.samples)||0;
     const rowBg=idx%2===0?'':'background:#fdf8f8';
 
+    // Auto-count used samples from filled results
     let usedSoFar=0;
     let testCols='';
 
@@ -1919,7 +1916,7 @@ function renderTestMon(){
       const isActive=testDays.includes(d);
 
       if(!isActive){
-        for(let j=0;j<8;j++){
+        for(let j=0;j<7;j++){
           testCols+=`<td style="background:#f0f0f0;${j===0?borderStyle:''}"></td>`;
         }
         return;
@@ -1930,7 +1927,8 @@ function renderTestMon(){
       const theo=theoMap[d]||100;
       const theoTarget=design?(design*theo/100).toFixed(0):'-';
       const testDate=addDays(normalizeDate(e.date||''),d);
-      const samplesUsed=parseInt(res.samplesUsed)||0;
+      // Count used samples = number of filled S1/S2/S3
+      const samplesUsed=[res.r1,res.r2,res.r3].filter(x=>x&&parseFloat(x)>0).length;
       usedSoFar+=samplesUsed;
       const remaining=totalSamples-usedSoFar;
       const ave=res.ave||'';
@@ -1940,12 +1938,6 @@ function renderTestMon(){
       testCols+=`
         <td style="text-align:center;${borderStyle}">
           <span style="color:#1565C0;font-size:9px;font-weight:600">${fmtDate(testDate)}</span>
-        </td>
-        <td style="text-align:center">
-          <input type="number" value="${res.samplesUsed||''}" min="0" max="${totalSamples}"
-            onchange="saveTrField(${e.id},${d},'samplesUsed',this.value)"
-            style="width:40px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
-          ${samplesUsed>0?`<br><span style="font-size:8px;color:${remaining<0?'#C62828':'#2E7D32'}">Rem:${remaining}</span>`:''}
         </td>
         <td style="text-align:center">
           <input type="number" value="${res.r1||''}"
@@ -1975,9 +1967,10 @@ function renderTestMon(){
         </td>`;
     });
 
+    // Compute final remaining
     const totalUsed=testDays.reduce((sum,d)=>{
       const res=e[`tr_${d}`]||{};
-      return sum+(parseInt(res.samplesUsed)||0);
+      return sum+[res.r1,res.r2,res.r3].filter(x=>x&&parseFloat(x)>0).length;
     },0);
     const finalRemaining=totalSamples-totalUsed;
 
@@ -1992,7 +1985,7 @@ function renderTestMon(){
       <td style="text-align:center">
         <strong>${totalSamples}</strong> (${e.kind||'—'})
         <br><span style="font-size:9px;font-weight:600;color:${finalRemaining===0?'#2E7D32':finalRemaining<0?'#C62828':'#E65100'}">
-          ${finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' left':'⚠️ Over'}
+          ${finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' remaining':'⚠️ Over'}
         </span>
       </td>
       <td style="font-size:10px">${e.coord||'—'}</td>
