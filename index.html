@@ -592,72 +592,53 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
 <!-- ===== SHEET 5: TESTING MONITORING ===== -->
 <div id="tab-testmon" class="tab-content">
+
+  <!-- Result Entry Modal -->
+  <div id="result-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:8px;padding:20px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <h3 style="color:var(--maroon);margin-bottom:14px;font-size:14px" id="modal-title">Log Test Results</h3>
+      <div id="modal-info" style="background:#fdf8f8;border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:12px;font-size:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="form-group"><label>Sample 1 (PSI)</label><input type="number" id="r1" placeholder="0" oninput="updateModalCalc()"></div>
+        <div class="form-group"><label>Sample 2 (PSI)</label><input type="number" id="r2" placeholder="0" oninput="updateModalCalc()"></div>
+        <div class="form-group"><label>Sample 3 (PSI)</label><input type="number" id="r3" placeholder="0" oninput="updateModalCalc()"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label>Laboratory No.</label>
+        <input type="text" id="modal-lab-no" placeholder="e.g. TL-BUL-25-0308-11">
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Remarks</label>
+        <input type="text" id="modal-remarks" placeholder="e.g. Passed, Failed">
+      </div>
+      <div style="background:#f5f5f5;border-radius:4px;padding:10px;margin-bottom:12px;font-size:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div>Ave PSI: <strong id="modal-ave">—</strong></div>
+        <div>Theo Target: <strong id="modal-theo">—</strong></div>
+        <div>Result: <strong id="modal-result">—</strong></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-maroon" onclick="saveResult()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+
   <div class="panel">
     <div class="panel-header">
       Testing Monitoring — Compressive Strength Results
       <div style="display:flex;gap:6px" class="no-print">
-        <button class="btn btn-sm btn-print" onclick="printTestMon()">🖨 Print</button>
-      </div>
-    </div>
-    <div class="panel-body" style="padding:0">
-      <div class="filter-bar no-print">
-        <label>Month:</label>
-        <select id="testmon-month" onchange="renderTestMon()"></select>
-        <label>Result:</label>
-        <select id="testmon-result-filter" onchange="renderTestMon()">
+        <select id="testmon-month" onchange="renderTestMon()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none"></select>
+        <select id="testmon-result-filter" onchange="renderTestMon()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none">
           <option value="">All</option>
           <option value="pass">Pass</option>
           <option value="fail">Fail</option>
           <option value="pending">Pending</option>
         </select>
-      </div>
-      <div class="table-wrap">
-        <table class="data-table" style="font-size:11px">
-          <thead>
-            <tr>
-              <th>Pouring Date</th>
-              <th>Client</th>
-              <th>Location</th>
-              <th>Design</th>
-              <th>Structure</th>
-              <th>Samples</th>
-              <th>Fresh Concrete</th>
-              <th>Day 1 PSI</th>
-              <th>Day 2 PSI</th>
-              <th>Day 3 PSI</th>
-              <th>Ave PSI</th>
-              <th>Result</th>
-              <th>% of Design</th>
-              <th class="no-print">Log</th>
-            </tr>
-          </thead>
-          <tbody id="testmon-tbody"></tbody>
-        </table>
-      </div>
-      <div id="testmon-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No test monitoring records.</div>
-    </div>
-  </div>
-
-  <!-- Result Entry Modal -->
-  <div id="result-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center">
-    <div style="background:#fff;border-radius:8px;padding:20px;width:420px;max-width:95vw;max-height:90vh;overflow-y:auto">
-      <h3 style="color:var(--maroon);margin-bottom:14px;font-size:14px">Log Test Results</h3>
-      <div id="modal-info" style="background:#fdf8f8;border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:12px;font-size:12px"></div>
-      <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
-        <div class="form-group"><label>Test 1 PSI</label><input type="number" id="r1" placeholder="0"></div>
-        <div class="form-group"><label>Test 2 PSI</label><input type="number" id="r2" placeholder="0"></div>
-        <div class="form-group"><label>Test 3 PSI</label><input type="number" id="r3" placeholder="0"></div>
-      </div>
-      <div style="background:#f5f5f5;border-radius:4px;padding:10px;margin:10px 0;font-size:12px">
-        <strong>Ave PSI: <span id="modal-ave">—</span></strong> &nbsp;|&nbsp; 
-        <strong>Result: <span id="modal-result">—</span></strong> &nbsp;|&nbsp;
-        <strong>% of Design: <span id="modal-pct">—</span></strong>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-maroon" onclick="saveResult()">Save Results</button>
+        <button class="btn btn-sm btn-print" onclick="printTestMon()">🖨 Print</button>
       </div>
     </div>
+    <div id="testmon-container" style="padding:0"></div>
+    <div id="testmon-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No records found.</div>
   </div>
 </div>
 
@@ -1827,57 +1808,166 @@ ${sectionsHtml}
 
 
 // ===== RENDER TEST MONITORING =====
+// Theoretical percentages
+const THEO_PCTS = {
+  '01 Days': {1: 100},
+  '03 Days': {1: 90, 3: 100},
+  '07 Days': {3: 69, 7: 100},
+  '14 Days': {3: 56, 7: 82, 14: 100},
+  '21 Days': {7: 71, 14: 87, 21: 100},
+  '28 Days': {7: 71, 14: 87, 28: 100},
+};
+
+const TEST_DAYS_MAP = {
+  '01 Days': [1],
+  '03 Days': [1, 3],
+  '07 Days': [3, 7],
+  '14 Days': [3, 7, 14],
+  '21 Days': [7, 14, 21],
+  '28 Days': [7, 14, 28],
+};
+
 function renderTestMon(){
   const mon=document.getElementById('testmon-month').value;
   const resultF=document.getElementById('testmon-result-filter').value;
   if(!mon) return;
   const [yr,mo]=mon.split('-').map(Number);
   let rows=db.entries.filter(e=>{
-    const d=new Date(e.date+'T00:00:00');
+    const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
     return d.getFullYear()===yr&&d.getMonth()+1===mo;
   });
-  
+
   if(resultF){
     rows=rows.filter(e=>{
-      const res=getTestResultStatus(e);
-      return res===resultF;
+      const status=getOverallStatus(e);
+      return status===resultF;
     });
   }
-  
-  renderCharts();
-  const tbody=document.getElementById('testmon-tbody');
+
+  const container=document.getElementById('testmon-container');
   const empty=document.getElementById('testmon-empty');
-  if(!rows.length){tbody.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  
-  tbody.innerHTML=rows.map(e=>{
-    const testDays=getTestDays(e.days);
+
+  if(!rows.length){
+    if(container) container.innerHTML='';
+    if(empty) empty.style.display='block';
+    return;
+  }
+  if(empty) empty.style.display='none';
+
+  // Build table HTML
+  let html='<div style="overflow-x:auto"><table class="data-table" style="font-size:11px;min-width:1200px">';
+
+  // Build dynamic headers based on test days
+  // We need to know all unique design types to build proper headers
+  // Use a per-entry card approach instead for clarity
+
+  html='';
+  rows.forEach((e,idx)=>{
+    const days=e.days||'28 Days';
+    const testDays=TEST_DAYS_MAP[days]||[7,14,28];
     const design=parseFloat(e.design)||0;
-    const r=e.testResults||[];
-    const ave=r.length?Math.round(r.reduce((a,b)=>a+b,0)/r.length):null;
-    const pct=ave&&design?Math.round(ave/design*100):null;
-    const reqPct=DESIGN_PCT[e.days]||100;
-    const isPassed=pct&&pct>=reqPct;
-    const resultBadge=r.length===0?'<span class="badge badge-pending">Pending</span>':isPassed?'<span class="badge badge-pass">PASS</span>':'<span class="badge badge-fail">FAIL</span>';
-    
-    const r1=r[0]||'';const r2=r[1]||'';const r3=r[2]||'';
-    return `<tr>
-      <td>${fmtDate(normalizeDate(e.date))}</td>
-      <td><strong>${e.client}</strong></td>
-      <td style="font-size:11px">${e.location||'—'}</td>
-      <td style="font-size:11px;white-space:nowrap"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
-      <td>${e.structure||'—'}</td>
-      <td style="white-space:nowrap">${e.samples||'—'} <span style="font-size:10px;color:#666">(${e.kind||'—'})</span></td>
-      <td style="white-space:nowrap">${e.rejected?`<span class="badge badge-fail" style="font-size:10px">⛔ REJECTED</span>`:'<span class="badge badge-pass" style="font-size:10px">✅ OK</span>'}</td>
-      <td style="text-align:center">${r1||'—'}</td>
-      <td style="text-align:center">${r2||'—'}</td>
-      <td style="text-align:center">${r3||'—'}</td>
-      <td style="text-align:center;font-weight:600">${ave||'—'}</td>
-      <td>${resultBadge}</td>
-      <td style="text-align:center">${pct?pct+'%':'—'}</td>
-      <td class="no-print"><button class="btn btn-sm btn-outline" onclick="openModal(${e.id})">📝 Log</button></td>
-    </tr>`;
-  }).join('');
+    const theoMap=THEO_PCTS[days]||{};
+    const rejected=e.rejected;
+
+    // Build test sections
+    let testSections='';
+    testDays.forEach(d=>{
+      const key=`tr_${d}`;
+      const results=e[key]||{r1:'',r2:'',r3:'',ave:'',labNo:'',remarks:''};
+      const theo=theoMap[d]||100;
+      const theoTarget=design?(design*theo/100).toFixed(0):'—';
+      const testDate=addDays(normalizeDate(e.date||''),d);
+      const ave=results.ave||'';
+      const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
+      const resultColor=passed===null?'#888':passed?'#2E7D32':'#C62828';
+      const resultText=passed===null?'Pending':passed?'PASS':'FAIL';
+
+      testSections+=`
+        <td style="text-align:center;color:#1565C0;font-weight:600;font-size:10px">${fmtDate(testDate)}</td>
+        <td style="text-align:center">${results.r1||'—'}</td>
+        <td style="text-align:center">${results.r2||'—'}</td>
+        <td style="text-align:center">${results.r3||'—'}</td>
+        <td style="text-align:center;font-weight:700">${ave||'—'}</td>
+        <td style="text-align:center;font-size:10px">${results.labNo||'—'}</td>
+        <td style="text-align:center;font-size:10px">${theoTarget} PSI<br><span style="color:#888;font-size:9px">(${theo}%)</span></td>
+        <td style="text-align:center"><span style="color:${resultColor};font-weight:600;font-size:10px">${resultText}</span></td>
+        <td class="no-print"><button class="btn btn-sm btn-outline" style="padding:2px 6px;font-size:10px" onclick="openModal(${e.id},${d})">📝</button></td>
+        <td style="font-size:10px">${results.remarks||'—'}</td>`;
+    });
+
+    // Day headers for this entry
+    let dayHeaders='';
+    let subHeaders='';
+    testDays.forEach(d=>{
+      dayHeaders+=`<th colspan="10" style="text-align:center;background:#4A0F0F;border-left:2px solid #fff">${d} DAY TEST</th>`;
+      subHeaders+=`<th style="font-size:9px">Test Date</th><th style="font-size:9px">S1</th><th style="font-size:9px">S2</th><th style="font-size:9px">S3</th><th style="font-size:9px">Ave PSI</th><th style="font-size:9px">Lab No.</th><th style="font-size:9px">Theo Target</th><th style="font-size:9px">Result</th><th class="no-print" style="font-size:9px">Log</th><th style="font-size:9px">Remarks</th>`;
+    });
+
+    html+=`
+    <div style="margin-bottom:16px;border:1px solid var(--border);border-radius:6px;overflow:hidden">
+      <!-- Entry Header -->
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <tr style="background:#fdf8f8">
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border);width:100px"><strong>Pouring Date</strong><br>${fmtDate(normalizeDate(e.date))}</td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Client</strong><br>${e.client||'—'}${rejected?` <span class="badge badge-fail" style="font-size:9px">⛔ FRESH REJECTED</span>`:''}</td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Project</strong><br><input type="text" value="${e.project||''}" onchange="saveEntryField(${e.id},'project',this.value)" style="border:1px solid #ddd;border-radius:3px;padding:2px 6px;font-size:11px;width:130px" placeholder="Project name"></td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Location</strong><br><span style="font-size:11px">${e.location||'—'}</span></td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Structure</strong><br>${e.structure||'—'}</td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Design</strong><br><span style="font-size:11px;font-weight:600">${e.design||'—'} ${e.agg||''} ${e.days||''}</span></td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap"><strong>Samples</strong><br>${e.samples||'—'} (${e.kind||'—'})</td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Site Coord.</strong><br>${e.coord||'—'}</td>
+          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Testing Coord.</strong><br>${e.testingCoord||'—'}</td>
+        </tr>
+      </table>
+      <!-- Test Results Table -->
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="-webkit-print-color-adjust:exact;print-color-adjust:exact">
+              ${dayHeaders}
+            </tr>
+            <tr style="background:#6B1A1A;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+              ${subHeaders}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>${testSections}</tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  });
+
+  if(container) container.innerHTML=html;
+}
+
+function saveEntryField(id,field,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e[field]=val;save();}
+}
+
+function getOverallStatus(e){
+  const days=e.days||'28 Days';
+  const testDays=TEST_DAYS_MAP[days]||[7,14,28];
+  const design=parseFloat(e.design)||0;
+  const theoMap=THEO_PCTS[days]||{};
+  let hasResult=false;
+  let allPass=true;
+  testDays.forEach(d=>{
+    const key=`tr_${d}`;
+    const results=e[key]||{};
+    if(results.ave){
+      hasResult=true;
+      const theo=theoMap[d]||100;
+      if(parseFloat(results.ave)<design*theo/100) allPass=false;
+    }
+  });
+  if(!hasResult) return 'pending';
+  return allPass?'pass':'fail';
+}
+
+function printTestMon(){
+  window.print();
 }
 
 function getTestResultStatus(e){
@@ -1890,16 +1980,25 @@ function getTestResultStatus(e){
 }
 
 // Modal
-function openModal(id){
+let currentModalDay=null;
+function openModal(id,day){
   const e=db.entries.find(x=>x.id===id);
   if(!e) return;
   currentModalId=id;
+  currentModalDay=day;
+  const key=`tr_${day}`;
+  const results=e[key]||{};
+  const days=e.days||'28 Days';
+  const theoMap=THEO_PCTS[days]||{};
+  const theo=theoMap[day]||100;
   const design=parseFloat(e.design)||0;
-  document.getElementById('modal-info').innerHTML=`<strong>${e.client}</strong> | ${fmtDate(e.date)} | ${e.design} PSI | ${e.days} | ${e.kind||''}`;
-  const r=e.testResults||[];
-  document.getElementById('r1').value=r[0]||'';
-  document.getElementById('r2').value=r[1]||'';
-  document.getElementById('r3').value=r[2]||'';
+  document.getElementById('modal-title').textContent=`Log ${day}-Day Test Results`;
+  document.getElementById('modal-info').innerHTML=`<strong>${e.client}</strong> | ${fmtDate(normalizeDate(e.date))} | ${e.design} PSI ${e.agg||''} ${e.days||''} | ${e.samples||''} (${e.kind||''}) | Theo: ${(design*theo/100).toFixed(0)} PSI (${theo}%)`;
+  document.getElementById('r1').value=results.r1||'';
+  document.getElementById('r2').value=results.r2||'';
+  document.getElementById('r3').value=results.r3||'';
+  document.getElementById('modal-lab-no').value=results.labNo||'';
+  document.getElementById('modal-remarks').value=results.remarks||'';
   updateModalCalc();
   document.getElementById('result-modal').style.display='flex';
 }
@@ -1909,24 +2008,43 @@ function updateModalCalc(){
   const v2=parseFloat(document.getElementById('r2').value)||0;
   const v3=parseFloat(document.getElementById('r3').value)||0;
   const vals=[v1,v2,v3].filter(x=>x>0);
-  if(!vals.length){document.getElementById('modal-ave').textContent='—';document.getElementById('modal-result').textContent='—';document.getElementById('modal-pct').textContent='—';return;}
+  if(!vals.length){
+    document.getElementById('modal-ave').textContent='—';
+    document.getElementById('modal-result').textContent='—';
+    return;
+  }
   const ave=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
   const e=db.entries.find(x=>x.id===currentModalId);
   const design=parseFloat(e?e.design:0)||0;
-  const reqPct=DESIGN_PCT[e?e.days:'28 Days']||100;
-  const pct=design?Math.round(ave/design*100):0;
-  const pass=pct>=reqPct;
+  const days=e?e.days:'28 Days';
+  const theoMap=THEO_PCTS[days]||{};
+  const theo=currentModalDay?theoMap[currentModalDay]||100:100;
+  const theoTarget=design?Math.round(design*theo/100):0;
+  const pass=ave>=theoTarget;
   document.getElementById('modal-ave').textContent=ave+' PSI';
+  document.getElementById('modal-theo').textContent=theoTarget+' PSI ('+theo+'%)';
   document.getElementById('modal-result').innerHTML=pass?'<span style="color:var(--green);font-weight:700">PASS ✓</span>':'<span style="color:var(--red);font-weight:700">FAIL ✗</span>';
-  document.getElementById('modal-pct').textContent=pct+'%';
 }
 
 ['r1','r2','r3'].forEach(id=>document.getElementById(id).addEventListener('input',updateModalCalc));
 
 function saveResult(){
   const e=db.entries.find(x=>x.id===currentModalId);
-  if(!e) return;
-  const vals=[parseFloat(document.getElementById('r1').value)||0,parseFloat(document.getElementById('r2').value)||0,parseFloat(document.getElementById('r3').value)||0].filter(x=>x>0);
+  if(!e||!currentModalDay) return;
+  const key=`tr_${currentModalDay}`;
+  const r1=parseFloat(document.getElementById('r1').value)||0;
+  const r2=parseFloat(document.getElementById('r2').value)||0;
+  const r3=parseFloat(document.getElementById('r3').value)||0;
+  const vals=[r1,r2,r3].filter(x=>x>0);
+  const ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+  e[key]={
+    r1:r1||'',r2:r2||'',r3:r3||'',
+    ave:ave||'',
+    labNo:document.getElementById('modal-lab-no').value,
+    remarks:document.getElementById('modal-remarks').value,
+    testDate:new Date().toISOString().split('T')[0]
+  };
+  // Keep legacy testResults for KPI compatibility
   e.testResults=vals;
   e.testDate=new Date().toISOString().split('T')[0];
   save();
