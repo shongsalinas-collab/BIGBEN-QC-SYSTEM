@@ -550,7 +550,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
 <!-- ===== SHEET 4: TESTING SCHEDULE ===== -->
 <div id="tab-testing" class="tab-content">
-  <div class="no-print" style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap" class="no-print">
     <div style="display:flex;align-items:center;gap:8px">
       <label style="font-weight:700;color:var(--maroon)">📅 Schedule Date:</label>
       <select id="test-date-filter" onchange="renderTesting()" style="padding:6px 10px;border:1px solid var(--maroon);border-radius:4px;font-size:13px;color:var(--maroon);font-weight:600"></select>
@@ -2323,7 +2323,96 @@ function showTab(name){
 }
 
 function printSheet(which){
-  window.print();
+  if(which==='master'){
+    // Get current filtered rows
+    const mon=document.getElementById('filter-month').value;
+    const search=(document.getElementById('master-search').value||'').toLowerCase();
+    const areaF=document.getElementById('master-area-filter').value;
+    const [yr,mo]=mon.split('-').map(Number);
+    const rows=db.entries.filter(e=>{
+      const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+      if(d.getFullYear()!==yr||d.getMonth()+1!==mo) return false;
+      if(search&&!e.client.toLowerCase().includes(search)&&!(e.location||'').toLowerCase().includes(search)) return false;
+      if(areaF&&e.area!==areaF) return false;
+      return true;
+    });
+
+    const tableRows=rows.map((e,i)=>`<tr style="${e.rejected?'background:#fff5f5':''}">
+      <td>${i+1}</td>
+      <td>${fmtDate(normalizeDate(e.date))}</td>
+      <td><strong>${e.client}</strong>${e.rejected?` <span style="color:#C62828;font-size:8px">[REJECTED: ${e.rejectReason||''}]</span>`:''}</td>
+      <td>${e.location||'—'}</td>
+      <td>${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
+      <td>${fmtTime(e.timeBatched)||'—'}</td>
+      <td>${fmtTime(e.time)||'—'}</td>
+      <td>${e.structure||'—'}</td>
+      <td>${e.coord||'—'}</td>
+      <td>${e.testingCoord||'—'}</td>
+      <td>${e.samples||'—'} (${e.kind||'—'})</td>
+      <td>${e.sampleRemarks||'—'}</td>
+      <td>${e.slip||'—'}</td>
+      <td>${e.vol||'—'}</td>
+      <td>${e.remarks||'—'}</td>
+    </tr>`).join('');
+
+    const monLabel=document.querySelector('#filter-month option:checked').textContent;
+    const printHTML=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Monthly Master List - ${monLabel}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:8px;padding:12px}
+table{border-collapse:collapse;width:100%}
+th{background:#6B1A1A;color:#fff;padding:3px 5px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:8px}
+td{padding:3px 5px;border-bottom:1px solid #ddd;font-size:8px}
+.no-print{text-align:center;margin-bottom:10px}
+.divider{height:2px;background:#6B1A1A;margin:6px 0 10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.footer{margin-top:16px}
+.footer table td{text-align:center;padding-top:28px;border-top:1px solid #333;font-size:9px}
+@page{margin:.6cm;size:landscape}
+@media print{.no-print{display:none!important}}
+</style></head>
+<body>
+<div class="no-print">
+  <button onclick="window.print()" style="background:#6B1A1A;color:#fff;padding:8px 24px;border:none;border-radius:4px;font-size:13px;cursor:pointer;font-weight:700">🖨️ PRINT</button>
+  <button onclick="window.close()" style="background:#888;color:#fff;padding:8px 16px;border:none;border-radius:4px;font-size:13px;cursor:pointer;margin-left:8px">✕ Close</button>
+</div>
+<table style="margin-bottom:10px">
+  <tr>
+    <td style="width:70px;border:none"><img src="${MAROON_URL}" style="width:60px;height:60px;object-fit:contain"></td>
+    <td style="text-align:center;border:none">
+      <div style="font-size:13px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
+      <div style="font-size:11px;font-weight:600;margin-top:2px">MONTHLY MASTER LIST OF POURING</div>
+      <div style="font-size:10px;color:#444;margin-top:2px">${monLabel}</div>
+    </td>
+    <td style="width:70px;text-align:right;font-size:8px;color:#666;border:none">SP-QA-02</td>
+  </tr>
+</table>
+<div class="divider"></div>
+<table>
+  <thead><tr>
+    <th>#</th><th>Date</th><th>Client</th><th>Location</th><th>Design</th>
+    <th>Time Batched</th><th>Time Finish</th><th>Structure</th><th>Site Coord.</th>
+    <th>Testing Coord.</th><th>Samples</th><th>Remarks Sample</th><th>Slip No.</th><th>Volume</th><th>Remarks</th>
+  </tr></thead>
+  <tbody>${tableRows}</tbody>
+</table>
+<div class="footer">
+  <table><tr>
+    <td style="width:33%">Prepared by<br><small>QC Clerk</small></td>
+    <td style="width:33%">Checked by<br><small>QC Supervisor</small></td>
+    <td style="width:33%">Noted by<br><small>R&D Supervisor</small></td>
+  </tr></table>
+  <div style="margin-top:8px;font-size:7px;color:#999;text-align:center">STRICTLY CONFIDENTIAL – For use of BIG BEN only.</div>
+</div>
+</body></html>`;
+    const w=window.open('','_blank','width=1100,height=700');
+    w.document.write(printHTML);
+    w.document.close();
+    w.focus();
+    setTimeout(()=>{w.print();},500);
+  } else {
+    window.print();
+  }
 }
 
 function saveCuring(id,val){
