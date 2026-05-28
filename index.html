@@ -1318,9 +1318,8 @@ function renderMaster(){
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
       <td>${e.testingCoord?`<span style='font-size:11px;color:#1565C0;font-weight:600'>${e.testingCoord}</span>`:'<span style="color:#ccc">—</span>'}</td>
-      <td>${e.samples||'—'}</td>
+      <td style="white-space:nowrap">${e.samples||'—'} <span style="font-size:11px;color:#666">(${e.kind||'—'})</span></td>
       <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
-      <td>${e.kind||'—'}</td>
       <td>${e.slip||'—'}</td>
       <td>${e.vol||'—'}</td>
       <td><input type="text" value="${e.remarks||''}" onchange="saveRemarks(${e.id},this.value)" style="width:120px;font-size:11px;padding:3px 6px;border:1px solid #ddd;border-radius:3px" placeholder="Notes..."></td>
