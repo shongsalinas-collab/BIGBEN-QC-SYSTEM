@@ -1843,59 +1843,52 @@ function renderTestMon(){
   if(!rows.length){if(container)container.innerHTML='';if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';
 
-  const bgColors=['#6B1A1A','#8B2222','#6B1A1A'];
+  // All possible test days in order
+  const ALL_TEST_DAYS=[1,3,7,14,21,28];
+  const DAY_LABELS={1:'1 Days Testing',3:'3 Days Testing',7:'7 Days Testing',14:'14 Days Testing',21:'21 Days Testing',28:'28 Days Testing'};
+  const bgColors={1:'#6B1A1A',3:'#8B2222',7:'#6B1A1A',14:'#8B2222',21:'#6B1A1A',28:'#8B2222'};
+
+  // Find which test days are needed across all rows
+  const neededDays=new Set();
+  rows.forEach(e=>{
+    const testDays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];
+    testDays.forEach(d=>neededDays.add(d));
+  });
+  const activeDays=ALL_TEST_DAYS.filter(d=>neededDays.has(d));
+
+  // Build headers
+  let topHeaders='';
+  let subHeaders='';
+  activeDays.forEach(d=>{
+    const bg=bgColors[d];
+    topHeaders+=`<th colspan="8" style="text-align:center;background:${bg};border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[d]}</th>`;
+    subHeaders+=`
+      <th style="font-size:9px;background:${bg};border-left:2px solid #fff">Test Date</th>
+      <th style="font-size:9px;background:${bg}">Samples Used</th>
+      <th style="font-size:9px;background:${bg}">S1 PSI</th>
+      <th style="font-size:9px;background:${bg}">S2 PSI</th>
+      <th style="font-size:9px;background:${bg}">S3 PSI</th>
+      <th style="font-size:9px;background:${bg}">Ave PSI</th>
+      <th style="font-size:9px;background:${bg}">Theo Target</th>
+      <th style="font-size:9px;background:${bg}">Lab No. / Result / Remarks</th>`;
+  });
 
   let html=`<div style="overflow-x:auto">
-  <table class="data-table" style="font-size:10px;min-width:1400px">
+  <table class="data-table" style="font-size:10px">
     <thead>
       <tr>
-        <th rowspan="3" style="min-width:80px">Date</th>
-        <th rowspan="3" style="min-width:100px">Client</th>
-        <th rowspan="3" style="min-width:100px">Project</th>
-        <th rowspan="3" style="min-width:120px">Location</th>
-        <th rowspan="3" style="min-width:60px">Structure</th>
-        <th rowspan="3" style="min-width:130px">Design</th>
-        <th rowspan="3" style="min-width:70px">Total Samples</th>
-        <th rowspan="3" style="min-width:70px">Site Coord.</th>
-        <th rowspan="3" style="min-width:70px">Testing Coord.</th>
-        <th colspan="8" style="text-align:center;background:#6B1A1A;border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">TEST DAY 1</th>
-        <th colspan="8" style="text-align:center;background:#8B2222;border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">TEST DAY 2</th>
-        <th colspan="8" style="text-align:center;background:#6B1A1A;border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">TEST DAY 3</th>
-      </tr>`;
-
-  // Row 2 - dynamic day labels per entry (show most common or first entry)
-  // Since each row has different days, show in the sub-header as dynamic
-  html+=`<tr>
-        <th colspan="8" style="text-align:center;background:#4A0F0F;border-left:2px solid #fff;font-size:9px">Date | Samples Used | S1 | S2 | S3 | Ave PSI | Theo Target | Lab No./Result</th>
-        <th colspan="8" style="text-align:center;background:#6B1A1A;border-left:2px solid #fff;font-size:9px">Date | Samples Used | S1 | S2 | S3 | Ave PSI | Theo Target | Lab No./Result</th>
-        <th colspan="8" style="text-align:center;background:#4A0F0F;border-left:2px solid #fff;font-size:9px">Date | Samples Used | S1 | S2 | S3 | Ave PSI | Theo Target | Lab No./Result</th>
+        <th rowspan="2" style="min-width:80px">Date</th>
+        <th rowspan="2" style="min-width:100px">Client</th>
+        <th rowspan="2" style="min-width:100px">Project</th>
+        <th rowspan="2" style="min-width:120px">Location</th>
+        <th rowspan="2" style="min-width:60px">Structure</th>
+        <th rowspan="2" style="min-width:130px">Design</th>
+        <th rowspan="2" style="min-width:70px">Total Samples</th>
+        <th rowspan="2" style="min-width:70px">Site Coord.</th>
+        <th rowspan="2" style="min-width:70px">Testing Coord.</th>
+        ${topHeaders}
       </tr>
-      <tr>
-        <th style="font-size:9px;background:#4A0F0F;border-left:2px solid #fff">Test Date</th>
-        <th style="font-size:9px;background:#4A0F0F">Samples Used</th>
-        <th style="font-size:9px;background:#4A0F0F">S1</th>
-        <th style="font-size:9px;background:#4A0F0F">S2</th>
-        <th style="font-size:9px;background:#4A0F0F">S3</th>
-        <th style="font-size:9px;background:#4A0F0F">Ave PSI</th>
-        <th style="font-size:9px;background:#4A0F0F">Theo Target</th>
-        <th style="font-size:9px;background:#4A0F0F">Lab No./Result</th>
-        <th style="font-size:9px;background:#6B1A1A;border-left:2px solid #fff">Test Date</th>
-        <th style="font-size:9px;background:#6B1A1A">Samples Used</th>
-        <th style="font-size:9px;background:#6B1A1A">S1</th>
-        <th style="font-size:9px;background:#6B1A1A">S2</th>
-        <th style="font-size:9px;background:#6B1A1A">S3</th>
-        <th style="font-size:9px;background:#6B1A1A">Ave PSI</th>
-        <th style="font-size:9px;background:#6B1A1A">Theo Target</th>
-        <th style="font-size:9px;background:#6B1A1A">Lab No./Result</th>
-        <th style="font-size:9px;background:#4A0F0F;border-left:2px solid #fff">Test Date</th>
-        <th style="font-size:9px;background:#4A0F0F">Samples Used</th>
-        <th style="font-size:9px;background:#4A0F0F">S1</th>
-        <th style="font-size:9px;background:#4A0F0F">S2</th>
-        <th style="font-size:9px;background:#4A0F0F">S3</th>
-        <th style="font-size:9px;background:#4A0F0F">Ave PSI</th>
-        <th style="font-size:9px;background:#4A0F0F">Theo Target</th>
-        <th style="font-size:9px;background:#4A0F0F">Lab No./Result</th>
-      </tr>
+      <tr>${subHeaders}</tr>
     </thead>
     <tbody>`;
 
@@ -1910,15 +1903,15 @@ function renderTestMon(){
     let usedSoFar=0;
     let testCols='';
 
-    for(let i=0;i<3;i++){
-      const d=testDays[i];
+    activeDays.forEach((d,i)=>{
       const borderStyle=i>0?'border-left:2px solid #aaa':'';
+      const isActive=testDays.includes(d);
 
-      if(!d){
+      if(!isActive){
         for(let j=0;j<8;j++){
-          testCols+=`<td style="background:#f5f5f5;${j===0?borderStyle:''}">—</td>`;
+          testCols+=`<td style="background:#f0f0f0;${j===0?borderStyle:''}"></td>`;
         }
-        continue;
+        return;
       }
 
       const key=`tr_${d}`;
@@ -1935,8 +1928,7 @@ function renderTestMon(){
 
       testCols+=`
         <td style="text-align:center;${borderStyle}">
-          <span style="color:#1565C0;font-size:9px;font-weight:600">${fmtDate(testDate)}</span><br>
-          <span style="font-size:8px;color:#555;font-weight:600">${d}-Day Testing</span>
+          <span style="color:#1565C0;font-size:9px;font-weight:600">${fmtDate(testDate)}</span>
         </td>
         <td style="text-align:center">
           <input type="number" value="${res.samplesUsed||''}" min="0" max="${totalSamples}"
@@ -1970,7 +1962,7 @@ function renderTestMon(){
             onchange="saveTrField(${e.id},${d},'remarks',this.value)"
             style="width:95px;font-size:9px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;margin-top:1px;display:block">
         </td>`;
-    }
+    });
 
     const totalUsed=testDays.reduce((sum,d)=>{
       const res=e[`tr_${d}`]||{};
