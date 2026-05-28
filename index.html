@@ -1728,13 +1728,15 @@ function saveTestRemark(id,day,val){
 function printTesting(){
   const filterDate=document.getElementById('test-date-filter').value;
   if(!filterDate){alert('Please select a date first.');return;}
-  const DAY_LABELS=['01 DAYS TESTING','03 DAYS TESTING','07 DAYS TESTING','14 DAYS TESTING','28 DAYS TESTING'];
-  const DAY_NUMS=[1,3,7,14,28];
+  const isAll=filterDate==='all';
+  const DAY_LABELS={'1':'01 DAYS TESTING','3':'03 DAYS TESTING','7':'07 DAYS TESTING','14':'14 DAYS TESTING','21':'21 DAYS TESTING','28':'28 DAYS TESTING'};
+  const DAY_NUMS=[1,3,7,14,21,28];
   let sectionsHtml='';
   DAY_NUMS.forEach((d,idx)=>{
     const matches=db.entries.filter(e=>{
       const testDays=getTestDays(e.days);
       const entryDate=normalizeDate(e.date||"");
+      if(isAll) return testDays.includes(d);
       return testDays.includes(d) && addDays(entryDate,d)===filterDate;
     });
     if(matches.length){
@@ -1771,7 +1773,7 @@ function printTesting(){
   });
 
   const printHTML=`<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Testing Schedule - ${fmtDate(filterDate)}</title>
+<html><head><meta charset="UTF-8"><title>Testing Schedule - ${isAll?"All Dates":fmtDate(filterDate)}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;font-size:10px;padding:14px}
@@ -1789,7 +1791,7 @@ body{font-family:Arial,sans-serif;font-size:10px;padding:14px}
     <td style="text-align:center;vertical-align:middle">
       <div style="font-size:15px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
       <div style="font-size:12px;font-weight:600;margin-top:3px">TESTING SCHEDULE</div>
-      <div style="font-size:12px;font-weight:700;color:#444;margin-top:3px">${fmtDate(filterDate).toUpperCase()}</div>
+      <div style="font-size:12px;font-weight:700;color:#444;margin-top:3px">${isAll?"ALL DATES":fmtDate(filterDate).toUpperCase()}</div>
     </td>
     <td style="width:85px;text-align:right;font-size:9px;color:#666;vertical-align:top">SP-QA-02<br>F-QA-2.2</td>
   </tr>
