@@ -302,8 +302,8 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <div class="panel">
     <div class="panel-header">
       Monthly Master List of Pouring
-      <div style="display:flex;gap:6px" class="no-print">
-        <select id="filter-month" onchange="renderMaster()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none"></select>
+      <div style="display:flex;gap:6px;align-items:center">
+        <select id="filter-month" onchange="renderMaster()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none" class="no-print"></select>
         <button class="btn btn-sm btn-print" onclick="printSheet('master')">🖨 Print</button>
       </div>
     </div>
@@ -550,8 +550,8 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
 <!-- ===== SHEET 4: TESTING SCHEDULE ===== -->
 <div id="tab-testing" class="tab-content">
-  <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap" class="no-print">
-    <div style="display:flex;align-items:center;gap:8px">
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:8px" class="no-print">
       <label style="font-weight:700;color:var(--maroon)">📅 Schedule Date:</label>
       <select id="test-date-filter" onchange="renderTesting()" style="padding:6px 10px;border:1px solid var(--maroon);border-radius:4px;font-size:13px;color:var(--maroon);font-weight:600"></select>
     </div>
