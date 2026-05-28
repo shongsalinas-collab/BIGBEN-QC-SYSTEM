@@ -327,9 +327,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Pouring Date</th>
               <th>Client</th>
               <th>Location</th>
-              <th>Design (PSI)</th>
-              <th>Aggregates</th>
-              <th>No. of Days</th>
+              <th>Design</th>
               <th>Time Batched</th>
               <th>Time Finish</th>
               <th>Structure</th>
@@ -1339,9 +1337,7 @@ function renderMaster(){
       <td>${fmtDate(e.date)}</td>
       <td><strong>${e.client}</strong>${e.rejected?`<br><span class="badge badge-rejected">${e.autoRejected?'AUTO-':''}REJECTED: ${e.rejectReason}</span>`:''}</td>
       <td>${e.location||'—'}</td>
-      <td>${e.design||'—'}</td>
-      <td>${e.agg||'—'}</td>
-      <td>${e.days||'—'}</td>
+      <td style="font-size:11px"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
       <td>${fmtTime(e.timeBatched)}</td>
       <td>${fmtTime(e.time)}</td>
       <td>${e.structure||'—'}</td>
