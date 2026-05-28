@@ -1836,108 +1836,117 @@ function renderTestMon(){
     const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
     return d.getFullYear()===yr&&d.getMonth()+1===mo;
   });
-
-  if(resultF){
-    rows=rows.filter(e=>{
-      const status=getOverallStatus(e);
-      return status===resultF;
-    });
-  }
+  if(resultF) rows=rows.filter(e=>getOverallStatus(e)===resultF);
 
   const container=document.getElementById('testmon-container');
   const empty=document.getElementById('testmon-empty');
+  if(!rows.length){if(container)container.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
 
-  if(!rows.length){
-    if(container) container.innerHTML='';
-    if(empty) empty.style.display='block';
-    return;
-  }
-  if(empty) empty.style.display='none';
+  // Group entries by design days to build proper headers
+  // Build one big table - all rows same structure (max test days = 28days = 3 test days)
+  
+  let html=`<div style="overflow-x:auto">
+  <table class="data-table" style="font-size:10px;min-width:1400px">
+    <thead>
+      <tr>
+        <th rowspan="2" style="min-width:80px">Date</th>
+        <th rowspan="2" style="min-width:100px">Client</th>
+        <th rowspan="2" style="min-width:100px">Project</th>
+        <th rowspan="2" style="min-width:120px">Location</th>
+        <th rowspan="2" style="min-width:70px">Structure</th>
+        <th rowspan="2" style="min-width:130px">Design</th>
+        <th rowspan="2" style="min-width:70px">Samples</th>
+        <th rowspan="2" style="min-width:80px">Site Coord.</th>
+        <th rowspan="2" style="min-width:80px">Testing Coord.</th>
+        <th colspan="7" style="text-align:center;background:#333;border-left:2px solid #fff">TEST 1</th>
+        <th colspan="7" style="text-align:center;background:#555;border-left:2px solid #fff">TEST 2</th>
+        <th colspan="7" style="text-align:center;background:#333;border-left:2px solid #fff">TEST 3</th>
+      </tr>
+      <tr>
+        <th style="font-size:9px;background:#333;border-left:2px solid #fff">Date</th>
+        <th style="font-size:9px;background:#333">S1</th>
+        <th style="font-size:9px;background:#333">S2</th>
+        <th style="font-size:9px;background:#333">S3</th>
+        <th style="font-size:9px;background:#333">Ave PSI</th>
+        <th style="font-size:9px;background:#333">Theo Target</th>
+        <th style="font-size:9px;background:#333">Lab No. / Result</th>
+        <th style="font-size:9px;background:#555;border-left:2px solid #fff">Date</th>
+        <th style="font-size:9px;background:#555">S1</th>
+        <th style="font-size:9px;background:#555">S2</th>
+        <th style="font-size:9px;background:#555">S3</th>
+        <th style="font-size:9px;background:#555">Ave PSI</th>
+        <th style="font-size:9px;background:#555">Theo Target</th>
+        <th style="font-size:9px;background:#555">Lab No. / Result</th>
+        <th style="font-size:9px;background:#333;border-left:2px solid #fff">Date</th>
+        <th style="font-size:9px;background:#333">S1</th>
+        <th style="font-size:9px;background:#333">S2</th>
+        <th style="font-size:9px;background:#333">S3</th>
+        <th style="font-size:9px;background:#333">Ave PSI</th>
+        <th style="font-size:9px;background:#333">Theo Target</th>
+        <th style="font-size:9px;background:#333">Lab No. / Result</th>
+      </tr>
+    </thead>
+    <tbody>`;
 
-  // Build table HTML
-  let html='<div style="overflow-x:auto"><table class="data-table" style="font-size:11px;min-width:1200px">';
-
-  // Build dynamic headers based on test days
-  // We need to know all unique design types to build proper headers
-  // Use a per-entry card approach instead for clarity
-
-  html='';
   rows.forEach((e,idx)=>{
     const days=e.days||'28 Days';
     const testDays=TEST_DAYS_MAP[days]||[7,14,28];
     const design=parseFloat(e.design)||0;
     const theoMap=THEO_PCTS[days]||{};
-    const rejected=e.rejected;
+    const rowBg=idx%2===0?'':'background:#fdf8f8';
 
-    // Build test sections
-    let testSections='';
-    testDays.forEach(d=>{
+    let testCols='';
+    // Always show 3 test columns (pad with empty if less)
+    for(let i=0;i<3;i++){
+      const d=testDays[i];
+      if(!d){
+        testCols+=`<td colspan="7" style="background:#f0f0f0;${i===1?'border-left:2px solid #ddd':''}"></td>`;
+        // Actually need 7 separate tds
+        testCols=testCols.replace(`<td colspan="7"`,`<td style="background:#f0f0f0;${i===1?'border-left:2px solid #ddd':i===2?'border-left:2px solid #ddd':''}">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td`);
+        testCols=testCols.replace(`style="background:#f0f0f0;${i===1?'border-left:2px solid #ddd':''}"></td>`, '');
+        continue;
+      }
       const key=`tr_${d}`;
-      const results=e[key]||{r1:'',r2:'',r3:'',ave:'',labNo:'',remarks:''};
+      const res=e[key]||{};
       const theo=theoMap[d]||100;
-      const theoTarget=design?(design*theo/100).toFixed(0):'—';
+      const theoTarget=design?(design*theo/100).toFixed(0):'-';
       const testDate=addDays(normalizeDate(e.date||''),d);
-      const ave=results.ave||'';
+      const ave=res.ave||'';
       const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
       const resultColor=passed===null?'#888':passed?'#2E7D32':'#C62828';
-      const resultText=passed===null?'Pending':passed?'PASS':'FAIL';
+      const borderLeft=i>0?'border-left:2px solid #aaa':'';
 
-      testSections+=`
-        <td style="text-align:center;color:#1565C0;font-weight:600;font-size:10px">${fmtDate(testDate)}</td>
-        <td style="text-align:center">${results.r1||'—'}</td>
-        <td style="text-align:center">${results.r2||'—'}</td>
-        <td style="text-align:center">${results.r3||'—'}</td>
-        <td style="text-align:center;font-weight:700">${ave||'—'}</td>
-        <td style="text-align:center;font-size:10px">${results.labNo||'—'}</td>
-        <td style="text-align:center;font-size:10px">${theoTarget} PSI<br><span style="color:#888;font-size:9px">(${theo}%)</span></td>
-        <td style="text-align:center"><span style="color:${resultColor};font-weight:600;font-size:10px">${resultText}</span></td>
-        <td class="no-print"><button class="btn btn-sm btn-outline" style="padding:2px 6px;font-size:10px" onclick="openModal(${e.id},${d})">📝</button></td>
-        <td style="font-size:10px">${results.remarks||'—'}</td>`;
-    });
+      testCols+=`
+        <td style="text-align:center;color:#1565C0;font-size:9px;${borderLeft}">${fmtDate(testDate)}<br><span style="font-size:8px;color:#888">${d}-Day</span></td>
+        <td style="text-align:center">${res.r1||'—'}</td>
+        <td style="text-align:center">${res.r2||'—'}</td>
+        <td style="text-align:center">${res.r3||'—'}</td>
+        <td style="text-align:center;font-weight:700;color:${resultColor}">${ave||'—'}</td>
+        <td style="text-align:center;font-size:9px">${theoTarget} PSI<br><span style="color:#888">(${theo}%)</span></td>
+        <td style="font-size:9px">
+          <div style="color:${resultColor};font-weight:600">${passed===null?'PENDING':passed?'✅ PASS':'❌ FAIL'}</div>
+          <div style="color:#666;font-size:8px">${res.labNo||''}</div>
+          <div style="color:#666;font-size:8px">${res.remarks||''}</div>
+          <button class="btn no-print" style="padding:1px 5px;font-size:9px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px" onclick="openModal(${e.id},${d})">📝 Log</button>
+        </td>`;
+    }
 
-    // Day headers for this entry
-    let dayHeaders='';
-    let subHeaders='';
-    testDays.forEach(d=>{
-      dayHeaders+=`<th colspan="10" style="text-align:center;background:#4A0F0F;border-left:2px solid #fff">${d} DAY TEST</th>`;
-      subHeaders+=`<th style="font-size:9px">Test Date</th><th style="font-size:9px">S1</th><th style="font-size:9px">S2</th><th style="font-size:9px">S3</th><th style="font-size:9px">Ave PSI</th><th style="font-size:9px">Lab No.</th><th style="font-size:9px">Theo Target</th><th style="font-size:9px">Result</th><th class="no-print" style="font-size:9px">Log</th><th style="font-size:9px">Remarks</th>`;
-    });
-
-    html+=`
-    <div style="margin-bottom:16px;border:1px solid var(--border);border-radius:6px;overflow:hidden">
-      <!-- Entry Header -->
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
-        <tr style="background:#fdf8f8">
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border);width:100px"><strong>Pouring Date</strong><br>${fmtDate(normalizeDate(e.date))}</td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Client</strong><br>${e.client||'—'}${rejected?` <span class="badge badge-fail" style="font-size:9px">⛔ FRESH REJECTED</span>`:''}</td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Project</strong><br><input type="text" value="${e.project||''}" onchange="saveEntryField(${e.id},'project',this.value)" style="border:1px solid #ddd;border-radius:3px;padding:2px 6px;font-size:11px;width:130px" placeholder="Project name"></td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Location</strong><br><span style="font-size:11px">${e.location||'—'}</span></td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Structure</strong><br>${e.structure||'—'}</td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Design</strong><br><span style="font-size:11px;font-weight:600">${e.design||'—'} ${e.agg||''} ${e.days||''}</span></td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap"><strong>Samples</strong><br>${e.samples||'—'} (${e.kind||'—'})</td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Site Coord.</strong><br>${e.coord||'—'}</td>
-          <td style="padding:6px 10px;border-bottom:1px solid var(--border)"><strong>Testing Coord.</strong><br>${e.testingCoord||'—'}</td>
-        </tr>
-      </table>
-      <!-- Test Results Table -->
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:11px">
-          <thead>
-            <tr style="-webkit-print-color-adjust:exact;print-color-adjust:exact">
-              ${dayHeaders}
-            </tr>
-            <tr style="background:#6B1A1A;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">
-              ${subHeaders}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>${testSections}</tr>
-          </tbody>
-        </table>
-      </div>
-    </div>`;
+    html+=`<tr style="${rowBg}">
+      <td style="white-space:nowrap">${fmtDate(normalizeDate(e.date))}</td>
+      <td><strong>${e.client}</strong></td>
+      <td><input type="text" value="${e.project||''}" onchange="saveEntryField(${e.id},'project',this.value)" style="border:1px solid #ddd;border-radius:2px;padding:1px 4px;font-size:10px;width:90px" placeholder="Project"></td>
+      <td style="font-size:10px">${e.location||'—'}</td>
+      <td>${e.structure||'—'}</td>
+      <td style="font-size:10px;white-space:nowrap"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
+      <td style="text-align:center;white-space:nowrap">${e.samples||'—'} (${e.kind||'—'})</td>
+      <td style="font-size:10px">${e.coord||'—'}</td>
+      <td style="font-size:10px">${e.testingCoord||'—'}</td>
+      ${testCols}
+    </tr>`;
   });
 
+  html+=`</tbody></table></div>`;
   if(container) container.innerHTML=html;
 }
 
