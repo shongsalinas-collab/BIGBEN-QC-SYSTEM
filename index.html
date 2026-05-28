@@ -1741,7 +1741,7 @@ function printTesting(){
     });
     if(matches.length){
       sectionsHtml+=`<div style="margin-bottom:14px">
-        <div style="background:#222;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[idx]}</div>
+        <div style="background:#222;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">${d===1?'01 DAYS TESTING':d===3?'03 DAYS TESTING':d===7?'07 DAYS TESTING':d===14?'14 DAYS TESTING':d===21?'21 DAYS TESTING':'28 DAYS TESTING'}</div>
         <table style="width:100%;border-collapse:collapse;font-size:9px">
           <thead><tr style="background:#6B1A1A;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">
             <th style="padding:4px 6px">DATE</th>
