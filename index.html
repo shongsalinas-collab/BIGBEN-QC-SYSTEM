@@ -1871,9 +1871,7 @@ function renderTestMon(){
     topHeaders+=`<th colspan="7" style="text-align:center;background:${bg};border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[d]}</th>`;
     subHeaders+=`
       <th style="font-size:9px;background:${bg};border-left:2px solid #fff">Test Date</th>
-      <th style="font-size:9px;background:${bg}">S1 PSI</th>
-      <th style="font-size:9px;background:${bg}">S2 PSI</th>
-      <th style="font-size:9px;background:${bg}">S3 PSI</th>
+      <th colspan="3" style="font-size:9px;background:${bg};text-align:center">PSI Results (+S to add)</th>
       <th style="font-size:9px;background:${bg}">Ave PSI</th>
       <th style="font-size:9px;background:${bg}">Theo Target</th>
       <th style="font-size:9px;background:${bg}">Lab No. / Result / Remarks</th>`;
@@ -1938,20 +1936,25 @@ function renderTestMon(){
         <td style="text-align:center;${borderStyle}">
           <span style="color:#1565C0;font-size:9px;font-weight:600">${fmtDate(testDate)}</span>
         </td>
-        <td style="text-align:center">
-          <input type="number" value="${res.r1||''}"
-            onchange="saveTrField(${e.id},${d},'r1',this.value);autoCalcAve(${e.id},${d})"
-            style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
-        </td>
-        <td style="text-align:center">
-          <input type="number" value="${res.r2||''}"
-            onchange="saveTrField(${e.id},${d},'r2',this.value);autoCalcAve(${e.id},${d})"
-            style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
-        </td>
-        <td style="text-align:center">
-          <input type="number" value="${res.r3||''}"
-            onchange="saveTrField(${e.id},${d},'r3',this.value);autoCalcAve(${e.id},${d})"
-            style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+        <td colspan="3" style="vertical-align:top">
+          <div id="samples_${e.id}_${d}" style="display:flex;flex-wrap:wrap;gap:2px;align-items:center">
+            ${(()=>{
+              // Build sample inputs dynamically
+              const sampleKeys=Object.keys(res).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+              // Always show at least r1, r2, r3
+              const minKeys=['r1','r2','r3'];
+              minKeys.forEach(k=>{if(!sampleKeys.includes(k))sampleKeys.push(k);});
+              sampleKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+              return sampleKeys.map(k=>`
+                <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
+                  <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
+                  <input type="number" value="${res[k]||''}"
+                    onchange="saveTrField(${e.id},${d},'${k}',this.value);autoCalcAve(${e.id},${d})"
+                    style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+                </div>`).join('')+
+                `<button onclick="addSample(${e.id},${d})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
+            })()}
+          </div>
         </td>
         <td id="ave_${e.id}_${d}" style="text-align:center;font-weight:700;color:${resultColor}">${ave||'—'}</td>
         <td style="text-align:center;font-size:9px">${theoTarget}<br><span style="color:#888;font-size:8px">(${theo}%)</span></td>
@@ -2010,10 +2013,9 @@ function autoCalcAve(entryId, day){
   if(!e) return;
   const key=`tr_${day}`;
   if(!e[key]) e[key]={};
-  const r1=parseFloat(e[key].r1)||0;
-  const r2=parseFloat(e[key].r2)||0;
-  const r3=parseFloat(e[key].r3)||0;
-  const vals=[r1,r2,r3].filter(x=>x>0);
+  // Get all sample values dynamically
+  const sampleKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/));
+  const vals=sampleKeys.map(k=>parseFloat(e[key][k])||0).filter(x=>x>0);
   e[key].ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):'';
   saveQuiet();
   // Update ave display without full re-render
@@ -2034,6 +2036,34 @@ function autoCalcAve(entryId, day){
   updateRemainingDisplay(entryId);
 }
 
+function addSample(entryId, day){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const key=`tr_${day}`;
+  if(!e[key]) e[key]={};
+  // Find next sample number
+  const existing=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/));
+  const nextNum=existing.length>0?Math.max(...existing.map(k=>parseInt(k.slice(1))))+1:4;
+  e[key][`r${nextNum}`]='';
+  saveQuiet();
+  // Re-render just the samples div
+  const samplesDiv=document.getElementById(`samples_${entryId}_${day}`);
+  if(samplesDiv){
+    const sampleKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+    const minKeys=['r1','r2','r3'];
+    minKeys.forEach(k=>{if(!sampleKeys.includes(k))sampleKeys.push(k);});
+    sampleKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+    samplesDiv.innerHTML=sampleKeys.map(k=>`
+      <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
+        <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
+        <input type="number" value="${e[key][k]||''}"
+          onchange="saveTrField(${entryId},${day},'${k}',this.value);autoCalcAve(${entryId},${day})"
+          style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+      </div>`).join('')+
+      `<button onclick="addSample(${entryId},${day})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
+  }
+}
+
 function updateRemainingDisplay(entryId){
   const e=db.entries.find(x=>x.id===entryId);
   if(!e) return;
@@ -2042,7 +2072,8 @@ function updateRemainingDisplay(entryId){
   const totalSamples=parseInt(e.samples)||0;
   const totalUsed=testDays.reduce((sum,d)=>{
     const res=e[`tr_${d}`]||{};
-    return sum+[res.r1,res.r2,res.r3].filter(x=>x&&parseFloat(x)>0).length;
+    const sKeys=Object.keys(res).filter(k=>k.match(/^r\d+$/));
+    return sum+sKeys.filter(k=>res[k]&&parseFloat(res[k])>0).length;
   },0);
   const finalRemaining=totalSamples-totalUsed;
   const remEl=document.getElementById(`rem_${entryId}`);
