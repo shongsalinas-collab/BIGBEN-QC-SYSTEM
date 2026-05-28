@@ -555,7 +555,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <div class="no-print" style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
     <div style="display:flex;align-items:center;gap:8px">
       <label style="font-weight:700;color:var(--maroon)">📅 Schedule Date:</label>
-      <input type="date" id="test-date-filter" onchange="renderTesting()" oninput="renderTesting()" style="padding:6px 10px;border:1px solid var(--maroon);border-radius:4px;font-size:13px;color:var(--maroon);font-weight:600">
+      <select id="test-date-filter" onchange="renderTesting()" style="padding:6px 10px;border:1px solid var(--maroon);border-radius:4px;font-size:13px;color:var(--maroon);font-weight:600"></select>
     </div>
     <button class="btn btn-print" onclick="printTesting()">🖨 Print Schedule</button>
   </div>
@@ -1650,11 +1650,40 @@ function renderMonitoring(){
   }).join('');
 }
 
+// ===== TESTING DATE SELECTOR =====
+function initTestingDateSelector(){
+  const sel=document.getElementById('test-date-filter');
+  if(!sel) return;
+  const dates=new Set();
+  // Add all test dates from entries
+  db.entries.forEach(e=>{
+    const entryDate=normalizeDate(e.date||'');
+    if(!entryDate) return;
+    const testDays=getTestDays(e.days);
+    testDays.forEach(d=>dates.add(addDays(entryDate,d)));
+  });
+  const todayStr=new Date().toISOString().split('T')[0];
+  dates.add(todayStr);
+  const sorted=[...dates].sort();
+  const currentVal=sel.value;
+  sel.innerHTML=`<option value="all">All Dates</option>`+
+    sorted.map(d=>{
+      const count=db.entries.filter(e=>{
+        const entryDate=normalizeDate(e.date||'');
+        return getTestDays(e.days).some(td=>addDays(entryDate,td)===d);
+      }).length;
+      const isSelected=currentVal?d===currentVal:d===todayStr;
+      return `<option value="${d}" ${isSelected?'selected':''}>${fmtDate(d)}${count>0?' ('+count+')':''}`;
+    }).join('');
+  renderTesting();
+}
+
 // ===== RENDER TESTING SCHEDULE =====
 const TESTING_COORDS = ['Dio Balili','Joshua Facun','Roni Aguilar','Teodoro Taysa','JM Buitizon'];
 
 function renderTesting(){
-  const filterDate=document.getElementById('test-date-filter').value;
+  const sel=document.getElementById('test-date-filter');
+  const filterDate=sel?sel.value:'';
   const panel2=document.getElementById('testing-panels');
   const empty2=document.getElementById('test-empty');
   if(!filterDate){
@@ -1670,6 +1699,7 @@ function renderTesting(){
     const matches=db.entries.filter(e=>{
       const testDays=getTestDays(e.days);
       const entryDate=normalizeDate(e.date||"");
+      if(filterDate==='all') return testDays.includes(d);
       return testDays.includes(d) && addDays(entryDate,d)===filterDate;
     });
     if(matches.length){
@@ -2141,7 +2171,7 @@ function renderCharts(){
 }
 
 function renderAll(){
-  renderMaster();initMoldDateSelector();renderMonitoring();renderTesting();renderTestMon();renderKPI();loadSettingsUI();
+  renderMaster();initMoldDateSelector();initTestingDateSelector();renderMonitoring();renderTestMon();renderKPI();loadSettingsUI();
 }
 
 // Set today's date defaults
