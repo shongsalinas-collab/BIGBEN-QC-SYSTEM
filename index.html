@@ -615,20 +615,20 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <table class="data-table" style="font-size:11px">
           <thead>
             <tr>
-              <th style="width:85px">Pouring Date</th>
-              <th style="min-width:120px">Client</th>
-              <th style="min-width:120px">Location</th>
-              <th style="width:160px">Design</th>
-              <th style="width:80px">Structure</th>
-              <th style="width:90px">Samples & Kind</th>
-              <th style="width:100px">Fresh Concrete</th>
-              <th style="width:70px">Day 1 PSI</th>
-              <th style="width:70px">Day 2 PSI</th>
-              <th style="width:70px">Day 3 PSI</th>
-              <th style="width:70px">Ave PSI</th>
-              <th style="width:80px">Result</th>
-              <th style="width:80px">% of Design</th>
-              <th class="no-print" style="width:60px">Log</th>
+              <th>Pouring Date</th>
+              <th>Client</th>
+              <th>Location</th>
+              <th>Design</th>
+              <th>Structure</th>
+              <th>Samples</th>
+              <th>Fresh Concrete</th>
+              <th>Day 1 PSI</th>
+              <th>Day 2 PSI</th>
+              <th>Day 3 PSI</th>
+              <th>Ave PSI</th>
+              <th>Result</th>
+              <th>% of Design</th>
+              <th class="no-print">Log</th>
             </tr>
           </thead>
           <tbody id="testmon-tbody"></tbody>
@@ -1865,19 +1865,16 @@ function renderTestMon(){
       <td>${fmtDate(normalizeDate(e.date))}</td>
       <td><strong>${e.client}</strong></td>
       <td style="font-size:11px">${e.location||'—'}</td>
-      <td style="font-size:11px">${e.design||'—'} ${e.agg||''}</td>
-      <td>${e.agg||'—'}</td>
-      <td>${e.days||'—'}</td>
+      <td style="font-size:11px;white-space:nowrap"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
       <td>${e.structure||'—'}</td>
-      <td>${e.samples||'—'}</td>
-      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
-      <td>${e.kind||'—'}</td>
-      <td>${r1||'—'}</td>
-      <td>${r2||'—'}</td>
-      <td>${r3||'—'}</td>
-      <td>${ave||'—'}</td>
+      <td style="white-space:nowrap">${e.samples||'—'} <span style="font-size:10px;color:#666">(${e.kind||'—'})</span></td>
+      <td style="white-space:nowrap">${e.rejected?`<span class="badge badge-fail" style="font-size:10px">⛔ REJECTED</span>`:'<span class="badge badge-pass" style="font-size:10px">✅ OK</span>'}</td>
+      <td style="text-align:center">${r1||'—'}</td>
+      <td style="text-align:center">${r2||'—'}</td>
+      <td style="text-align:center">${r3||'—'}</td>
+      <td style="text-align:center;font-weight:600">${ave||'—'}</td>
       <td>${resultBadge}</td>
-      <td>${pct?pct+'%':'—'}</td>
+      <td style="text-align:center">${pct?pct+'%':'—'}</td>
       <td class="no-print"><button class="btn btn-sm btn-outline" onclick="openModal(${e.id})">📝 Log</button></td>
     </tr>`;
   }).join('');
