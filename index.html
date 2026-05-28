@@ -222,18 +222,8 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         </div>
       </div>
 
-      <!-- ROW 3: QC Requirements -->
-      <div style="background:#f8f8fb;border:1px solid #c8c8e0;border-radius:4px;padding:10px;margin-bottom:10px">
-        <div style="font-size:10px;font-weight:700;color:#1565C0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🌡️ QC Requirements & Fresh Concrete</div>
-        <div class="form-grid">
-          <div class="form-group"><label>Required Slump Min (")</label><input type="number" id="f-slump-min" placeholder='e.g. 6' step="0.5" oninput="checkAutoReject()"></div>
-          <div class="form-group"><label>Required Slump Max (")</label><input type="number" id="f-slump-max" placeholder='e.g. 8' step="0.5" oninput="checkAutoReject()"></div>
-          <div class="form-group"><label>Actual Slump (")</label><input type="number" id="f-actual-slump" placeholder="Actual reading" step="0.5" oninput="checkAutoReject()"></div>
-          <div class="form-group"><label>Max. Allowed Temp (°C)</label><input type="number" id="f-temp" placeholder="e.g. 32" oninput="checkAutoReject()"></div>
-          <div class="form-group"><label>Actual Temperature (°C)</label><input type="text" id="f-actual-temp" placeholder="Actual reading" oninput="checkAutoReject()"></div>
-        </div>
-        <div id="auto-reject-alert" style="display:none;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:4px;padding:8px 12px;margin-top:8px;font-size:12px;font-weight:600;color:#C62828"></div>
-      </div>
+      <!-- Auto reject alert still needed -->
+      <div id="auto-reject-alert" style="display:none;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;font-weight:600;color:#C62828"></div>
 
       <!-- ROW 4: Samples -->
       <div style="background:#fffbf5;border:1px solid #e0d8c8;border-radius:4px;padding:10px;margin-bottom:10px">
@@ -280,6 +270,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <option value="Temperature">Temperature</option>
               <option value="Slump">Slump</option>
               <option value="Overmix">Overmix (Standby Time)</option>
+              <option value="Segregated">Segregated</option>
               <option value="Others">Others (specify)</option>
             </select>
           </div>
@@ -1954,10 +1945,10 @@ function renderTestMon(){
             onchange="saveTrField(${e.id},${d},'r3',this.value);autoCalcAve(${e.id},${d})"
             style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
         </td>
-        <td style="text-align:center;font-weight:700;color:${resultColor}">${ave||'—'}</td>
+        <td id="ave_${e.id}_${d}" style="text-align:center;font-weight:700;color:${resultColor}">${ave||'—'}</td>
         <td style="text-align:center;font-size:9px">${theoTarget}<br><span style="color:#888;font-size:8px">(${theo}%)</span></td>
         <td style="font-size:9px">
-          <div style="color:${resultColor};font-weight:600">${passed===null?'Pending':passed?'✅ PASS':'❌ FAIL'}</div>
+          <div id="res_${e.id}_${d}" style="color:${resultColor};font-weight:600">${passed===null?'Pending':passed?'✅ PASS':'❌ FAIL'}</div>
           <input type="text" value="${res.labNo||''}" placeholder="Lab No."
             onchange="saveTrField(${e.id},${d},'labNo',this.value)"
             style="width:95px;font-size:9px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;margin-top:2px;display:block">
@@ -1984,9 +1975,7 @@ function renderTestMon(){
       <td style="font-size:10px;white-space:nowrap"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
       <td style="text-align:center">
         <strong>${totalSamples}</strong> (${e.kind||'—'})
-        <br><span style="font-size:9px;font-weight:600;color:${finalRemaining===0?'#2E7D32':finalRemaining<0?'#C62828':'#E65100'}">
-          ${finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' remaining':'⚠️ Over'}
-        </span>
+        <br><span id="rem_${e.id}" style="font-size:9px;font-weight:600;color:${finalRemaining===0?'#2E7D32':finalRemaining<0?'#C62828':'#E65100'}">${finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' remaining':'⚠️ Over'}</span>
       </td>
       <td style="font-size:10px">${e.coord||'—'}</td>
       <td style="font-size:10px">${e.testingCoord||'—'}</td>
@@ -2005,8 +1994,8 @@ function saveTrField(entryId, day, field, val){
   if(!e[key]) e[key]={};
   e[key][field]=val;
   save();
-  // Re-render to update remaining counts
-  renderTestMon();
+  // Update only specific cells without full re-render
+  updateRemainingDisplay(entryId);
 }
 
 function autoCalcAve(entryId, day){
@@ -2020,7 +2009,40 @@ function autoCalcAve(entryId, day){
   const vals=[r1,r2,r3].filter(x=>x>0);
   e[key].ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):'';
   save();
-  renderTestMon();
+  // Update ave display without full re-render
+  const aveEl=document.getElementById(`ave_${entryId}_${day}`);
+  if(aveEl){
+    const ave=e[key].ave;
+    const design=parseFloat(e.design)||0;
+    const theoMap=THEO_PCTS[e.days||'28 Days']||{};
+    const theo=theoMap[day]||100;
+    const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
+    const resultColor=passed===null?'#888':passed?'#2E7D32':'#C62828';
+    aveEl.style.color=resultColor;
+    aveEl.textContent=ave||'—';
+    // Update result cell
+    const resEl=document.getElementById(`res_${entryId}_${day}`);
+    if(resEl) resEl.innerHTML=passed===null?'Pending':passed?'<span style="color:#2E7D32;font-weight:600">✅ PASS</span>':'<span style="color:#C62828;font-weight:600">❌ FAIL</span>';
+  }
+  updateRemainingDisplay(entryId);
+}
+
+function updateRemainingDisplay(entryId){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const days=e.days||'28 Days';
+  const testDays=TEST_DAYS_MAP[days]||[7,14,28];
+  const totalSamples=parseInt(e.samples)||0;
+  const totalUsed=testDays.reduce((sum,d)=>{
+    const res=e[`tr_${d}`]||{};
+    return sum+[res.r1,res.r2,res.r3].filter(x=>x&&parseFloat(x)>0).length;
+  },0);
+  const finalRemaining=totalSamples-totalUsed;
+  const remEl=document.getElementById(`rem_${entryId}`);
+  if(remEl){
+    remEl.style.color=finalRemaining===0?'#2E7D32':finalRemaining<0?'#C62828':'#E65100';
+    remEl.textContent=finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' remaining':'⚠️ Over';
+  }
 }
 
 function saveEntryField(id,field,val){
