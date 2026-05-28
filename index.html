@@ -759,10 +759,11 @@ let currentModalId = null;
 let fbRef = null;
 let isOnline = false;
 
+let _skipNextRender=false;
+
 function save(){
   if(fbRef && isOnline){
     ensureArray();
-    // Save settings separately, entries as indexed object with _ prefix to preserve order
     const saveData = {
       settings: db.settings||{},
       entries: {}
@@ -772,6 +773,13 @@ function save(){
     });
     fbRef.set(saveData).catch(e=>console.error('Save error:',e));
   }
+}
+
+function saveQuiet(){
+  // Save without triggering re-render (for Sheet 5 inline edits)
+  _skipNextRender=true;
+  save();
+  setTimeout(()=>{_skipNextRender=false;},3000);
 }
 
 function ensureArray(){
@@ -1993,8 +2001,7 @@ function saveTrField(entryId, day, field, val){
   const key=`tr_${day}`;
   if(!e[key]) e[key]={};
   e[key][field]=val;
-  save();
-  // Update only specific cells without full re-render
+  saveQuiet();
   updateRemainingDisplay(entryId);
 }
 
@@ -2008,7 +2015,7 @@ function autoCalcAve(entryId, day){
   const r3=parseFloat(e[key].r3)||0;
   const vals=[r1,r2,r3].filter(x=>x>0);
   e[key].ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):'';
-  save();
+  saveQuiet();
   // Update ave display without full re-render
   const aveEl=document.getElementById(`ave_${entryId}_${day}`);
   if(aveEl){
@@ -2047,7 +2054,7 @@ function updateRemainingDisplay(entryId){
 
 function saveEntryField(id,field,val){
   const e=db.entries.find(x=>x.id===id);
-  if(e){e[field]=val;save();}
+  if(e){e[field]=val;saveQuiet();}
 }
 
 function getOverallStatus(e){
@@ -2610,6 +2617,10 @@ fbRef.on('value', snapshot => {
   }
   ensureArray();
   showOnlineStatus(true);
+  if(_skipNextRender){
+    _skipNextRender=false;
+    return;
+  }
   renderAll();
 }, error => {
   console.error('Firebase error:', error);
