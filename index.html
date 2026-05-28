@@ -1843,48 +1843,48 @@ function renderTestMon(){
   if(!rows.length){if(container)container.innerHTML='';if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';
 
-  // Group entries by design days to build proper headers
-  // Build one big table - all rows same structure (max test days = 28days = 3 test days)
-  
   let html=`<div style="overflow-x:auto">
-  <table class="data-table" style="font-size:10px;min-width:1400px">
+  <table class="data-table" style="font-size:10px;min-width:1600px">
     <thead>
       <tr>
         <th rowspan="2" style="min-width:80px">Date</th>
         <th rowspan="2" style="min-width:100px">Client</th>
         <th rowspan="2" style="min-width:100px">Project</th>
         <th rowspan="2" style="min-width:120px">Location</th>
-        <th rowspan="2" style="min-width:70px">Structure</th>
+        <th rowspan="2" style="min-width:60px">Structure</th>
         <th rowspan="2" style="min-width:130px">Design</th>
-        <th rowspan="2" style="min-width:70px">Samples</th>
-        <th rowspan="2" style="min-width:80px">Site Coord.</th>
-        <th rowspan="2" style="min-width:80px">Testing Coord.</th>
-        <th colspan="7" style="text-align:center;background:#333;border-left:2px solid #fff">TEST 1</th>
-        <th colspan="7" style="text-align:center;background:#555;border-left:2px solid #fff">TEST 2</th>
-        <th colspan="7" style="text-align:center;background:#333;border-left:2px solid #fff">TEST 3</th>
+        <th rowspan="2" style="min-width:60px">Total Samples</th>
+        <th rowspan="2" style="min-width:70px">Site Coord.</th>
+        <th rowspan="2" style="min-width:70px">Testing Coord.</th>
+        <th colspan="8" style="text-align:center;background:#6B1A1A;border-left:2px solid #fff">TEST DAY 1</th>
+        <th colspan="8" style="text-align:center;background:#8B2222;border-left:2px solid #fff">TEST DAY 2</th>
+        <th colspan="8" style="text-align:center;background:#6B1A1A;border-left:2px solid #fff">TEST DAY 3</th>
       </tr>
       <tr>
-        <th style="font-size:9px;background:#333;border-left:2px solid #fff">Date</th>
-        <th style="font-size:9px;background:#333">S1</th>
-        <th style="font-size:9px;background:#333">S2</th>
-        <th style="font-size:9px;background:#333">S3</th>
-        <th style="font-size:9px;background:#333">Ave PSI</th>
-        <th style="font-size:9px;background:#333">Theo Target</th>
-        <th style="font-size:9px;background:#333">Lab No. / Result</th>
-        <th style="font-size:9px;background:#555;border-left:2px solid #fff">Date</th>
-        <th style="font-size:9px;background:#555">S1</th>
-        <th style="font-size:9px;background:#555">S2</th>
-        <th style="font-size:9px;background:#555">S3</th>
-        <th style="font-size:9px;background:#555">Ave PSI</th>
-        <th style="font-size:9px;background:#555">Theo Target</th>
-        <th style="font-size:9px;background:#555">Lab No. / Result</th>
-        <th style="font-size:9px;background:#333;border-left:2px solid #fff">Date</th>
-        <th style="font-size:9px;background:#333">S1</th>
-        <th style="font-size:9px;background:#333">S2</th>
-        <th style="font-size:9px;background:#333">S3</th>
-        <th style="font-size:9px;background:#333">Ave PSI</th>
-        <th style="font-size:9px;background:#333">Theo Target</th>
-        <th style="font-size:9px;background:#333">Lab No. / Result</th>
+        <th style="font-size:9px;background:#6B1A1A;border-left:2px solid #fff">Test Date</th>
+        <th style="font-size:9px;background:#6B1A1A">Samples Used</th>
+        <th style="font-size:9px;background:#6B1A1A">S1 PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">S2 PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">S3 PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">Ave PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">Theo Target</th>
+        <th style="font-size:9px;background:#6B1A1A">Lab No./Result</th>
+        <th style="font-size:9px;background:#8B2222;border-left:2px solid #fff">Test Date</th>
+        <th style="font-size:9px;background:#8B2222">Samples Used</th>
+        <th style="font-size:9px;background:#8B2222">S1 PSI</th>
+        <th style="font-size:9px;background:#8B2222">S2 PSI</th>
+        <th style="font-size:9px;background:#8B2222">S3 PSI</th>
+        <th style="font-size:9px;background:#8B2222">Ave PSI</th>
+        <th style="font-size:9px;background:#8B2222">Theo Target</th>
+        <th style="font-size:9px;background:#8B2222">Lab No./Result</th>
+        <th style="font-size:9px;background:#6B1A1A;border-left:2px solid #fff">Test Date</th>
+        <th style="font-size:9px;background:#6B1A1A">Samples Used</th>
+        <th style="font-size:9px;background:#6B1A1A">S1 PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">S2 PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">S3 PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">Ave PSI</th>
+        <th style="font-size:9px;background:#6B1A1A">Theo Target</th>
+        <th style="font-size:9px;background:#6B1A1A">Lab No./Result</th>
       </tr>
     </thead>
     <tbody>`;
@@ -1894,60 +1894,133 @@ function renderTestMon(){
     const testDays=TEST_DAYS_MAP[days]||[7,14,28];
     const design=parseFloat(e.design)||0;
     const theoMap=THEO_PCTS[days]||{};
+    const totalSamples=parseInt(e.samples)||0;
     const rowBg=idx%2===0?'':'background:#fdf8f8';
 
+    // Compute remaining samples
+    let usedSoFar=0;
     let testCols='';
-    // Always show 3 test columns (pad with empty if less)
+
     for(let i=0;i<3;i++){
       const d=testDays[i];
+      const borderStyle=i>0?'border-left:2px solid #aaa':'';
+
       if(!d){
-        testCols+=`<td colspan="7" style="background:#f0f0f0;${i===1?'border-left:2px solid #ddd':''}"></td>`;
-        // Actually need 7 separate tds
-        testCols=testCols.replace(`<td colspan="7"`,`<td style="background:#f0f0f0;${i===1?'border-left:2px solid #ddd':i===2?'border-left:2px solid #ddd':''}">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td style="background:#f0f0f0">&nbsp;</td><td`);
-        testCols=testCols.replace(`style="background:#f0f0f0;${i===1?'border-left:2px solid #ddd':''}"></td>`, '');
+        // Empty test columns
+        for(let j=0;j<8;j++){
+          testCols+=`<td style="background:#f0f0f0;${j===0?borderStyle:''}"></td>`;
+        }
         continue;
       }
+
       const key=`tr_${d}`;
       const res=e[key]||{};
       const theo=theoMap[d]||100;
       const theoTarget=design?(design*theo/100).toFixed(0):'-';
       const testDate=addDays(normalizeDate(e.date||''),d);
       const ave=res.ave||'';
+      const samplesUsed=parseInt(res.samplesUsed)||0;
+      usedSoFar+=samplesUsed;
+      const remaining=totalSamples-usedSoFar;
       const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
       const resultColor=passed===null?'#888':passed?'#2E7D32':'#C62828';
-      const borderLeft=i>0?'border-left:2px solid #aaa':'';
+
+      // Day label for header display
+      const dayLabel=`${d}-Day Test`;
 
       testCols+=`
-        <td style="text-align:center;color:#1565C0;font-size:9px;${borderLeft}">${fmtDate(testDate)}<br><span style="font-size:8px;color:#888">${d}-Day</span></td>
-        <td style="text-align:center">${res.r1||'—'}</td>
-        <td style="text-align:center">${res.r2||'—'}</td>
-        <td style="text-align:center">${res.r3||'—'}</td>
-        <td style="text-align:center;font-weight:700;color:${resultColor}">${ave||'—'}</td>
-        <td style="text-align:center;font-size:9px">${theoTarget} PSI<br><span style="color:#888">(${theo}%)</span></td>
-        <td style="font-size:9px">
-          <div style="color:${resultColor};font-weight:600">${passed===null?'PENDING':passed?'✅ PASS':'❌ FAIL'}</div>
-          <div style="color:#666;font-size:8px">${res.labNo||''}</div>
-          <div style="color:#666;font-size:8px">${res.remarks||''}</div>
-          <button class="btn no-print" style="padding:1px 5px;font-size:9px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px" onclick="openModal(${e.id},${d})">📝 Log</button>
+        <td style="text-align:center;${borderStyle}">
+          <span style="color:#1565C0;font-size:9px;font-weight:600">${fmtDate(testDate)}</span><br>
+          <span style="font-size:8px;color:#888">${dayLabel}</span>
+        </td>
+        <td style="text-align:center">
+          <input type="number" value="${res.samplesUsed||''}" min="0" max="${totalSamples}"
+            onchange="saveTrField(${e.id},${d},'samplesUsed',this.value)"
+            style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+          <br><span style="font-size:8px;color:${remaining<0?'#C62828':'#2E7D32'}">${samplesUsed>0?'Rem: '+remaining:''}</span>
+        </td>
+        <td style="text-align:center">
+          <input type="number" value="${res.r1||''}"
+            onchange="saveTrField(${e.id},${d},'r1',this.value);autoCalcAve(${e.id},${d})"
+            style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+        </td>
+        <td style="text-align:center">
+          <input type="number" value="${res.r2||''}"
+            onchange="saveTrField(${e.id},${d},'r2',this.value);autoCalcAve(${e.id},${d})"
+            style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+        </td>
+        <td style="text-align:center">
+          <input type="number" value="${res.r3||''}"
+            onchange="saveTrField(${e.id},${d},'r3',this.value);autoCalcAve(${e.id},${d})"
+            style="width:45px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+        </td>
+        <td style="text-align:center;font-weight:700;color:${resultColor}" id="ave_${e.id}_${d}">${ave||'—'}</td>
+        <td style="text-align:center;font-size:9px">${theoTarget}<br><span style="color:#888">(${theo}%)</span></td>
+        <td style="font-size:9px;word-wrap:break-word;max-width:100px">
+          <div style="color:${resultColor};font-weight:600">${passed===null?'Pending':passed?'✅ PASS':'❌ FAIL'}</div>
+          <input type="text" value="${res.labNo||''}" placeholder="Lab No."
+            onchange="saveTrField(${e.id},${d},'labNo',this.value)"
+            style="width:90px;font-size:9px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;margin-top:2px">
+          <input type="text" value="${res.remarks||''}" placeholder="Remarks"
+            onchange="saveTrField(${e.id},${d},'remarks',this.value)"
+            style="width:90px;font-size:9px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;margin-top:1px">
         </td>`;
     }
 
+    // Remaining after all tests
+    const totalUsed=testDays.reduce((sum,d)=>{
+      const res=e[`tr_${d}`]||{};
+      return sum+(parseInt(res.samplesUsed)||0);
+    },0);
+    const finalRemaining=totalSamples-totalUsed;
+
     html+=`<tr style="${rowBg}">
-      <td style="white-space:nowrap">${fmtDate(normalizeDate(e.date))}</td>
-      <td><strong>${e.client}</strong></td>
-      <td><input type="text" value="${e.project||''}" onchange="saveEntryField(${e.id},'project',this.value)" style="border:1px solid #ddd;border-radius:2px;padding:1px 4px;font-size:10px;width:90px" placeholder="Project"></td>
-      <td style="font-size:10px">${e.location||'—'}</td>
-      <td>${e.structure||'—'}</td>
+      <td style="white-space:nowrap;font-size:10px">${fmtDate(normalizeDate(e.date))}</td>
+      <td style="word-wrap:break-word"><strong>${e.client}</strong></td>
+      <td><input type="text" value="${e.project||''}" onchange="saveEntryField(${e.id},'project',this.value)"
+        style="border:1px solid #ddd;border-radius:2px;padding:1px 4px;font-size:10px;width:85px" placeholder="Project"></td>
+      <td style="font-size:10px;word-wrap:break-word;max-width:120px">${e.location||'—'}</td>
+      <td style="font-size:10px;word-wrap:break-word">${e.structure||'—'}</td>
       <td style="font-size:10px;white-space:nowrap"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
-      <td style="text-align:center;white-space:nowrap">${e.samples||'—'} (${e.kind||'—'})</td>
-      <td style="font-size:10px">${e.coord||'—'}</td>
-      <td style="font-size:10px">${e.testingCoord||'—'}</td>
+      <td style="text-align:center">
+        <strong>${totalSamples}</strong> (${e.kind||'—'})
+        <br><span style="font-size:9px;color:${finalRemaining===0?'#2E7D32':finalRemaining<0?'#C62828':'#E65100'}">
+          ${finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' left':'⚠️ Over'}
+        </span>
+      </td>
+      <td style="font-size:10px;word-wrap:break-word">${e.coord||'—'}</td>
+      <td style="font-size:10px;word-wrap:break-word">${e.testingCoord||'—'}</td>
       ${testCols}
     </tr>`;
   });
 
   html+=`</tbody></table></div>`;
   if(container) container.innerHTML=html;
+}
+
+function saveTrField(entryId, day, field, val){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const key=`tr_${day}`;
+  if(!e[key]) e[key]={};
+  e[key][field]=val;
+  save();
+  // Re-render to update remaining counts
+  renderTestMon();
+}
+
+function autoCalcAve(entryId, day){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const key=`tr_${day}`;
+  if(!e[key]) e[key]={};
+  const r1=parseFloat(e[key].r1)||0;
+  const r2=parseFloat(e[key].r2)||0;
+  const r3=parseFloat(e[key].r3)||0;
+  const vals=[r1,r2,r3].filter(x=>x>0);
+  e[key].ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):'';
+  save();
+  renderTestMon();
 }
 
 function saveEntryField(id,field,val){
