@@ -1425,7 +1425,7 @@ function renderKPICharts(entries){
     if(chartKpi1) chartKpi1.destroy();
     const acc=entries.filter(e=>!e.rejected).length;
     const rej=entries.filter(e=>e.rejected).length;
-    chartKpi1=new Chart(ctx1,{type:'doughnut',data:{labels:['Accepted','Rejected'],datasets:[{data:[acc,rej],backgroundColor:['#2E7D32','#C62828'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+' ('+Math.round(c.raw/(acc+rej||1)*100)+'%)'}}}}});
+    chartKpi1=new Chart(ctx1,{type:'doughnut',data:{labels:['Accepted','Rejected'],datasets:[{data:[acc||0.001,rej],backgroundColor:['#2E7D32','#C62828'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+(c.label==='Accepted'?acc:rej)+' ('+(c.label==='Accepted'?Math.round(acc/(acc+rej||1)*100):Math.round(rej/(acc+rej||1)*100))+'%)'}}}},});
   }
   const ctx2=document.getElementById('chart-kpi2');
   if(ctx2){
@@ -1437,7 +1437,7 @@ function renderKPICharts(entries){
       const design=parseFloat(e.design)||0;
       tdays.forEach(d=>{const res=e['tr_'+d]||{};if(res.ave){parseFloat(res.ave)>=design*(theoMap[d]||100)/100?pass++:fail++;}else pending++;});
     });
-    chartKpi2=new Chart(ctx2,{type:'doughnut',data:{labels:['Pass','Fail','Pending'],datasets:[{data:[pass,fail,pending],backgroundColor:['#2E7D32','#C62828','#E65100'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}}}});
+    chartKpi2=new Chart(ctx2,{type:'doughnut',data:{labels:['Pass','Fail','Pending'],datasets:[{data:[pass||(pending>0?0.001:0),fail,pending],backgroundColor:['#2E7D32','#C62828','#E65100'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}}}});
   }
   const ctx3=document.getElementById('chart-reason');
   if(ctx3){
