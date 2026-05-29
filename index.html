@@ -675,21 +675,37 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px">
     <div class="panel" style="margin:0">
       <div class="panel-header" style="font-size:11px">KPI 1 — Fresh Concrete</div>
-      <div class="panel-body" style="padding:12px"><canvas id="chart-kpi1" height="180"></canvas></div>
+      <div class="panel-body" style="padding:12px">
+        <div style="position:relative;width:100%;height:200px">
+          <canvas id="chart-kpi1" style="width:100%!important;height:200px!important"></canvas>
+        </div>
+      </div>
     </div>
     <div class="panel" style="margin:0">
       <div class="panel-header" style="font-size:11px">KPI 2 — Hardened Concrete</div>
-      <div class="panel-body" style="padding:12px"><canvas id="chart-kpi2" height="180"></canvas></div>
+      <div class="panel-body" style="padding:12px">
+        <div style="position:relative;width:100%;height:200px">
+          <canvas id="chart-kpi2" style="width:100%!important;height:200px!important"></canvas>
+        </div>
+      </div>
     </div>
     <div class="panel" style="margin:0">
       <div class="panel-header" style="font-size:11px">Rejection by Reason</div>
-      <div class="panel-body" style="padding:12px"><canvas id="chart-reason" height="180"></canvas></div>
+      <div class="panel-body" style="padding:12px">
+        <div style="position:relative;width:100%;height:200px">
+          <canvas id="chart-reason" style="width:100%!important;height:200px!important"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="panel" style="margin-bottom:16px">
     <div class="panel-header" style="font-size:11px">📈 Monthly Trend — All KPIs (Last 6 Months)</div>
-    <div class="panel-body" style="padding:12px"><canvas id="chart-trend" height="90"></canvas></div>
+    <div class="panel-body" style="padding:12px">
+      <div style="position:relative;width:100%;height:120px">
+        <canvas id="chart-trend" style="width:100%!important;height:120px!important"></canvas>
+      </div>
+    </div>
   </div>
 
   <!-- Rejection Log -->
@@ -1425,7 +1441,7 @@ function renderKPICharts(entries){
     if(chartKpi1) chartKpi1.destroy();
     const acc=entries.filter(e=>!e.rejected).length;
     const rej=entries.filter(e=>e.rejected).length;
-    chartKpi1=new Chart(ctx1,{type:'doughnut',data:{labels:['Accepted','Rejected'],datasets:[{data:[acc||0.001,rej],backgroundColor:['#2E7D32','#C62828'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+(c.label==='Accepted'?acc:rej)+' ('+(c.label==='Accepted'?Math.round(acc/(acc+rej||1)*100):Math.round(rej/(acc+rej||1)*100))+'%)'}}}},});
+    chartKpi1=new Chart(ctx1,{type:'doughnut',data:{labels:['Accepted','Rejected'],datasets:[{data:[acc||0.001,rej],backgroundColor:['#2E7D32','#C62828'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}}});
   }
   const ctx2=document.getElementById('chart-kpi2');
   if(ctx2){
@@ -1437,14 +1453,14 @@ function renderKPICharts(entries){
       const design=parseFloat(e.design)||0;
       tdays.forEach(d=>{const res=e['tr_'+d]||{};if(res.ave){parseFloat(res.ave)>=design*(theoMap[d]||100)/100?pass++:fail++;}else pending++;});
     });
-    chartKpi2=new Chart(ctx2,{type:'doughnut',data:{labels:['Pass','Fail','Pending'],datasets:[{data:[pass||(pending>0?0.001:0),fail,pending],backgroundColor:['#2E7D32','#C62828','#E65100'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}}}});
+    chartKpi2=new Chart(ctx2,{type:'doughnut',data:{labels:['Pass','Fail','Pending'],datasets:[{data:[pass||(pending>0?0.001:0),fail,pending],backgroundColor:['#2E7D32','#C62828','#E65100'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}}}});
   }
   const ctx3=document.getElementById('chart-reason');
   if(ctx3){
     if(chartRsn) chartRsn.destroy();
     const reasons={Temperature:0,Slump:0,Overmix:0,Segregated:0,Others:0};
     entries.filter(e=>e.rejected).forEach(e=>{const r=e.rejectReason||'Others';if(reasons[r]!==undefined)reasons[r]++;else reasons['Others']++;});
-    chartRsn=new Chart(ctx3,{type:'bar',data:{labels:Object.keys(reasons),datasets:[{label:'Count',data:Object.values(reasons),backgroundColor:['#E65100','#1565C0','#6A1B9A','#2E7D32','#37474F'],borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}}}}}});
+    chartRsn=new Chart(ctx3,{type:'bar',data:{labels:Object.keys(reasons),datasets:[{label:'Count',data:Object.values(reasons),backgroundColor:['#E65100','#1565C0','#6A1B9A','#2E7D32','#37474F'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}}}}}});
   }
 }
 
@@ -1473,7 +1489,7 @@ function renderTrendChart(){
     d3.push(due>0?Math.round(onT/due*100):null);
   });
   if(chartTrend) chartTrend.destroy();
-  chartTrend=new Chart(ctx,{type:'line',data:{labels:months.map(m=>m.label),datasets:[{label:'KPI 1 Fresh',data:d1,borderColor:'#6B1A1A',backgroundColor:'rgba(107,26,26,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#6B1A1A'},{label:'KPI 2 Hardened',data:d2,borderColor:'#1565C0',backgroundColor:'rgba(21,101,192,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#1565C0'},{label:'KPI 3 On-Time',data:d3,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#2E7D32'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:10}}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  chartTrend=new Chart(ctx,{type:'line',data:{labels:months.map(m=>m.label),datasets:[{label:'KPI 1 Fresh',data:d1,borderColor:'#6B1A1A',backgroundColor:'rgba(107,26,26,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#6B1A1A'},{label:'KPI 2 Hardened',data:d2,borderColor:'#1565C0',backgroundColor:'rgba(21,101,192,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#1565C0'},{label:'KPI 3 On-Time',data:d3,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#2E7D32'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:10}}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
 }
 
 function loadSettingsUI(){
@@ -3000,7 +3016,7 @@ function renderCharts(){
         labels:Object.keys(reasons),
         datasets:[{label:'Count',data:Object.values(reasons),backgroundColor:['#E65100','#1565C0','#6A1B9A','#37474F'],borderRadius:4}]
       },
-      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}}}}}
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}}}}}
     });
   }
 
