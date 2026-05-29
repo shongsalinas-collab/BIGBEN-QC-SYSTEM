@@ -675,15 +675,11 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
     <div class="panel" style="margin:0">
       <div class="panel-header" style="font-size:11px">KPI 1 — Fresh Concrete Acceptance</div>
-      <div class="panel-body" style="padding:14px" id="kpi1-chart-container">
-        <div style="text-align:center;color:#999;padding:20px">Loading...</div>
-      </div>
+      <div class="panel-body" style="padding:14px" id="kpi1-chart-container" style="min-height:160px"><div style="text-align:center;color:#999;padding:20px">—</div></div>
     </div>
     <div class="panel" style="margin:0">
       <div class="panel-header" style="font-size:11px">Rejection by Reason</div>
-      <div class="panel-body" style="padding:14px" id="kpi-reason-chart">
-        <div style="text-align:center;color:#999;padding:20px">Loading...</div>
-      </div>
+      <div class="panel-body" style="padding:14px" id="kpi-reason-chart" style="min-height:160px"><div style="text-align:center;color:#999;padding:20px">—</div></div>
     </div>
   </div>
 
@@ -3453,6 +3449,19 @@ function renderCharts(){
 
 function renderAll(){
   renderMaster();initMoldDateSelector();initTestingDateSelector();renderMonitoring();renderTestMon();renderKPI();loadSettingsUI();
+  // Render KPI charts if KPI tab is active
+  const activeTab=document.querySelector('.tab-content.active');
+  if(activeTab&&activeTab.id==='tab-kpi'){
+    setTimeout(()=>{
+      const mon=document.getElementById('kpi-month').value;
+      if(!mon) return;
+      const [yr,mo]=mon.split('-').map(Number);
+      const ents=db.entries.filter(e=>{const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');return d.getFullYear()===yr&&d.getMonth()+1===mo;});
+      const tv=ents.reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
+      const rv=ents.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
+      renderKPISVGCharts(ents,tv>0?Math.round((tv-rv)/tv*100):0,tv,rv);
+    },200);
+  }
 }
 
 // Set today's date defaults
