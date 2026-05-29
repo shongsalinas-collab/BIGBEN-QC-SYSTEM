@@ -2733,9 +2733,10 @@ function renderTestMon(){
   let subHeaders='';
   activeDays.forEach(d=>{
     const bg=bgColors[d];
-    topHeaders+=`<th colspan="7" style="text-align:center;background:${bg};border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[d]}</th>`;
+    topHeaders+=`<th colspan="8" style="text-align:center;background:${bg};border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[d]}</th>`;
     subHeaders+=`
-      <th style="font-size:9px;background:${bg};border-left:2px solid #fff">Test Date</th>
+      <th style="font-size:9px;background:${bg};border-left:2px solid #fff">Sched. Date</th>
+      <th style="font-size:9px;background:${bg}">Actual Test Date</th>
       <th colspan="3" style="font-size:9px;background:${bg};text-align:center">PSI Results (+S to add)</th>
       <th style="font-size:9px;background:${bg}">Ave PSI</th>
       <th style="font-size:9px;background:${bg}">Theo Target</th>
@@ -2778,7 +2779,7 @@ function renderTestMon(){
       const isActive=testDays.includes(d);
 
       if(!isActive){
-        for(let j=0;j<7;j++){
+        for(let j=0;j<8;j++){
           testCols+=`<td style="background:#f0f0f0;${j===0?borderStyle:''}"></td>`;
         }
         return;
@@ -2797,9 +2798,21 @@ function renderTestMon(){
       const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
       const resultColor=passed===null?'#888':passed?'#2E7D32':'#C62828';
 
+      // Check if tested on time
+      const actualTestDate=res.testDate||'';
+      const isOnTime=actualTestDate&&actualTestDate<=testDate;
+      const isLate=actualTestDate&&actualTestDate>testDate;
+      const timeliness=!actualTestDate?'':(isOnTime?'<span style="color:#2E7D32;font-size:8px">✅ On Time</span>':'<span style="color:#C62828;font-size:8px">⚠️ Late</span>');
+
       testCols+=`
         <td style="text-align:center;${borderStyle}">
           <span style="color:#1565C0;font-size:9px;font-weight:600">${fmtDate(testDate)}</span>
+        </td>
+        <td style="text-align:center">
+          <input type="date" value="${res.testDate||''}"
+            onchange="saveTrField(${e.id},${d},'testDate',this.value)"
+            style="font-size:9px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;width:95px">
+          <div>${timeliness}</div>
         </td>
         <td colspan="3" style="vertical-align:top">
           <div id="samples_${e.id}_${d}" style="display:flex;flex-wrap:wrap;gap:2px;align-items:center">
