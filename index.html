@@ -1412,6 +1412,15 @@ const TESTING_COORDS = ['Dio Balili','Joshua Facun','Roni Aguilar','Teodoro Tays
 
 let chartKpi1=null,chartKpi2=null,chartRsn=null,chartTrend=null;
 
+function tryRenderCharts(){
+  const entries=window._lastKpiEntries||[];
+  if(!window.Chart){setTimeout(()=>tryRenderCharts(),500);return;}
+  const canvas=document.getElementById('chart-kpi1');
+  if(!canvas||canvas.offsetWidth===0){setTimeout(()=>tryRenderCharts(),300);return;}
+  renderKPICharts(entries);
+  renderTrendChart();
+}
+
 function renderKPICharts(entries){
   const ctx1=document.getElementById('chart-kpi1');
   if(ctx1){
