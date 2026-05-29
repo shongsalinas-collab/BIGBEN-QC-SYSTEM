@@ -635,6 +635,385 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
 <!-- ===== KPI DASHBOARD ===== -->
 <div id="tab-kpi" class="tab-content">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <label style="font-weight:700;color:var(--maroon);font-size:12px">📅 Month:</label>
+    <select id="kpi-month" onchange="renderKPI()" style="padding:6px 10px;border:1px solid var(--maroon);border-radius:4px;font-size:13px;color:var(--maroon);font-weight:600"></select>
+  </div>
+
+  <!-- KPI Summary Cards -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px">
+    <div style="background:linear-gradient(135deg,#6B1A1A,#8B2222);border-radius:10px;padding:16px;color:#fff;box-shadow:0 4px 12px rgba(107,26,26,.3)">
+      <div style="font-size:11px;opacity:.8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">KPI 1 · Fresh Concrete</div>
+      <div style="font-size:36px;font-weight:700;margin-bottom:4px" id="kpi1-val">—</div>
+      <div style="font-size:11px;opacity:.9" id="kpi1-sub">Acceptance Rate</div>
+      <div style="margin-top:10px;background:rgba(255,255,255,.2);border-radius:4px;height:6px;overflow:hidden">
+        <div id="kpi1-bar" style="height:100%;background:#fff;transition:width .5s;width:0%;border-radius:4px"></div>
+      </div>
+      <div style="font-size:10px;opacity:.7;margin-top:4px">Target: ≥95%</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#1565C0,#1976D2);border-radius:10px;padding:16px;color:#fff;box-shadow:0 4px 12px rgba(21,101,192,.3)">
+      <div style="font-size:11px;opacity:.8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">KPI 2 · Hardened Concrete</div>
+      <div style="font-size:36px;font-weight:700;margin-bottom:4px" id="kpi2-val">—</div>
+      <div style="font-size:11px;opacity:.9" id="kpi2-sub">Acceptance Rate</div>
+      <div style="margin-top:10px;background:rgba(255,255,255,.2);border-radius:4px;height:6px;overflow:hidden">
+        <div id="kpi2-bar" style="height:100%;background:#fff;transition:width .5s;width:0%;border-radius:4px"></div>
+      </div>
+      <div style="font-size:10px;opacity:.7;margin-top:4px">Target: ≥95%</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#2E7D32,#388E3C);border-radius:10px;padding:16px;color:#fff;box-shadow:0 4px 12px rgba(46,125,50,.3)">
+      <div style="font-size:11px;opacity:.8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">KPI 3 · On-Time Testing</div>
+      <div style="font-size:36px;font-weight:700;margin-bottom:4px" id="kpi3-val">—</div>
+      <div style="font-size:11px;opacity:.9" id="kpi3-sub">Timeliness Rate</div>
+      <div style="margin-top:10px;background:rgba(255,255,255,.2);border-radius:4px;height:6px;overflow:hidden">
+        <div id="kpi3-bar" style="height:100%;background:#fff;transition:width .5s;width:0%;border-radius:4px"></div>
+      </div>
+      <div style="font-size:10px;opacity:.7;margin-top:4px">Target: 100%</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px">
+    <div class="panel" style="margin:0">
+      <div class="panel-header" style="font-size:11px">KPI 1 — Fresh Concrete</div>
+      <div class="panel-body" style="padding:12px"><canvas id="chart-kpi1" height="180"></canvas></div>
+    </div>
+    <div class="panel" style="margin:0">
+      <div class="panel-header" style="font-size:11px">KPI 2 — Hardened Concrete</div>
+      <div class="panel-body" style="padding:12px"><canvas id="chart-kpi2" height="180"></canvas></div>
+    </div>
+    <div class="panel" style="margin:0">
+      <div class="panel-header" style="font-size:11px">Rejection by Reason</div>
+      <div class="panel-body" style="padding:12px"><canvas id="chart-reason" height="180"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-header" style="font-size:11px">📈 Monthly Trend — All KPIs (Last 6 Months)</div>
+    <div class="panel-body" style="padding:12px"><canvas id="chart-trend" height="90"></canvas></div>
+  </div>
+
+  <!-- Rejection Log -->
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-header" style="background:#C62828;font-size:12px">⛔ Fresh Concrete Rejection Log</div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr style="background:#C62828;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+          <th>#</th><th>Date</th><th>Client</th><th>Location</th><th>Design</th><th>Reason</th><th>Vol (m³)</th><th>TM No.</th><th>DR No.</th>
+        </tr></thead>
+        <tbody id="kpi-rejection-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Hardened Breakdown -->
+  <div class="panel" style="margin-bottom:0">
+    <div class="panel-header" style="font-size:12px">📊 Hardened Concrete — Test Results</div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Date</th><th>Client</th><th>Design</th><th>Test Day</th><th>Ave PSI</th><th>Theo Target</th><th>Result</th>
+        </tr></thead>
+        <tbody id="kpi-hardened-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS TAB ===== -->
+<div id="tab-settings" class="tab-content">
+  <div class="panel">
+    <div class="panel-header">⚙️ QC Requirements Settings</div>
+    <div class="panel-body">
+      <div style="font-size:12px;color:#666;margin-bottom:16px">These values are used for auto-reject detection and KPI computation. Changes apply immediately to all new entries.</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Max Temperature (°C)</label><input type="number" id="s-max-temp" placeholder="e.g. 32" style="font-size:15px;font-weight:600"></div>
+        <div class="form-group"><label>Min Slump (inches)</label><input type="number" id="s-min-slump" step="0.5" placeholder="e.g. 2"></div>
+        <div class="form-group"><label>Max Slump (inches)</label><input type="number" id="s-max-slump" step="0.5" placeholder="e.g. 6"></div>
+        <div class="form-group"><label>Max Standby Time (hours)</label><input type="number" id="s-max-standby" placeholder="e.g. 4" style="font-size:15px;font-weight:600"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-maroon" onclick="saveSettings()">💾 Save Settings</button>
+        <button class="btn btn-outline" onclick="loadSettingsUI()">↺ Reset</button>
+      </div>
+      <div id="settings-saved" style="display:none;margin-top:10px;color:var(--green);font-weight:600;font-size:12px">✅ Settings saved!</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header" style="background:#C62828">🔧 Data Repair Tool</div>
+    <div class="panel-body">
+      <div style="font-size:12px;color:#666;margin-bottom:12px">Click this button to fix corrupted dates in the database. This will clean up any entries with malformed date formats.</div>
+      <button class="btn" style="background:#C62828;color:#fff" onclick="fixCorruptedDates()">🔧 Fix Corrupted Dates</button>
+      <div id="fix-result" style="display:none;margin-top:10px;font-size:12px;font-weight:600"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">📋 Current Requirements Summary</div>
+    <div class="panel-body">
+      <table class="data-table" style="max-width:500px">
+        <thead><tr><th>Parameter</th><th>Limit</th><th>Auto-Reject if...</th></tr></thead>
+        <tbody id="settings-summary"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SHEET 2: MOLD COLLECTION SCHEDULE ===== -->
+<div id="tab-mold" class="tab-content">
+
+  <!-- SCREEN VIEW -->
+  <div class="no-print">
+    <div class="filter-bar" style="margin-bottom:12px">
+      <label style="font-weight:700;color:var(--maroon)">📅 Collection Date:</label>
+      <select id="mold-filter-date" onchange="renderMold()" style="font-size:13px;padding:5px 10px;border:1px solid var(--maroon);border-radius:4px;color:var(--maroon);font-weight:600"></select>
+      <button class="btn btn-print" onclick="printMold()">🖨 Print Schedule</button>
+      <span style="font-size:11px;color:#888;margin-left:8px" id="mold-count"></span>
+    </div>
+  </div>
+
+  <!-- PRINTABLE AREA -->
+  <div id="mold-print-area">
+    <!-- Print Header -->
+    <div id="mold-print-header" style="display:none;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <td style="width:120px;vertical-align:middle">
+<img src="https://shongsalinas-collab.github.io/BIGBEN-QC-SYSTEM/logo-white.png" style="width:100px;height:100px;object-fit:contain">
+          </td>
+          <td style="text-align:center;vertical-align:middle">
+            <div style="font-size:16px;font-weight:700;color:var(--maroon)">BIG BEN READY MIX CONCRETE</div>
+            <div style="font-size:13px;font-weight:600;margin-top:2px">CYLINDER MOLD COLLECTION SCHEDULE</div>
+            <div style="font-size:12px;color:#666;margin-top:2px" id="mold-print-date-label"></div>
+          </td>
+          <td style="width:120px;text-align:right;vertical-align:top;font-size:10px;color:#666">
+            SP-QA-02<br>F-QA-2.1
+          </td>
+        </tr>
+      </table>
+      <div style="height:2px;background:var(--maroon);margin:8px 0"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="panel">
+      <div class="panel-header no-print">
+        Mold Collection Schedule
+        <span id="mold-header-date" style="font-size:12px;font-weight:400;opacity:.9"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="mold-table" style="min-width:900px">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pouring Date</th>
+              <th>Area</th>
+              <th>Client</th>
+              <th>Location</th>
+              <th>Design</th>
+              <th>Time Finish</th>
+              <th>Structure</th>
+              <th>Site Coordinator</th>
+              <th>Collection Date</th>
+              <th>Samples</th>
+              <th>Type of Mold</th>
+            </tr>
+          </thead>
+          <tbody id="mold-tbody"></tbody>
+        </table>
+      </div>
+      <div id="mold-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No mold collections scheduled for this date.</div>
+    </div>
+
+    <!-- Print Footer -->
+    <div id="mold-print-footer" style="display:none;margin-top:20px">
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <td style="width:33%;text-align:center;padding-top:40px;border-top:1px solid #333;font-size:11px">Prepared by</td>
+          <td style="width:33%;text-align:center;padding-top:40px;border-top:1px solid #333;font-size:11px">Checked by</td>
+          <td style="width:33%;text-align:center;padding-top:40px;border-top:1px solid #333;font-size:11px">Noted by</td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:10px;color:#666">Testing Coordinator</td>
+          <td style="text-align:center;font-size:10px;color:#666">QC Supervisor</td>
+          <td style="text-align:center;font-size:10px;color:#666">R&D Supervisor</td>
+        </tr>
+      </table>
+      <div style="margin-top:10px;font-size:9px;color:#999;text-align:center">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ===== SHEET 3: MOLD MONITORING ===== -->
+<div id="tab-monitoring" class="tab-content">
+  <div class="panel">
+    <div class="panel-header">
+      Mold Monitoring
+      <button class="btn btn-sm btn-print" onclick="printMonitoring()">🖨 Print</button>
+    </div>
+    <div id="mon-print-header" style="display:none;padding:14px 14px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:8px">
+        <tr>
+          <td style="width:80px;vertical-align:middle"><img src="https://shongsalinas-collab.github.io/BIGBEN-QC-SYSTEM/logo-maroon.jpg" style="width:65px;height:65px;object-fit:contain"></td>
+          <td style="text-align:center;vertical-align:middle">
+            <div style="font-size:14px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
+            <div style="font-size:11px;font-weight:600;margin-top:2px">MOLD MONITORING</div>
+            <div style="font-size:10px;color:#666;margin-top:2px" id="mon-print-date"></div>
+          </td>
+          <td style="width:80px;text-align:right;font-size:9px;color:#666;vertical-align:top">SP-QA-02<br>F-QA-2.1</td>
+        </tr>
+      </table>
+      <div style="height:2px;background:#6B1A1A;margin-bottom:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>
+    </div>
+    <div class="panel-body" style="padding:0">
+      <div class="filter-bar no-print">
+        <label>Area:</label>
+        <select id="mon-area-filter" onchange="renderMonitoring()">
+          <option value="">All</option>
+          <option>Manila Area</option>
+          <option>Bulacan Area</option>
+        </select>
+        <label>Status:</label>
+        <select id="mon-status-filter" onchange="renderMonitoring()">
+          <option value="">All</option>
+          <option value="collected">Collected</option>
+          <option value="pending">Pending</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="mon-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Slip No.</th>
+              <th>Pouring Date</th>
+              <th>Area</th>
+              <th>Client</th>
+              <th>Location</th>
+              <th>Design</th>
+              <th>Structure</th>
+              <th>Site Coord.</th>
+              <th>No. of Sample &amp; Kind</th>
+              <th>Sample Remarks</th>
+              <th>Curing Location</th>
+              <th>Time Return</th>
+            </tr>
+          </thead>
+          <tbody id="mon-tbody"></tbody>
+        </table>
+      </div>
+      <div id="mon-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No records found.</div>
+    </div>
+    <!-- Print Footer -->
+    <div id="mon-print-footer" style="display:none;padding:0 14px 14px">
+      <table style="width:100%;border-collapse:collapse;margin-top:20px">
+        <tr>
+          <td style="width:33%;text-align:center;padding-top:36px;border-top:1px solid #333;font-size:11px">Prepared by<div style="font-size:10px;color:#666">Testing Coordinator</div></td>
+          <td style="width:33%;text-align:center;padding-top:36px;border-top:1px solid #333;font-size:11px">Checked by<div style="font-size:10px;color:#666">QC Supervisor</div></td>
+          <td style="width:33%;text-align:center;padding-top:36px;border-top:1px solid #333;font-size:11px">Noted by<div style="font-size:10px;color:#666">R&D Supervisor</div></td>
+        </tr>
+      </table>
+      <div style="margin-top:10px;font-size:9px;color:#999;text-align:center">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SHEET 4: TESTING SCHEDULE ===== -->
+<div id="tab-testing" class="tab-content">
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:8px" class="no-print">
+      <label style="font-weight:700;color:var(--maroon)">📅 Schedule Date:</label>
+      <select id="test-date-filter" onchange="renderTesting()" style="padding:6px 10px;border:1px solid var(--maroon);border-radius:4px;font-size:13px;color:var(--maroon);font-weight:600"></select>
+    </div>
+    <button class="btn btn-sm" style="background:#1565C0;color:#fff;border:none;padding:7px 14px;border-radius:4px;cursor:pointer;font-weight:600" onclick="printTesting()">🖨 Print Schedule</button>
+  </div>
+
+  <!-- Print Header -->
+  <div id="testing-print-header" style="display:none;margin-bottom:14px">
+    <table style="width:100%;border-collapse:collapse">
+      <tr>
+        <td style="width:90px;vertical-align:middle"><img src="https://shongsalinas-collab.github.io/BIGBEN-QC-SYSTEM/logo-maroon.jpg" style="width:75px;height:75px;object-fit:contain"></td>
+        <td style="text-align:center;vertical-align:middle">
+          <div style="font-size:16px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
+          <div style="font-size:13px;font-weight:600;margin-top:3px">TESTING SCHEDULE</div>
+          <div style="font-size:12px;color:#444;font-weight:600;margin-top:2px" id="testing-print-date-label"></div>
+        </td>
+        <td style="width:90px;text-align:right;font-size:10px;color:#666;vertical-align:top">SP-QA-02<br>F-QA-2.2</td>
+      </tr>
+    </table>
+    <div style="height:2px;background:#6B1A1A;margin:8px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>
+  </div>
+
+  <div id="testing-panels"></div>
+  <div id="test-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">Select a date to view testing schedule.</div>
+
+  <!-- Print Footer -->
+  <div id="testing-print-footer" style="display:none;margin-top:20px">
+    <table style="width:100%;border-collapse:collapse">
+      <tr>
+        <td style="width:33%;text-align:center;padding-top:36px;border-top:1px solid #333;font-size:11px">Prepared by<div style="font-size:10px;color:#666">Testing Coordinator</div></td>
+        <td style="width:33%;text-align:center;padding-top:36px;border-top:1px solid #333;font-size:11px">Checked by<div style="font-size:10px;color:#666">QC Supervisor</div></td>
+        <td style="width:33%;text-align:center;padding-top:36px;border-top:1px solid #333;font-size:11px">Noted by<div style="font-size:10px;color:#666">R&D Supervisor</div></td>
+      </tr>
+    </table>
+    <div style="margin-top:10px;font-size:9px;color:#999;text-align:center">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+  </div>
+</div>
+
+<!-- ===== SHEET 5: TESTING MONITORING ===== -->
+<div id="tab-testmon" class="tab-content">
+
+  <!-- Result Entry Modal -->
+  <div id="result-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:8px;padding:20px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <h3 style="color:var(--maroon);margin-bottom:14px;font-size:14px" id="modal-title">Log Test Results</h3>
+      <div id="modal-info" style="background:#fdf8f8;border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:12px;font-size:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="form-group"><label>Sample 1 (PSI)</label><input type="number" id="r1" placeholder="0" oninput="updateModalCalc()"></div>
+        <div class="form-group"><label>Sample 2 (PSI)</label><input type="number" id="r2" placeholder="0" oninput="updateModalCalc()"></div>
+        <div class="form-group"><label>Sample 3 (PSI)</label><input type="number" id="r3" placeholder="0" oninput="updateModalCalc()"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label>Laboratory No.</label>
+        <input type="text" id="modal-lab-no" placeholder="e.g. TL-BUL-25-0308-11">
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Remarks</label>
+        <input type="text" id="modal-remarks" placeholder="e.g. Passed, Failed">
+      </div>
+      <div style="background:#f5f5f5;border-radius:4px;padding:10px;margin-bottom:12px;font-size:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div>Ave PSI: <strong id="modal-ave">—</strong></div>
+        <div>Theo Target: <strong id="modal-theo">—</strong></div>
+        <div>Result: <strong id="modal-result">—</strong></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-maroon" onclick="saveResult()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      Testing Monitoring — Compressive Strength Results
+      <div style="display:flex;gap:6px" class="no-print">
+        <select id="testmon-month" onchange="renderTestMon()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none"></select>
+        <select id="testmon-result-filter" onchange="renderTestMon()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none">
+          <option value="">All</option>
+          <option value="pass">Pass</option>
+          <option value="fail">Fail</option>
+          <option value="pending">Pending</option>
+        </select>
+        <button class="btn btn-sm btn-print" onclick="printTestMon()">🖨 Print</button>
+      </div>
+    </div>
+    <div id="testmon-container" style="padding:0"></div>
+    <div id="testmon-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No records found.</div>
+  </div>
+</div>
+
+<!-- ===== KPI DASHBOARD ===== -->
+<div id="tab-kpi" class="tab-content">
   <div class="panel">
     <div class="panel-header">
       KPI Dashboard
@@ -1027,6 +1406,1418 @@ function fixCorruptedDates(){
   el.style.color='var(--green)';
   el.textContent='✅ Fixed '+fixed+' corrupted values! Refreshing...';
   setTimeout(()=>{renderAll();},1000);
+}
+
+function loadSettingsUI(){
+  const s=getSettings();
+  document.getElementById('s-max-temp').value=s.maxTemp;
+  document.getElementById('s-min-slump').value=s.minSlump;
+  document.getElementById('s-max-slump').value=s.maxSlump;
+  document.getElementById('s-max-standby').value=s.maxStandby;
+  const tbody=document.getElementById('settings-summary');
+  if(tbody) tbody.innerHTML=`
+    <tr><td>Temperature</td><td>Max ${s.maxTemp}°C</td><td>Actual > ${s.maxTemp}°C</td></tr>
+    <tr><td>Slump (default range)</td><td>${s.minSlump}" – ${s.maxSlump}"</td><td>Actual &lt; min or &gt; max (per-entry range overrides this)</td></tr>
+    <tr><td>Standby Time (Overmix)</td><td>Max ${s.maxStandby} hours</td><td>Standby > ${s.maxStandby} hrs</td></tr>
+  `;
+}
+
+function clearForm(){
+  ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-testing-coord','f-samples','f-sample-remarks','f-sample-remarks-other','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  document.getElementById('f-rejected').checked=false;
+  document.getElementById('rejection-block').style.display='none';
+  document.getElementById('f-agg-other-wrap').style.display='none';
+  document.getElementById('f-reject-detail-wrap').style.display='none';
+}
+
+function addEntry(){
+  const date=document.getElementById('f-date').value;
+  const client=document.getElementById('f-client').value.trim();
+  if(!date||!client){alert('Please fill in at least Date and Client Name.');return;}
+  const aggVal=document.getElementById('f-agg').value;
+  const agg=aggVal==='others'?document.getElementById('f-agg-other').value:aggVal;
+  const isRejected=document.getElementById('f-rejected').checked;
+  const timeBatched=document.getElementById('f-time-batched').value;
+  const timeFinish=document.getElementById('f-time').value;
+  const standby=calcStandby(timeBatched,timeFinish);
+  const settings=getSettings();
+  const actualTemp=parseFloat(document.getElementById('f-actual-temp').value)||null;
+  const actualSlump=parseFloat(document.getElementById('f-actual-slump').value)||null;
+  const slumpMin=document.getElementById('f-slump-min').value;
+  const slumpMax=document.getElementById('f-slump-max').value;
+  const autoRejected=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax);
+  const finalRejected=isRejected||autoRejected.rejected;
+  const entry={
+    id:Date.now(),
+    date:normalizeDate(date), client,
+    location:document.getElementById('f-location').value,
+    design:document.getElementById('f-design').value,
+    agg, days:document.getElementById('f-days').value,
+    timeBatched, time:timeFinish,
+    standby,
+    mixer:document.getElementById('f-mixer').value,
+    structure:document.getElementById('f-structure').value,
+    coord:document.getElementById('f-coord').value,
+    testingCoord:document.getElementById('f-testing-coord').value,
+    samples:document.getElementById('f-samples').value,
+    sampleRemarks:(document.getElementById('f-sample-remarks').value==='Others'?document.getElementById('f-sample-remarks-other').value:document.getElementById('f-sample-remarks').value),
+    kind:document.getElementById('f-kind').value,
+    slip:document.getElementById('f-slip').value,
+    slumpMin:document.getElementById('f-slump-min').value,
+    slumpMax:document.getElementById('f-slump-max').value,
+    actualSlump:document.getElementById('f-actual-slump').value,
+    temp:document.getElementById('f-temp').value,
+    actualTemp:document.getElementById('f-actual-temp').value,
+    vol:parseFloat(document.getElementById('f-vol').value)||0,
+    volRejected:parseFloat(document.getElementById('f-vol-rejected').value)||0,
+    drNo:document.getElementById('f-dr-no').value,
+    rejected:finalRejected,
+    rejectReason:finalRejected?(isRejected?document.getElementById('f-reject-reason').value:autoRejected.reason):'',
+    rejectDetail:finalRejected?(isRejected?document.getElementById('f-reject-detail').value:autoRejected.detail):'',
+    autoRejected:autoRejected.rejected,
+    collected:false,
+    testResults:[],
+    testDates:{},
+    area:getArea(document.getElementById('f-location').value),
+    remarks:''
+  };
+  db.entries.unshift(entry);
+  save();
+  clearForm();
+  renderMaster();
+  renderMold();
+  renderMonitoring();
+  renderTesting();
+  renderTestMon();
+  renderKPI();
+}
+
+function deleteEntry(id){
+  if(!confirm('Delete this entry?')) return;
+  db.entries=db.entries.filter(e=>e.id!==id);
+  save();
+  renderAll();
+}
+
+function editEntry(id){
+  const e=db.entries.find(x=>x.id===id);
+  if(!e) return;
+  // Fill form with entry data
+  document.getElementById('f-date').value=e.date||'';
+  document.getElementById('f-client').value=e.client||'';
+  document.getElementById('f-location').value=e.location||'';
+  document.getElementById('f-design').value=e.design||'';
+  const aggEl=document.getElementById('f-agg');
+  const aggOpts=['Agg – G1"','Agg – 3/4"','Agg – 3/8"'];
+  if(aggOpts.includes(e.agg)){aggEl.value=e.agg;}
+  else if(e.agg){aggEl.value='others';document.getElementById('f-agg-other').value=e.agg;document.getElementById('f-agg-other-wrap').style.display='flex';}
+  document.getElementById('f-days').value=e.days||'';
+  document.getElementById('f-time-batched').value=e.timeBatched||'';
+  document.getElementById('f-time').value=e.time||'';
+  document.getElementById('f-structure').value=e.structure||'';
+  document.getElementById('f-coord').value=e.coord||'';
+  document.getElementById('f-testing-coord').value=e.testingCoord||'';
+  document.getElementById('f-samples').value=e.samples||'';
+  document.getElementById('f-sample-remarks').value=e.sampleRemarks||'';
+  toggleSampleRemarks();
+  document.getElementById('f-kind').value=e.kind||'';
+  document.getElementById('f-slip').value=e.slip||'';
+  document.getElementById('f-slump-min').value=e.slumpMin||'';
+  document.getElementById('f-slump-max').value=e.slumpMax||'';
+  document.getElementById('f-actual-slump').value=e.actualSlump||'';
+  document.getElementById('f-temp').value=e.temp||'';
+  document.getElementById('f-actual-temp').value=e.actualTemp||'';
+  document.getElementById('f-vol').value=e.vol||'';
+  document.getElementById('f-rejected').checked=e.rejected||false;
+  if(e.rejected){
+    document.getElementById('rejection-block').style.display='block';
+    document.getElementById('f-reject-reason').value=e.rejectReason||'';
+    toggleRejectDetail();
+    document.getElementById('f-reject-detail').value=e.rejectDetail||'';
+    document.getElementById('f-mixer').value=e.mixer||'';
+    document.getElementById('f-dr-no').value=e.drNo||'';
+    document.getElementById('f-vol-rejected').value=e.volRejected||'';
+  }
+  // Show form
+  document.getElementById('entry-form').style.display='block';
+  // Scroll to top
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Change Add button to Update
+  const addBtn=document.querySelector('[onclick="addEntry()"]');
+  if(addBtn){
+    addBtn.textContent='💾 Update Entry';
+    addBtn.setAttribute('onclick',`updateEntry(${id})`);
+  }
+}
+
+function updateEntry(id){
+  const idx=db.entries.findIndex(x=>x.id===id);
+  if(idx===-1) return;
+  const aggVal=document.getElementById('f-agg').value;
+  const agg=aggVal==='others'?document.getElementById('f-agg-other').value:aggVal;
+  const isRejected=document.getElementById('f-rejected').checked;
+  const timeBatched=document.getElementById('f-time-batched').value;
+  const timeFinish=document.getElementById('f-time').value;
+  const standby=calcStandby(timeBatched,timeFinish);
+  const settings=getSettings();
+  const actualTemp=parseFloat(document.getElementById('f-actual-temp').value)||null;
+  const actualSlump=parseFloat(document.getElementById('f-actual-slump').value)||null;
+  const slumpMin=document.getElementById('f-slump-min').value;
+  const slumpMax=document.getElementById('f-slump-max').value;
+  const autoRejected=checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,slumpMax);
+  const finalRejected=isRejected||autoRejected.rejected;
+  // Update entry preserving id and other fields
+  db.entries[idx]={
+    ...db.entries[idx],
+    date:document.getElementById('f-date').value,
+    client:document.getElementById('f-client').value.trim(),
+    location:document.getElementById('f-location').value,
+    design:document.getElementById('f-design').value,
+    agg, days:document.getElementById('f-days').value,
+    timeBatched, time:timeFinish, standby,
+    structure:document.getElementById('f-structure').value,
+    coord:document.getElementById('f-coord').value,
+    testingCoord:document.getElementById('f-testing-coord').value,
+    samples:document.getElementById('f-samples').value,
+    sampleRemarks:(document.getElementById('f-sample-remarks').value==='Others'?document.getElementById('f-sample-remarks-other').value:document.getElementById('f-sample-remarks').value),
+    kind:document.getElementById('f-kind').value,
+    slip:document.getElementById('f-slip').value,
+    slumpMin, slumpMax,
+    actualSlump:document.getElementById('f-actual-slump').value,
+    temp:document.getElementById('f-temp').value,
+    actualTemp:document.getElementById('f-actual-temp').value,
+    vol:parseFloat(document.getElementById('f-vol').value)||0,
+    volRejected:parseFloat(document.getElementById('f-vol-rejected').value)||0,
+    drNo:document.getElementById('f-dr-no').value,
+    rejected:finalRejected,
+    rejectReason:finalRejected?(isRejected?document.getElementById('f-reject-reason').value:autoRejected.reason):'',
+    rejectDetail:finalRejected?(isRejected?document.getElementById('f-reject-detail').value:autoRejected.detail):'',
+    autoRejected:autoRejected.rejected,
+    mixer:document.getElementById('f-mixer').value,
+    area:getArea(document.getElementById('f-location').value)
+  };
+  save();
+  clearForm();
+  // Restore Add button
+  const addBtn=document.querySelector('[onclick^="updateEntry"]');
+  if(addBtn){addBtn.textContent='➕ Add Entry';addBtn.setAttribute('onclick','addEntry()');}
+  renderAll();
+}
+
+function toggleCollected(id){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){
+    e.collected=!e.collected;
+    if(e.collected){
+      e.collectedDate=new Date().toISOString().split('T')[0];
+    } else {
+      e.collectedDate='';
+    }
+    save();
+    renderMonitoring();
+  }
+}
+
+// ===== RENDER MASTER =====
+function toggleSampleRemarks(){
+  const val=document.getElementById('f-sample-remarks').value;
+  document.getElementById('f-sample-remarks-other-wrap').style.display=val==='Others'?'flex':'none';
+  // Hide Borrower Slip if Sample at Plant
+  const slipWrap=document.getElementById('f-slip-wrap');
+  const slipInput=document.getElementById('f-slip');
+  if(val==='Sample at Plant'){
+    if(slipWrap) slipWrap.style.opacity='0.4';
+    if(slipInput){slipInput.value='';slipInput.disabled=true;slipInput.placeholder='N/A - Sample at Plant';}
+  } else {
+    if(slipWrap) slipWrap.style.opacity='1';
+    if(slipInput){slipInput.disabled=false;slipInput.placeholder='Slip No.';}
+  }
+}
+
+function saveRemarks(id,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e.remarks=val;save();}
+}
+
+function checkTempColor(e){
+  const settings=getSettings();
+  const actual=parseFloat(e.actualTemp);
+  if(!actual) return '#222';
+  return actual>settings.maxTemp?'var(--red)':'var(--green)';
+}
+function checkSlumpColor(e){
+  const settings=getSettings();
+  const actual=parseFloat(e.actualSlump);
+  if(!actual) return '#222';
+  const sMin=e.slumpMin?parseFloat(e.slumpMin):settings.minSlump;
+  const sMax=e.slumpMax?parseFloat(e.slumpMax):settings.maxSlump;
+  return (actual<sMin||actual>sMax)?'var(--red)':'var(--green)';
+}
+function renderMaster(){
+  const mon=document.getElementById('filter-month').value;
+  const search=(document.getElementById('master-search').value||'').toLowerCase();
+  const areaF=document.getElementById('master-area-filter').value;
+  const [yr,mo]=mon.split('-').map(Number);
+  const rows=db.entries.filter(e=>{
+    const d=new Date(e.date+'T00:00:00');
+    if(d.getFullYear()!==yr||d.getMonth()+1!==mo) return false;
+    if(search&&!e.client.toLowerCase().includes(search)&&!e.location.toLowerCase().includes(search)) return false;
+    if(areaF&&e.area!==areaF) return false;
+    return true;
+  });
+  const tbody=document.getElementById('master-tbody');
+  const empty=document.getElementById('master-empty');
+  if(!rows.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=rows.map((e,i)=>`
+    <tr class="${e.rejected?'rejected':''}">
+      <td>${i+1}</td>
+      <td>${fmtDate(e.date)}</td>
+      <td><strong>${e.client}</strong>${e.rejected?`<br><span class="badge badge-rejected">${e.autoRejected?'AUTO-':''}REJECTED: ${e.rejectReason}</span>`:''}</td>
+      <td>${e.location||'—'}</td>
+      <td style="font-size:11px"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
+      <td>${fmtTime(e.timeBatched)}</td>
+      <td>${fmtTime(e.time)}</td>
+      <td>${e.structure||'—'}</td>
+      <td>${e.coord||'—'}</td>
+      <td>${e.testingCoord?`<span style='font-size:11px;color:#1565C0;font-weight:600'>${e.testingCoord}</span>`:'<span style="color:#ccc">—</span>'}</td>
+      <td style="white-space:nowrap">${e.samples||'—'} <span style="font-size:11px;color:#666">(${e.kind||'—'})</span></td>
+      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
+      <td>${e.slip||'—'}</td>
+      <td>${e.vol||'—'}</td>
+      <td><input type="text" value="${e.remarks||''}" onchange="saveRemarks(${e.id},this.value)" style="width:120px;font-size:11px;padding:3px 6px;border:1px solid #ddd;border-radius:3px" placeholder="Notes..."></td>
+      <td class="no-print" style="white-space:nowrap">
+        <button class="btn btn-sm" style="background:#1565C0;color:#fff;margin-right:4px" onclick="editEntry(${e.id})">✏️ Edit</button>
+        <button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">✕</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ===== RENDER MOLD COLLECTION =====
+function initMoldDateSelector(){
+  const sel=document.getElementById('mold-filter-date');
+  if(!sel) return;
+  const dates=new Set();
+  // Collection date = pouring date + 1 day
+  db.entries.forEach(e=>{
+    if(e.date) dates.add(addDays(e.date,1));
+  });
+  const todayStr=new Date().toISOString().split('T')[0];
+  dates.add(todayStr);
+  const sorted=[...dates].sort();
+  const currentVal=sel.value;
+  // Find closest date to today that has entries
+  const todayEntries=sorted.find(d=>d>=todayStr&&db.entries.filter(e=>addDays(e.date,1)===d).length>0)||todayStr;
+  const allCount=db.entries.length;
+  sel.innerHTML=`<option value="all" ${(!currentVal||currentVal==='all')?'selected':''}>All Dates (${allCount})</option>`+
+  sorted.map(d=>{
+    const count=db.entries.filter(e=>addDays(e.date,1)===d).length;
+    const isSelected=currentVal&&currentVal!=='all'?d===currentVal:false;
+    return `<option value="${d}" ${isSelected?'selected':''}>${fmtDate(d)}${count>0?' ('+count+')':''}</option>`;
+  }).join('');
+  renderMold();
+}
+
+function renderMold(){
+  const sel=document.getElementById('mold-filter-date');
+  const filterDate=sel?sel.value:'';
+  const rows=filterDate==='all'
+    ? [...db.entries].sort((a,b)=>addDays(a.date,1).localeCompare(addDays(b.date,1)))
+    : filterDate
+      ? db.entries.filter(e=>addDays(e.date,1)===filterDate)
+      : [];
+  const tbody=document.getElementById('mold-tbody');
+  const empty=document.getElementById('mold-empty');
+  const countEl=document.getElementById('mold-count');
+  const headerDate=document.getElementById('mold-header-date');
+  if(headerDate) headerDate.textContent=filterDate==='all'?'— All Dates':filterDate?'— Collection Date: '+fmtDate(filterDate):'';
+  if(!rows.length){
+    if(tbody) tbody.innerHTML='';
+    if(empty) empty.style.display='block';
+    if(countEl) countEl.textContent='No collections scheduled';
+    return;
+  }
+  if(empty) empty.style.display='none';
+  if(countEl) countEl.textContent=rows.length+' collection(s) ' + (filterDate==='all'?'total':'scheduled');
+  tbody.innerHTML=rows.map((e,i)=>{
+    const area=e.moldArea||e.area||getArea(e.location||'');
+    const areaBadge=area==='Manila Area'?'badge-manila':area==='Bulacan Area'?'badge-bulacan':'badge-pending';
+    const collectDate=addDays(e.date,1);
+    const qty=parseInt(e.samples)||0;
+    // Mold type/size
+    const moldType=e.moldType||'Cylinder';
+    const moldSize=e.moldSize||e.kind||'—';
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${fmtDate(e.date)}</td>
+      <td>
+        <div data-print-select>
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldArea',this.value)">
+            <option value="">--</option>
+            <option value="Manila Area" ${area==='Manila Area'?'selected':''}>Manila Area</option>
+            <option value="Bulacan Area" ${area==='Bulacan Area'?'selected':''}>Bulacan Area</option>
+            <option value="Others" ${area==='Others'?'selected':''}>Others</option>
+          </select>
+          <span class="print-text">${area||'—'}</span>
+        </div>
+      </td>
+      <td><strong>${e.client}</strong></td>
+      <td style="font-size:11px">${e.location||'—'}</td>
+      <td style="font-size:11px">${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
+      <td>${fmtTime(e.time)}</td>
+      <td>${e.structure||'—'}</td>
+      <td>${e.coord||'—'}</td>
+      <td><strong style="color:var(--maroon)">${fmtDate(addDays(e.date,1))}</strong></td>
+
+      <td style="text-align:center;white-space:nowrap">
+        <strong>${qty}</strong> <span style="font-size:11px;color:#666">(${moldSize||'—'})</span>
+        <div data-print-select style="display:none">
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldSize',this.value)">
+            <option value="">--</option>
+            <option value="6x12" ${moldSize==='6x12'?'selected':''}>6×12</option>
+            <option value="4x8" ${moldSize==='4x8'?'selected':''}>4×8</option>
+            <option value="Beam" ${moldSize==='Beam'?'selected':''}>Beam</option>
+          </select>
+        </div>
+      </td>
+      <td>
+        <div data-print-select>
+          <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'moldType',this.value)">
+            <option value="Cylinder" ${moldType==='Cylinder'?'selected':''}>Cylinder</option>
+            <option value="Beam" ${moldType==='Beam'?'selected':''}>Beam</option>
+            <option value="Others" ${moldType==='Others'?'selected':''}>Others</option>
+          </select>
+          <span class="print-text">${moldType||'—'}</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function saveMoldField(id,field,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e[field]=val;save();}
+}
+
+function printMold(){
+  const sel=document.getElementById('mold-filter-date');
+  const filterDate=sel?sel.value:'';
+  const rows=filterDate==='all'
+    ? [...db.entries].sort((a,b)=>addDays(a.date,1).localeCompare(addDays(b.date,1)))
+    : filterDate?db.entries.filter(e=>addDays(e.date,1)===filterDate):[];
+
+  const tableRows=rows.map((e,i)=>{
+    const area=e.moldArea||e.area||getArea(e.location||'');
+    const moldType=e.moldType||'Cylinder';
+    const moldSize=e.moldSize||e.kind||'—';
+    const qty=parseInt(e.samples)||0;
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td>${fmtDate(e.date)}</td>
+      <td>${area||'—'}</td>
+      <td><strong>${e.client}</strong></td>
+      <td>${e.location||'—'}</td>
+      <td>${e.design||''} ${e.agg||''}</td>
+      <td>${fmtTime(e.time)}</td>
+      <td>${e.structure||'—'}</td>
+      <td>${e.coord||'—'}</td>
+      <td><strong style="color:#6B1A1A">${fmtDate(addDays(e.date,1))}</strong></td>
+      <td style="text-align:center"><strong>${qty}</strong></td>
+      <td>${moldType}</td>
+      <td>${moldSize}</td>
+    </tr>`;
+  }).join('');
+
+  const printHTML=`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mold Collection Schedule - ${fmtDate(filterDate)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:11px;padding:16px}
+.header-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.logo{background:#6B1A1A;color:#fff;padding:8px 14px;font-weight:900;font-size:20px;border-radius:4px}
+.title{text-align:center}
+.title h1{font-size:15px;font-weight:700;color:#6B1A1A}
+.title h2{font-size:12px;font-weight:600;margin-top:3px}
+.title p{font-size:11px;color:#666;margin-top:2px}
+.doc-no{text-align:right;font-size:10px;color:#666}
+.divider{height:2px;background:#6B1A1A;margin:8px 0 14px}
+table.data{width:100%;border-collapse:collapse;font-size:10px}
+table.data th{background:#6B1A1A;color:#fff;padding:6px 8px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+table.data td{padding:5px 8px;border-bottom:1px solid #ddd;vertical-align:middle}
+table.data tr:nth-child(even) td{background:#fdf8f8}
+.footer{margin-top:30px}
+.footer table{width:100%;border-collapse:collapse}
+.footer td{text-align:center;padding-top:36px;border-top:1px solid #333;font-size:10px}
+.footer .role{font-size:9px;color:#666;margin-top:2px}
+.confidential{margin-top:12px;font-size:8px;color:#999;text-align:center}
+@page{margin:1cm;size:landscape}
+</style>
+</head>
+<body>
+<table class="header-table">
+  <tr>
+    <td style="width:100px"><img src="https://shongsalinas-collab.github.io/BIGBEN-QC-SYSTEM/logo-maroon.jpg" style="width:90px;height:90px;object-fit:contain"></td>
+    <td class="title">
+      <h1>BIG BEN READY MIX CONCRETE</h1>
+      <h2>CYLINDER MOLD COLLECTION SCHEDULE</h2>
+      <p>Collection Date: <strong>${filterDate==='all'?'All Dates':fmtDate(filterDate)}</strong></p>
+    </td>
+    <td class="doc-no">SP-QA-02<br>F-QA-2.1</td>
+  </tr>
+</table>
+<div class="divider"></div>
+<table class="data">
+  <thead>
+    <tr>
+      <th>#</th><th>Pouring Date</th><th>Area</th><th>Client</th><th>Location</th>
+      <th>Design</th><th>Time Finish</th><th>Structure</th><th>Site Coordinator</th>
+      <th>Collection Date</th><th>No. of Samples</th>
+      <th>Type of Mold</th><th>Size of Mold</th>
+    </tr>
+  </thead>
+  <tbody>${tableRows}</tbody>
+</table>
+<div class="footer">
+  <table>
+    <tr>
+      <td>Prepared by<div class="role">Testing Coordinator</div></td>
+      <td>Checked by<div class="role">QC Supervisor</div></td>
+      <td>Noted by<div class="role">R&D Supervisor</div></td>
+    </tr>
+  </table>
+  <div class="confidential">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+</div>
+</body>
+</html>`;
+
+  const w=window.open('','_blank','width=900,height=600');
+  w.document.write(printHTML);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{w.print();},500);
+}
+
+// ===== RENDER MONITORING =====
+function printMonitoring(){
+  const h=document.getElementById('mon-print-header');
+  const f=document.getElementById('mon-print-footer');
+  const d=document.getElementById('mon-print-date');
+  if(h) h.style.display='block';
+  if(f) f.style.display='block';
+  if(d) d.textContent='Date Printed: '+fmtDate(new Date().toISOString().split('T')[0]);
+  // Hide dropdowns - show text
+  document.querySelectorAll('#mon-tbody select').forEach(s=>{
+    const span=document.createElement('span');
+    span.className='print-text';
+    span.textContent=s.value||'—';
+    s.parentNode.insertBefore(span,s.nextSibling);
+  });
+  document.body.classList.add('printing-monitoring');
+  window.print();
+  setTimeout(()=>{
+    document.body.classList.remove('printing-monitoring');
+    if(h) h.style.display='none';
+    if(f) f.style.display='none';
+    document.querySelectorAll('#mon-tbody .print-text').forEach(s=>s.remove());
+  },1500);
+}
+
+function renderMonitoring(){
+  const areaF=document.getElementById('mon-area-filter').value;
+  const statusF=document.getElementById('mon-status-filter').value;
+  let rows=db.entries.filter(e=>{
+    if(areaF&&(e.moldArea||e.area)!==areaF) return false;
+    if(statusF==='collected'&&!e.collected) return false;
+    if(statusF==='pending'&&e.collected) return false;
+    return true;
+  });
+  const tbody=document.getElementById('mon-tbody');
+  const empty=document.getElementById('mon-empty');
+  if(!rows.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  const todayStr=new Date().toISOString().split('T')[0];
+  tbody.innerHTML=rows.map(e=>{
+    const area=e.moldArea||e.area||'—';
+    const areaBadge=area==='Manila Area'?'badge-manila':area==='Bulacan Area'?'badge-bulacan':'badge-pending';
+    const deadline=addDays(e.date,2);
+    const collectedDate=e.collectedDate||'';
+    const curingLoc=e.curingLoc||e.curing||'';
+    // Time Return
+    let timeReturn='—';let timeStyle='';
+    if(e.collected&&collectedDate){
+      if(collectedDate<=deadline){timeReturn='✅ On Time';timeStyle='color:var(--green);font-weight:600';}
+      else{timeReturn='⚠️ Late';timeStyle='color:var(--red);font-weight:600';}
+    } else if(!e.collected){
+      if(todayStr>deadline){timeReturn='⚠️ Overdue';timeStyle='color:var(--red);font-weight:600';}
+      else{timeReturn='⏳ Pending';timeStyle='color:var(--orange)';}
+    }
+    const rowStyle=e.collected?'background:#f0f0f0;':'background:#fff;';
+    const textStyle=e.collected?'color:#999;':'';
+    return `<tr style="${rowStyle}">
+      <td style="white-space:nowrap">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" ${e.collected?'checked':''} onchange="toggleCollected(${e.id})" style="width:16px;height:16px;cursor:pointer;accent-color:var(--maroon)">
+          <span style="font-size:12px;font-weight:600;${e.collected?'color:#888':'color:var(--orange)'}">${e.collected?'Collected':'Pending'}</span>
+        </label>
+      </td>
+      <td style="${textStyle}">${e.slip||'—'}</td>
+      <td style="${textStyle}">${fmtDate(e.date)}</td>
+      <td><span class="badge ${areaBadge}">${area}</span></td>
+      <td><strong style="${textStyle}">${e.client}</strong></td>
+      <td style="font-size:11px;${textStyle}">${e.location||'—'}</td>
+      <td style="font-size:11px;${textStyle}">${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
+      <td style="${textStyle}">${e.structure||'—'}</td>
+      <td style="${textStyle}">${e.coord||'—'}</td>
+      <td style="text-align:center;${textStyle}"><strong>${e.samples||'—'}</strong> <span style="font-size:11px;color:#666">(${e.kind||'—'})</span></td>
+      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:'—'}</td>
+      <td>
+        <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" onchange="saveMoldField(${e.id},'curingLoc',this.value)">
+          <option value="">--</option>
+          <option value="Plant" ${curingLoc==='Plant'?'selected':''}>Plant</option>
+          <option value="Site" ${curingLoc==='Site'?'selected':''}>Site</option>
+          <option value="Others" ${curingLoc==='Others'?'selected':''}>Others</option>
+        </select>
+      </td>
+      <td style="${timeStyle}">${timeReturn}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== TESTING DATE SELECTOR =====
+function initTestingDateSelector(){
+  const sel=document.getElementById('test-date-filter');
+  if(!sel) return;
+  const dates=new Set();
+  // Add all test dates from entries
+  db.entries.forEach(e=>{
+    const entryDate=normalizeDate(e.date||'');
+    if(!entryDate) return;
+    const testDays=getTestDays(e.days);
+    testDays.forEach(d=>dates.add(addDays(entryDate,d)));
+  });
+  const todayStr=new Date().toISOString().split('T')[0];
+  dates.add(todayStr);
+  const sorted=[...dates].sort();
+  const currentVal=sel.value;
+  sel.innerHTML=`<option value="all">All Dates</option>`+
+    sorted.map(d=>{
+      const count=db.entries.filter(e=>{
+        const entryDate=normalizeDate(e.date||'');
+        return getTestDays(e.days).some(td=>addDays(entryDate,td)===d);
+      }).length;
+      const isSelected=currentVal?d===currentVal:d===todayStr;
+      return `<option value="${d}" ${isSelected?'selected':''}>${fmtDate(d)}${count>0?' ('+count+')':''}`;
+    }).join('');
+  renderTesting();
+}
+
+// ===== RENDER TESTING SCHEDULE =====
+const TESTING_COORDS = ['Dio Balili','Joshua Facun','Roni Aguilar','Teodoro Taysa','JM Buitizon'];
+
+function renderTesting(){
+  const sel=document.getElementById('test-date-filter');
+  const filterDate=sel?sel.value:'';
+  const panel2=document.getElementById('testing-panels');
+  const empty2=document.getElementById('test-empty');
+  if(!filterDate){
+    if(panel2) panel2.innerHTML='';
+    if(empty2){empty2.style.display='block';empty2.textContent='Select a date to view testing schedule.';}
+    return;
+  }
+  const DAY_LABELS=['01 DAYS TESTING','03 DAYS TESTING','07 DAYS TESTING','14 DAYS TESTING','28 DAYS TESTING'];
+  const DAY_NUMS=[1,3,7,14,28];
+  let found=false;
+  let html='';
+  DAY_NUMS.forEach((d,idx)=>{
+    const matches=db.entries.filter(e=>{
+      const testDays=getTestDays(e.days);
+      const entryDate=normalizeDate(e.date||"");
+      if(filterDate==='all') return testDays.includes(d);
+      return testDays.includes(d) && addDays(entryDate,d)===filterDate;
+    });
+    if(matches.length){
+      found=true;
+      html+=`<div style="margin-bottom:16px">
+        <div style="background:#222;color:#fff;padding:6px 12px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[idx]}</div>
+        <table class="data-table" style="font-size:12px">
+          <thead><tr>
+            <th>DATE</th><th>CLIENT</th><th>LOCATION</th><th>STRUCTURE</th>
+            <th>DESIGN</th><th>SITE COORD.</th><th>TESTING COORDINATOR</th>
+            <th>NO. OF SAMPLE</th><th>VOL</th><th>REMARKS</th>
+          </tr></thead>
+          <tbody>${matches.map((e,i)=>{
+            // Auto-sync from Sheet 1 if no per-day override
+            if(!e['testingCoord_'+d]&&e.testingCoord){
+              e['testingCoord_'+d]=e.testingCoord;
+              save();
+            }
+            const assignedCoord=e['testingCoord_'+d]||e.testingCoord||'';
+            const coordOpts=TESTING_COORDS.map(c=>`<option value="${c}" ${assignedCoord===c?'selected':''}>${c}</option>`).join('');
+            return `<tr>
+              <td>${fmtDate(e.date)}</td>
+              <td><strong>${e.client}</strong></td>
+              <td style="font-size:11px">${e.location||'—'}</td>
+              <td>${e.structure||'—'}</td>
+              <td style="font-size:11px">${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
+              <td>${e.coord||'—'}</td>
+              <td>
+                <select style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px;width:130px" onchange="saveTestingCoord(${e.id},${d},this.value)">
+                  <option value="">-- Assign --</option>
+                  ${coordOpts}
+                </select>
+                <span class="print-text" style="display:none">${assignedCoord||'—'}</span>
+              </td>
+              <td style="text-align:center">${e.samples||'—'} <span style="font-size:10px;color:#666">(${e.kind||''})</span></td>
+              <td style="text-align:center">${e.vol||'—'}</td>
+              <td>
+                <input type="text" value="${e['testRemark_'+d]||''}" onchange="saveTestRemark(${e.id},${d},this.value)" style="width:90px;font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px" placeholder="Remarks">
+                <span class="print-text" style="display:none">${e['testRemark_'+d]||''}</span>
+              </td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>`;
+    }
+  });
+  if(found){
+    if(panel2) panel2.innerHTML=html;
+    if(empty2) empty2.style.display='none';
+  } else {
+    if(panel2) panel2.innerHTML='';
+    if(empty2){empty2.style.display='block';empty2.textContent='No testing scheduled for '+fmtDate(filterDate)+'.';}
+  }
+}
+
+function saveTestingCoord(id,day,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e['testingCoord_'+day]=val;save();}
+}
+function saveTestRemark(id,day,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e['testRemark_'+day]=val;save();}
+}
+
+function printTesting(){
+  const filterDate=document.getElementById('test-date-filter').value;
+  if(!filterDate){alert('Please select a date first.');return;}
+  const isAll=filterDate==='all';
+  const DAY_LABELS={'1':'01 DAYS TESTING','3':'03 DAYS TESTING','7':'07 DAYS TESTING','14':'14 DAYS TESTING','21':'21 DAYS TESTING','28':'28 DAYS TESTING'};
+  const DAY_NUMS=[1,3,7,14,21,28];
+  let sectionsHtml='';
+  DAY_NUMS.forEach((d,idx)=>{
+    const matches=db.entries.filter(e=>{
+      const testDays=getTestDays(e.days);
+      const entryDate=normalizeDate(e.date||"");
+      if(isAll) return testDays.includes(d);
+      return testDays.includes(d) && addDays(entryDate,d)===filterDate;
+    });
+    if(matches.length){
+      sectionsHtml+=`<div style="margin-bottom:14px">
+        <div style="background:#222;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">${d===1?'01 DAYS TESTING':d===3?'03 DAYS TESTING':d===7?'07 DAYS TESTING':d===14?'14 DAYS TESTING':d===21?'21 DAYS TESTING':'28 DAYS TESTING'}</div>
+        <table style="width:100%;border-collapse:collapse;font-size:9px">
+          <thead><tr style="background:#6B1A1A;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+            <th style="padding:4px 6px">DATE</th>
+            <th style="padding:4px 6px">CLIENT</th>
+            <th style="padding:4px 6px">LOCATION</th>
+            <th style="padding:4px 6px">STRUCTURE</th>
+            <th style="padding:4px 6px">DESIGN</th>
+            <th style="padding:4px 6px">SITE COORD.</th>
+            <th style="padding:4px 6px">TESTING COORDINATOR</th>
+            <th style="padding:4px 6px;text-align:center">NO. OF SAMPLE</th>
+            <th style="padding:4px 6px;text-align:center">VOL</th>
+            <th style="padding:4px 6px">REMARKS</th>
+          </tr></thead>
+          <tbody>${matches.map((e,i)=>`<tr style="background:${i%2===0?'#fff':'#fdf8f8'}">
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd">${fmtDate(e.date)}</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd"><strong>${e.client}</strong></td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd">${e.location||'—'}</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd">${e.structure||'—'}</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd">${e.design||'—'} ${e.agg||''} ${e.days||''}</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd">${e.coord||'—'}</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd">${e['testingCoord_'+d]||e.testingCoord||'—'}</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd;text-align:center">${e.samples||'—'} (${e.kind||''})</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd;text-align:center">${e.vol||'—'}</td>
+            <td style="padding:3px 6px;border-bottom:1px solid #ddd">${e['testRemark_'+d]||''}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+    }
+  });
+
+  const printHTML=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Testing Schedule - ${isAll?"All Dates":fmtDate(filterDate)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:10px;padding:14px}
+.no-print{margin-bottom:12px;text-align:center}
+@media print{.no-print{display:none!important}@page{margin:.7cm;size:landscape}}
+</style></head>
+<body>
+<div class="no-print">
+  <button onclick="window.print()" style="background:#6B1A1A;color:#fff;padding:10px 30px;border:none;border-radius:4px;font-size:14px;cursor:pointer;font-weight:700">🖨️ PRINT</button>
+  <button onclick="window.close()" style="background:#888;color:#fff;padding:10px 20px;border:none;border-radius:4px;font-size:14px;cursor:pointer;margin-left:10px">✕ Close</button>
+</div>
+<table style="width:100%;border-collapse:collapse;margin-bottom:12px">
+  <tr>
+    <td style="width:85px;vertical-align:middle"><img src="${MAROON_URL}" style="width:72px;height:72px;object-fit:contain"></td>
+    <td style="text-align:center;vertical-align:middle">
+      <div style="font-size:15px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
+      <div style="font-size:12px;font-weight:600;margin-top:3px">TESTING SCHEDULE</div>
+      <div style="font-size:12px;font-weight:700;color:#444;margin-top:3px">${isAll?"ALL DATES":fmtDate(filterDate).toUpperCase()}</div>
+    </td>
+    <td style="width:85px;text-align:right;font-size:9px;color:#666;vertical-align:top">SP-QA-02<br>F-QA-2.2</td>
+  </tr>
+</table>
+<div style="height:2px;background:#6B1A1A;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>
+${sectionsHtml}
+<table style="width:100%;border-collapse:collapse;margin-top:24px">
+  <tr>
+    <td style="width:33%;text-align:center;padding-top:32px;border-top:1px solid #333;font-size:10px">Prepared by<div style="font-size:9px;color:#666">Testing Coordinator</div></td>
+    <td style="width:33%;text-align:center;padding-top:32px;border-top:1px solid #333;font-size:10px">Checked by<div style="font-size:9px;color:#666">QC Supervisor</div></td>
+    <td style="width:33%;text-align:center;padding-top:32px;border-top:1px solid #333;font-size:10px">Noted by<div style="font-size:9px;color:#666">R&D Supervisor</div></td>
+  </tr>
+</table>
+<div style="margin-top:10px;font-size:8px;color:#999;text-align:center">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+</body></html>`;
+
+  const w=window.open('','_blank','width=1000,height=700');
+  w.document.write(printHTML);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{w.print();},500);
+}
+
+
+// ===== RENDER TEST MONITORING =====
+// Theoretical percentages
+const THEO_PCTS = {
+  '01 Days': {1: 100},
+  '03 Days': {1: 90, 3: 100},
+  '07 Days': {3: 69, 7: 100},
+  '14 Days': {3: 56, 7: 82, 14: 100},
+  '21 Days': {7: 71, 14: 87, 21: 100},
+  '28 Days': {7: 71, 14: 87, 28: 100},
+};
+
+const TEST_DAYS_MAP = {
+  '01 Days': [1],
+  '03 Days': [1, 3],
+  '07 Days': [3, 7],
+  '14 Days': [3, 7, 14],
+  '21 Days': [7, 14, 21],
+  '28 Days': [7, 14, 28],
+};
+
+function renderTestMon(){
+  const mon=document.getElementById('testmon-month').value;
+  const resultF=document.getElementById('testmon-result-filter').value;
+  let rows=db.entries;
+  if(mon){
+    const [yr,mo]=mon.split('-').map(Number);
+    rows=db.entries.filter(e=>{
+      const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+      return d.getFullYear()===yr&&d.getMonth()+1===mo;
+    });
+  }
+  if(resultF) rows=rows.filter(e=>getOverallStatus(e)===resultF);
+
+  const container=document.getElementById('testmon-container');
+  const empty=document.getElementById('testmon-empty');
+  if(!rows.length){if(container)container.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+
+  const ALL_TEST_DAYS=[1,3,7,14,21,28];
+  const DAY_LABELS={1:'1 Days Testing',3:'3 Days Testing',7:'7 Days Testing',14:'14 Days Testing',21:'21 Days Testing',28:'28 Days Testing'};
+  const bgColors={1:'#6B1A1A',3:'#8B2222',7:'#6B1A1A',14:'#8B2222',21:'#6B1A1A',28:'#8B2222'};
+
+  const neededDays=new Set();
+  rows.forEach(e=>{
+    const testDays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];
+    testDays.forEach(d=>neededDays.add(d));
+  });
+  const activeDays=ALL_TEST_DAYS.filter(d=>neededDays.has(d));
+
+  let topHeaders='';
+  let subHeaders='';
+  activeDays.forEach(d=>{
+    const bg=bgColors[d];
+    topHeaders+=`<th colspan="7" style="text-align:center;background:${bg};border-left:2px solid #fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[d]}</th>`;
+    subHeaders+=`
+      <th style="font-size:9px;background:${bg};border-left:2px solid #fff">Test Date</th>
+      <th colspan="3" style="font-size:9px;background:${bg};text-align:center">PSI Results (+S to add)</th>
+      <th style="font-size:9px;background:${bg}">Ave PSI</th>
+      <th style="font-size:9px;background:${bg}">Theo Target</th>
+      <th style="font-size:9px;background:${bg}">Lab No. / Result / Remarks</th>`;
+  });
+
+  let html=`<div style="overflow-x:auto">
+  <table class="data-table" style="font-size:10px">
+    <thead>
+      <tr>
+        <th rowspan="2" style="min-width:80px">Date</th>
+        <th rowspan="2" style="min-width:100px">Client</th>
+        <th rowspan="2" style="min-width:100px">Project</th>
+        <th rowspan="2" style="min-width:120px">Location</th>
+        <th rowspan="2" style="min-width:60px">Structure</th>
+        <th rowspan="2" style="min-width:130px">Design</th>
+        <th rowspan="2" style="min-width:90px">Total Samples</th>
+        <th rowspan="2" style="min-width:70px">Site Coord.</th>
+        <th rowspan="2" style="min-width:70px">Testing Coord.</th>
+        ${topHeaders}
+      </tr>
+      <tr>${subHeaders}</tr>
+    </thead>
+    <tbody>`;
+
+  rows.forEach((e,idx)=>{
+    const days=e.days||'28 Days';
+    const testDays=TEST_DAYS_MAP[days]||[7,14,28];
+    const design=parseFloat(e.design)||0;
+    const theoMap=THEO_PCTS[days]||{};
+    const totalSamples=parseInt(e.samples)||0;
+    const rowBg=idx%2===0?'':'background:#fdf8f8';
+
+    // Auto-count used samples from filled results
+    let usedSoFar=0;
+    let testCols='';
+
+    activeDays.forEach((d,i)=>{
+      const borderStyle=i>0?'border-left:2px solid #aaa':'';
+      const isActive=testDays.includes(d);
+
+      if(!isActive){
+        for(let j=0;j<7;j++){
+          testCols+=`<td style="background:#f0f0f0;${j===0?borderStyle:''}"></td>`;
+        }
+        return;
+      }
+
+      const key=`tr_${d}`;
+      const res=e[key]||{};
+      const theo=theoMap[d]||100;
+      const theoTarget=design?(design*theo/100).toFixed(0):'-';
+      const testDate=addDays(normalizeDate(e.date||''),d);
+      // Count used samples = number of filled S1/S2/S3
+      const samplesUsed=[res.r1,res.r2,res.r3].filter(x=>x&&parseFloat(x)>0).length;
+      usedSoFar+=samplesUsed;
+      const remaining=totalSamples-usedSoFar;
+      const ave=res.ave||'';
+      const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
+      const resultColor=passed===null?'#888':passed?'#2E7D32':'#C62828';
+
+      testCols+=`
+        <td style="text-align:center;${borderStyle}">
+          <span style="color:#1565C0;font-size:9px;font-weight:600">${fmtDate(testDate)}</span>
+        </td>
+        <td colspan="3" style="vertical-align:top">
+          <div id="samples_${e.id}_${d}" style="display:flex;flex-wrap:wrap;gap:2px;align-items:center">
+            ${(()=>{
+              // Build sample inputs dynamically
+              const sampleKeys=Object.keys(res).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+              // Always show at least r1, r2, r3
+              const minKeys=['r1','r2','r3'];
+              minKeys.forEach(k=>{if(!sampleKeys.includes(k))sampleKeys.push(k);});
+              sampleKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+              return sampleKeys.map(k=>`
+                <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
+                  <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
+                  <input type="number" value="${res[k]||''}"
+                    onchange="saveTrField(${e.id},${d},'${k}',this.value);autoCalcAve(${e.id},${d})"
+                    style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+                </div>`).join('')+
+                `<button onclick="addSample(${e.id},${d})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
+            })()}
+          </div>
+        </td>
+        <td id="ave_${e.id}_${d}" style="text-align:center;font-weight:700;color:${resultColor}">${ave||'—'}</td>
+        <td style="text-align:center;font-size:9px">${theoTarget}<br><span style="color:#888;font-size:8px">(${theo}%)</span></td>
+        <td style="font-size:9px">
+          <div id="res_${e.id}_${d}" style="color:${resultColor};font-weight:600">${passed===null?'Pending':passed?'✅ PASS':'❌ FAIL'}</div>
+          <input type="text" value="${res.labNo||''}" placeholder="Lab No."
+            onchange="saveTrField(${e.id},${d},'labNo',this.value)"
+            style="width:95px;font-size:9px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;margin-top:2px;display:block">
+          <input type="text" value="${res.remarks||''}" placeholder="Remarks"
+            onchange="saveTrField(${e.id},${d},'remarks',this.value)"
+            style="width:95px;font-size:9px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;margin-top:1px;display:block">
+        </td>`;
+    });
+
+    // Compute final remaining
+    const totalUsed=testDays.reduce((sum,d)=>{
+      const res=e[`tr_${d}`]||{};
+      return sum+[res.r1,res.r2,res.r3].filter(x=>x&&parseFloat(x)>0).length;
+    },0);
+    const finalRemaining=totalSamples-totalUsed;
+
+    html+=`<tr style="${rowBg}">
+      <td style="white-space:nowrap;font-size:10px">${fmtDate(normalizeDate(e.date))}</td>
+      <td style="word-wrap:break-word"><strong>${e.client}</strong></td>
+      <td><input type="text" value="${e.project||''}" onchange="saveEntryField(${e.id},'project',this.value)"
+        style="border:1px solid #ddd;border-radius:2px;padding:1px 4px;font-size:10px;width:85px" placeholder="Project"></td>
+      <td style="font-size:10px;word-wrap:break-word;max-width:120px">${e.location||'—'}</td>
+      <td style="font-size:10px">${e.structure||'—'}</td>
+      <td style="font-size:10px;white-space:nowrap"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
+      <td style="text-align:center">
+        <strong>${totalSamples}</strong> (${e.kind||'—'})
+        <br><span id="rem_${e.id}" style="font-size:9px;font-weight:600;color:${finalRemaining===0?'#2E7D32':finalRemaining<0?'#C62828':'#E65100'}">${finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' remaining':'⚠️ Over'}</span>
+      </td>
+      <td style="font-size:10px">${e.coord||'—'}</td>
+      <td style="font-size:10px">${e.testingCoord||'—'}</td>
+      ${testCols}
+    </tr>`;
+  });
+
+  html+=`</tbody></table></div>`;
+  if(container) container.innerHTML=html;
+}
+
+function saveTrField(entryId, day, field, val){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const key=`tr_${day}`;
+  if(!e[key]) e[key]={};
+  e[key][field]=val;
+  saveQuiet();
+  updateRemainingDisplay(entryId);
+}
+
+function autoCalcAve(entryId, day){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const key=`tr_${day}`;
+  if(!e[key]) e[key]={};
+  // Get all sample values dynamically
+  const sampleKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/));
+  const vals=sampleKeys.map(k=>parseFloat(e[key][k])||0).filter(x=>x>0);
+  e[key].ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):'';
+  saveQuiet();
+  // Update ave display without full re-render
+  const aveEl=document.getElementById(`ave_${entryId}_${day}`);
+  if(aveEl){
+    const ave=e[key].ave;
+    const design=parseFloat(e.design)||0;
+    const theoMap=THEO_PCTS[e.days||'28 Days']||{};
+    const theo=theoMap[day]||100;
+    const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
+    const resultColor=passed===null?'#888':passed?'#2E7D32':'#C62828';
+    aveEl.style.color=resultColor;
+    aveEl.textContent=ave||'—';
+    // Update result cell
+    const resEl=document.getElementById(`res_${entryId}_${day}`);
+    if(resEl) resEl.innerHTML=passed===null?'Pending':passed?'<span style="color:#2E7D32;font-weight:600">✅ PASS</span>':'<span style="color:#C62828;font-weight:600">❌ FAIL</span>';
+  }
+  updateRemainingDisplay(entryId);
+}
+
+function addSample(entryId, day){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const key=`tr_${day}`;
+  if(!e[key]) e[key]={};
+  // Find next sample number
+  const existing=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/));
+  const nextNum=existing.length>0?Math.max(...existing.map(k=>parseInt(k.slice(1))))+1:4;
+  e[key][`r${nextNum}`]='';
+  saveQuiet();
+  // Re-render just the samples div
+  const samplesDiv=document.getElementById(`samples_${entryId}_${day}`);
+  if(samplesDiv){
+    const sampleKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+    const minKeys=['r1','r2','r3'];
+    minKeys.forEach(k=>{if(!sampleKeys.includes(k))sampleKeys.push(k);});
+    sampleKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+    samplesDiv.innerHTML=sampleKeys.map(k=>`
+      <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
+        <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
+        <input type="number" value="${e[key][k]||''}"
+          onchange="saveTrField(${entryId},${day},'${k}',this.value);autoCalcAve(${entryId},${day})"
+          style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+        ${parseInt(k.slice(1))>3?`<button onclick="removeSample(${entryId},${day},'${k}')" style="font-size:9px;padding:0 4px;background:#C62828;color:#fff;border:none;border-radius:2px;cursor:pointer;line-height:16px">✕</button>`:''}
+      </div>`).join('')+
+      `<button onclick="addSample(${entryId},${day})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
+  }
+}
+
+function removeSample(entryId, day, sampleKey){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const key=`tr_${day}`;
+  if(!e[key]) return;
+  delete e[key][sampleKey];
+  // Recalculate ave
+  const sampleKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/));
+  const vals=sampleKeys.map(k=>parseFloat(e[key][k])||0).filter(x=>x>0);
+  e[key].ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):'';
+  saveQuiet();
+  // Re-render samples div
+  const samplesDiv=document.getElementById(`samples_${entryId}_${day}`);
+  if(samplesDiv){
+    const remainingKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+    const minKeys=['r1','r2','r3'];
+    minKeys.forEach(k=>{if(!remainingKeys.includes(k))remainingKeys.push(k);});
+    remainingKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+    samplesDiv.innerHTML=remainingKeys.map(k=>`
+      <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
+        <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
+        <input type="number" value="${e[key][k]||''}"
+          onchange="saveTrField(${entryId},${day},'${k}',this.value);autoCalcAve(${entryId},${day})"
+          style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+        ${parseInt(k.slice(1))>3?`<button onclick="removeSample(${entryId},${day},'${k}')" style="font-size:9px;padding:0 4px;background:#C62828;color:#fff;border:none;border-radius:2px;cursor:pointer;line-height:16px">✕</button>`:''}
+      </div>`).join('')+
+      `<button onclick="addSample(${entryId},${day})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
+  }
+  // Update ave display
+  const aveEl=document.getElementById(`ave_${entryId}_${day}`);
+  if(aveEl) aveEl.textContent=e[key].ave||'—';
+  updateRemainingDisplay(entryId);
+}
+
+function updateRemainingDisplay(entryId){
+  const e=db.entries.find(x=>x.id===entryId);
+  if(!e) return;
+  const days=e.days||'28 Days';
+  const testDays=TEST_DAYS_MAP[days]||[7,14,28];
+  const totalSamples=parseInt(e.samples)||0;
+  const totalUsed=testDays.reduce((sum,d)=>{
+    const res=e[`tr_${d}`]||{};
+    const sKeys=Object.keys(res).filter(k=>k.match(/^r\d+$/));
+    return sum+sKeys.filter(k=>res[k]&&parseFloat(res[k])>0).length;
+  },0);
+  const finalRemaining=totalSamples-totalUsed;
+  const remEl=document.getElementById(`rem_${entryId}`);
+  if(remEl){
+    remEl.style.color=finalRemaining===0?'#2E7D32':finalRemaining<0?'#C62828':'#E65100';
+    remEl.textContent=finalRemaining===0?'✅ All tested':finalRemaining>0?finalRemaining+' remaining':'⚠️ Over';
+  }
+}
+
+function saveEntryField(id,field,val){
+  const e=db.entries.find(x=>x.id===id);
+  if(e){e[field]=val;saveQuiet();}
+}
+
+function getOverallStatus(e){
+  const days=e.days||'28 Days';
+  const testDays=TEST_DAYS_MAP[days]||[7,14,28];
+  const design=parseFloat(e.design)||0;
+  const theoMap=THEO_PCTS[days]||{};
+  let hasResult=false;
+  let allPass=true;
+  testDays.forEach(d=>{
+    const key=`tr_${d}`;
+    const results=e[key]||{};
+    if(results.ave){
+      hasResult=true;
+      const theo=theoMap[d]||100;
+      if(parseFloat(results.ave)<design*theo/100) allPass=false;
+    }
+  });
+  if(!hasResult) return 'pending';
+  return allPass?'pass':'fail';
+}
+
+function printTestMon(){
+  const container=document.getElementById('testmon-container');
+  if(!container||!container.innerHTML.trim()){alert('No data to print.');return;}
+  const mon=document.getElementById('testmon-month').value;
+  const monLabel=mon?document.querySelector('#testmon-month option:checked').textContent:'All Months';
+
+  
+  const printHTML=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Testing Monitoring - ${monLabel}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:9px;padding:12px}
+.no-print{display:none!important}
+table{border-collapse:collapse;width:100%}
+th{background:#6B1A1A;color:#fff;padding:4px 5px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:8px}
+td{padding:3px 5px;border-bottom:1px solid #ddd;vertical-align:middle;font-size:8px}
+tr:nth-child(even) td{background:#fdf8f8}
+input{display:none}
+.badge-pass{color:#2E7D32;font-weight:700}
+.badge-fail{color:#C62828;font-weight:700}
+.header-table{width:100%;margin-bottom:10px}
+.divider{height:2px;background:#6B1A1A;margin:6px 0 10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.footer{margin-top:20px}
+.footer table td{text-align:center;padding-top:28px;border-top:1px solid #333;font-size:9px}
+.conf{margin-top:8px;font-size:7px;color:#999;text-align:center}
+@page{margin:.6cm;size:landscape}
+</style></head>
+<body>
+<div class="no-print" style="display:block!important;text-align:center;padding:10px;margin-bottom:10px">
+  <button onclick="window.print()" style="background:#6B1A1A;color:#fff;padding:8px 24px;border:none;border-radius:4px;font-size:13px;cursor:pointer;font-weight:700">🖨️ PRINT</button>
+  <button onclick="window.close()" style="background:#888;color:#fff;padding:8px 16px;border:none;border-radius:4px;font-size:13px;cursor:pointer;margin-left:8px">✕ Close</button>
+</div>
+<table class="header-table">
+  <tr>
+    <td style="width:75px;vertical-align:middle"><img src="${MAROON_URL}" style="width:65px;height:65px;object-fit:contain"></td>
+    <td style="text-align:center;vertical-align:middle">
+      <div style="font-size:13px;font-weight:700;color:#6B1A1A">BIG BEN READY MIX CONCRETE</div>
+      <div style="font-size:11px;font-weight:600;margin-top:2px">TESTING MONITORING — COMPRESSIVE STRENGTH RESULTS</div>
+      <div style="font-size:10px;color:#444;margin-top:2px">${monLabel}</div>
+    </td>
+    <td style="width:75px;text-align:right;font-size:8px;color:#666;vertical-align:top">SP-QA-02</td>
+  </tr>
+</table>
+<div class="divider"></div>
+${container.innerHTML.replace(/onchange="[^"]*"/g,'').replace(/onclick="[^"]*"/g,'').replace(/<input[^>]*>/g, (m)=>{
+  const val=m.match(/value="([^"]*)"/);
+  return val?`<span>${val[1]}</span>`:'<span>—</span>';
+})}
+<div class="footer">
+  <table><tr>
+    <td style="width:33%">Prepared by<br><small>Testing Coordinator</small></td>
+    <td style="width:33%">Checked by<br><small>QC Supervisor</small></td>
+    <td style="width:33%">Noted by<br><small>R&D Supervisor</small></td>
+  </tr></table>
+  <div class="conf">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+</div>
+</body></html>`;
+
+  const w=window.open('','_blank','width=1200,height=700');
+  w.document.write(printHTML);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{w.print();},600);
+}
+
+function getTestResultStatus(e){
+  const r=e.testResults||[];
+  if(!r.length) return 'pending';
+  const design=parseFloat(e.design)||0;
+  const ave=r.reduce((a,b)=>a+b,0)/r.length;
+  const reqPct=DESIGN_PCT[e.days]||100;
+  return (ave/design*100)>=reqPct?'pass':'fail';
+}
+
+// Modal
+let currentModalDay=null;
+function openModal(id,day){
+  const e=db.entries.find(x=>x.id===id);
+  if(!e) return;
+  currentModalId=id;
+  currentModalDay=day;
+  const key=`tr_${day}`;
+  const results=e[key]||{};
+  const days=e.days||'28 Days';
+  const theoMap=THEO_PCTS[days]||{};
+  const theo=theoMap[day]||100;
+  const design=parseFloat(e.design)||0;
+  document.getElementById('modal-title').textContent=`Log ${day}-Day Test Results`;
+  document.getElementById('modal-info').innerHTML=`<strong>${e.client}</strong> | ${fmtDate(normalizeDate(e.date))} | ${e.design} PSI ${e.agg||''} ${e.days||''} | ${e.samples||''} (${e.kind||''}) | Theo: ${(design*theo/100).toFixed(0)} PSI (${theo}%)`;
+  document.getElementById('r1').value=results.r1||'';
+  document.getElementById('r2').value=results.r2||'';
+  document.getElementById('r3').value=results.r3||'';
+  document.getElementById('modal-lab-no').value=results.labNo||'';
+  document.getElementById('modal-remarks').value=results.remarks||'';
+  updateModalCalc();
+  document.getElementById('result-modal').style.display='flex';
+}
+
+function updateModalCalc(){
+  const v1=parseFloat(document.getElementById('r1').value)||0;
+  const v2=parseFloat(document.getElementById('r2').value)||0;
+  const v3=parseFloat(document.getElementById('r3').value)||0;
+  const vals=[v1,v2,v3].filter(x=>x>0);
+  if(!vals.length){
+    document.getElementById('modal-ave').textContent='—';
+    document.getElementById('modal-result').textContent='—';
+    return;
+  }
+  const ave=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  const e=db.entries.find(x=>x.id===currentModalId);
+  const design=parseFloat(e?e.design:0)||0;
+  const days=e?e.days:'28 Days';
+  const theoMap=THEO_PCTS[days]||{};
+  const theo=currentModalDay?theoMap[currentModalDay]||100:100;
+  const theoTarget=design?Math.round(design*theo/100):0;
+  const pass=ave>=theoTarget;
+  document.getElementById('modal-ave').textContent=ave+' PSI';
+  document.getElementById('modal-theo').textContent=theoTarget+' PSI ('+theo+'%)';
+  document.getElementById('modal-result').innerHTML=pass?'<span style="color:var(--green);font-weight:700">PASS ✓</span>':'<span style="color:var(--red);font-weight:700">FAIL ✗</span>';
+}
+
+['r1','r2','r3'].forEach(id=>document.getElementById(id).addEventListener('input',updateModalCalc));
+
+function saveResult(){
+  const e=db.entries.find(x=>x.id===currentModalId);
+  if(!e||!currentModalDay) return;
+  const key=`tr_${currentModalDay}`;
+  const r1=parseFloat(document.getElementById('r1').value)||0;
+  const r2=parseFloat(document.getElementById('r2').value)||0;
+  const r3=parseFloat(document.getElementById('r3').value)||0;
+  const vals=[r1,r2,r3].filter(x=>x>0);
+  const ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+  e[key]={
+    r1:r1||'',r2:r2||'',r3:r3||'',
+    ave:ave||'',
+    labNo:document.getElementById('modal-lab-no').value,
+    remarks:document.getElementById('modal-remarks').value,
+    testDate:new Date().toISOString().split('T')[0]
+  };
+  // Keep legacy testResults for KPI compatibility
+  e.testResults=vals;
+  e.testDate=new Date().toISOString().split('T')[0];
+  save();
+  closeModal();
+  renderTestMon();
+  renderKPI();
+}
+
+function closeModal(){
+  document.getElementById('result-modal').style.display='none';
+  currentModalId=null;
+}
+
+// ===== RENDER KPI =====
+function renderKPI(){
+  const mon=document.getElementById('kpi-month').value;
+  if(!mon) return;
+  const [yr,mo]=mon.split('-').map(Number);
+  const entries=db.entries.filter(e=>{
+    const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+    return d.getFullYear()===yr&&d.getMonth()+1===mo;
+  });
+  const todayStr=new Date().toISOString().split('T')[0];
+
+  // KPI 1
+  const totalVol=entries.reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
+  const rejVol=entries.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
+  const kpi1=totalVol>0?Math.round((totalVol-rejVol)/totalVol*100):0;
+  document.getElementById('kpi1-val').textContent=kpi1+'%';
+  document.getElementById('kpi1-sub').textContent=entries.filter(e=>!e.rejected).length+' accepted / '+entries.length+' total batches';
+  document.getElementById('kpi1-bar').style.width=kpi1+'%';
+  document.getElementById('kpi1-bar').style.background=kpi1>=95?'#fff':'#ffcc00';
+
+  // KPI 2
+  let totalTests=0,passedTests=0;
+  entries.forEach(e=>{
+    const tdays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];
+    const theoMap=THEO_PCTS[e.days||'28 Days']||{};
+    const design=parseFloat(e.design)||0;
+    tdays.forEach(d=>{
+      const res=e['tr_'+d]||{};
+      if(res.ave){totalTests++;if(parseFloat(res.ave)>=design*(theoMap[d]||100)/100)passedTests++;}
+    });
+  });
+  const kpi2=totalTests>0?Math.round(passedTests/totalTests*100):0;
+  document.getElementById('kpi2-val').textContent=kpi2+'%';
+  document.getElementById('kpi2-sub').textContent=passedTests+' passed / '+totalTests+' tested';
+  document.getElementById('kpi2-bar').style.width=kpi2+'%';
+  document.getElementById('kpi2-bar').style.background=kpi2>=95?'#fff':'#ffcc00';
+
+  // KPI 3
+  let totalDue=0,onTime=0;
+  entries.forEach(e=>{
+    const tdays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];
+    tdays.forEach(d=>{
+      const sched=addDays(normalizeDate(e.date||''),d);
+      if(sched<=todayStr){totalDue++;const res=e['tr_'+d]||{};if(res.ave)onTime++;}
+    });
+  });
+  const kpi3=totalDue>0?Math.round(onTime/totalDue*100):0;
+  document.getElementById('kpi3-val').textContent=kpi3+'%';
+  document.getElementById('kpi3-sub').textContent=onTime+' done / '+totalDue+' due';
+  document.getElementById('kpi3-bar').style.width=kpi3+'%';
+  document.getElementById('kpi3-bar').style.background=kpi3>=95?'#fff':'#ffcc00';
+
+  // Charts
+  if(window.Chart) renderKPICharts(entries);
+
+  // Rejection Log
+  const rejTbody=document.getElementById('kpi-rejection-tbody');
+  if(rejTbody){
+    const rej=entries.filter(e=>e.rejected);
+    rejTbody.innerHTML=rej.length?rej.map((e,i)=>'<tr><td>'+(i+1)+'</td><td>'+fmtDate(normalizeDate(e.date))+'</td><td><strong>'+e.client+'</strong></td><td>'+(e.location||'')+'</td><td style="font-size:11px">'+(e.design||'')+' '+(e.agg||'')+' '+(e.days||'')+'</td><td><span class="badge badge-fail">'+(e.rejectReason||'—')+'</span></td><td>'+(e.vol||'—')+'</td><td>'+(e.tmNo||'—')+'</td><td>'+(e.drNo||'—')+'</td></tr>').join(''):'<tr><td colspan="9" style="text-align:center;color:#2E7D32;font-weight:600">No rejections this month ✅</td></tr>';
+  }
+
+  // Hardened Breakdown
+  const hardTbody=document.getElementById('kpi-hardened-tbody');
+  if(hardTbody){
+    let rows=[];
+    entries.forEach(e=>{
+      const tdays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];
+      const theoMap=THEO_PCTS[e.days||'28 Days']||{};
+      const design=parseFloat(e.design)||0;
+      tdays.forEach(d=>{
+        const res=e['tr_'+d]||{};
+        const theo=theoMap[d]||100;
+        const theoTarget=design?(design*theo/100).toFixed(0):'—';
+        const ave=res.ave||'';
+        const passed=ave&&design?(parseFloat(ave)>=design*theo/100):null;
+        rows.push('<tr><td>'+fmtDate(normalizeDate(e.date))+'</td><td><strong>'+e.client+'</strong></td><td style="font-size:11px">'+(e.design||'')+' '+(e.agg||'')+' '+(e.days||'')+'</td><td style="text-align:center">'+d+'-Day</td><td style="text-align:center;font-weight:700">'+(ave||'Pending')+'</td><td style="text-align:center;font-size:11px">'+theoTarget+' PSI ('+theo+'%)</td><td style="text-align:center">'+(passed===null?'<span style="color:#888">Pending</span>':passed?'<span class="badge badge-pass">✅ PASS</span>':'<span class="badge badge-fail">❌ FAIL</span>')+'</td></tr>');
+      });
+    });
+    hardTbody.innerHTML=rows.length?rows.join(''):'<tr><td colspan="7" style="text-align:center;color:#999">No test results yet</td></tr>';
+  }
+
+  renderTrendChart();
+}
+
+let chartKpi1=null,chartKpi2=null,chartRsn=null,chartTrend=null;
+
+function renderKPICharts(entries){
+  const ctx1=document.getElementById('chart-kpi1');
+  if(ctx1){
+    if(chartKpi1) chartKpi1.destroy();
+    const acc=entries.filter(e=>!e.rejected).length;
+    const rej=entries.filter(e=>e.rejected).length;
+    chartKpi1=new Chart(ctx1,{type:'doughnut',data:{labels:['Accepted','Rejected'],datasets:[{data:[acc,rej],backgroundColor:['#2E7D32','#C62828'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+' ('+Math.round(c.raw/(acc+rej||1)*100)+'%)'}}}}});
+  }
+  const ctx2=document.getElementById('chart-kpi2');
+  if(ctx2){
+    if(chartKpi2) chartKpi2.destroy();
+    let pass=0,fail=0,pending=0;
+    entries.forEach(e=>{
+      const tdays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];
+      const theoMap=THEO_PCTS[e.days||'28 Days']||{};
+      const design=parseFloat(e.design)||0;
+      tdays.forEach(d=>{const res=e['tr_'+d]||{};if(res.ave){parseFloat(res.ave)>=design*(theoMap[d]||100)/100?pass++:fail++;}else pending++;});
+    });
+    chartKpi2=new Chart(ctx2,{type:'doughnut',data:{labels:['Pass','Fail','Pending'],datasets:[{data:[pass,fail,pending],backgroundColor:['#2E7D32','#C62828','#E65100'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}}}});
+  }
+  const ctx3=document.getElementById('chart-reason');
+  if(ctx3){
+    if(chartRsn) chartRsn.destroy();
+    const reasons={Temperature:0,Slump:0,Overmix:0,Segregated:0,Others:0};
+    entries.filter(e=>e.rejected).forEach(e=>{const r=e.rejectReason||'Others';if(reasons[r]!==undefined)reasons[r]++;else reasons['Others']++;});
+    chartRsn=new Chart(ctx3,{type:'bar',data:{labels:Object.keys(reasons),datasets:[{label:'Count',data:Object.values(reasons),backgroundColor:['#E65100','#1565C0','#6A1B9A','#2E7D32','#37474F'],borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}}}}}});
+  }
+}
+
+function renderTrendChart(){
+  if(!window.Chart) return;
+  const ctx=document.getElementById('chart-trend');
+  if(!ctx) return;
+  const months=[];
+  const now=new Date();
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push({label:d.toLocaleDateString('en-PH',{month:'short',year:'2-digit'}),yr:d.getFullYear(),mo:d.getMonth()+1});
+  }
+  const d1=[],d2=[],d3=[];
+  const todayStr=new Date().toISOString().split('T')[0];
+  months.forEach(m=>{
+    const ents=db.entries.filter(e=>{const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');return d.getFullYear()===m.yr&&d.getMonth()+1===m.mo;});
+    const tv=ents.reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
+    const rv=ents.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
+    d1.push(tv>0?Math.round((tv-rv)/tv*100):null);
+    let t=0,p=0;
+    ents.forEach(e=>{const tdays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];const theoMap=THEO_PCTS[e.days||'28 Days']||{};const design=parseFloat(e.design)||0;tdays.forEach(d=>{const res=e['tr_'+d]||{};if(res.ave){t++;if(parseFloat(res.ave)>=design*(theoMap[d]||100)/100)p++;}});});
+    d2.push(t>0?Math.round(p/t*100):null);
+    let due=0,onT=0;
+    ents.forEach(e=>{const tdays=TEST_DAYS_MAP[e.days||'28 Days']||[7,14,28];tdays.forEach(d=>{const sc=addDays(normalizeDate(e.date||''),d);if(sc<=todayStr){due++;const res=e['tr_'+d]||{};if(res.ave)onT++;}});});
+    d3.push(due>0?Math.round(onT/due*100):null);
+  });
+  if(chartTrend) chartTrend.destroy();
+  chartTrend=new Chart(ctx,{type:'line',data:{labels:months.map(m=>m.label),datasets:[{label:'KPI 1 Fresh',data:d1,borderColor:'#6B1A1A',backgroundColor:'rgba(107,26,26,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#6B1A1A'},{label:'KPI 2 Hardened',data:d2,borderColor:'#1565C0',backgroundColor:'rgba(21,101,192,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#1565C0'},{label:'KPI 3 On-Time',data:d3,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,.1)',tension:.3,pointRadius:4,pointBackgroundColor:'#2E7D32'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:10}}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
 }
 
 function loadSettingsUI(){
