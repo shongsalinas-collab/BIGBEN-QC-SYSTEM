@@ -1844,6 +1844,9 @@ function renderTrendChart(){
 }
 
 function renderKPISVGCharts(entries, kpi1, totalVol, rejVol){
+  console.log('renderKPISVGCharts called, entries=', entries.length, 'kpi1=', kpi1);
+  const c1=document.getElementById('kpi1-chart-container');
+  console.log('chart container found:', !!c1);
   // KPI 1 Donut Chart - Pure SVG no dependencies
   const accepted=entries.filter(e=>!e.rejected).length;
   const rejected=entries.filter(e=>e.rejected).length;
@@ -3103,6 +3106,7 @@ function closeModal(){
 // ===== RENDER KPI =====
 function renderKPI(){
   const mon=document.getElementById('kpi-month').value;
+  console.log('renderKPI called, mon=', mon, 'entries=', db.entries.length);
   if(!mon) return;
   const [yr,mo]=mon.split('-').map(Number);
   const entries=db.entries.filter(e=>{
