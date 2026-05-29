@@ -3428,8 +3428,10 @@ function renderCharts(){
   if(!mon||!window.Chart) return;
   const [yr,mo]=mon.split('-').map(Number);
   const entries=db.entries.filter(e=>{
-    const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
-    return d.getFullYear()===yr&&d.getMonth()+1===mo;
+    const nd=normalizeDate(e.date||'');
+    if(!nd) return false;
+    const parts=nd.split('-');
+    return parseInt(parts[0])===yr&&parseInt(parts[1])===mo;
   });
 
   // Chart 1: Fresh Concrete Acceptance vs Rejection (Doughnut)
