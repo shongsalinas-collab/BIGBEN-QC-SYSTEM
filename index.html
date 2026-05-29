@@ -1656,47 +1656,7 @@ function checkSlumpColor(e){
   const sMax=e.slumpMax?parseFloat(e.slumpMax):settings.maxSlump;
   return (actual<sMin||actual>sMax)?'var(--red)':'var(--green)';
 }
-function renderMaster(){
-  const mon=document.getElementById('filter-month').value;
-  const search=(document.getElementById('master-search').value||'').toLowerCase();
-  const areaF=document.getElementById('master-area-filter').value;
-  const [yr,mo]=mon.split('-').map(Number);
-  const rows=db.entries.filter(e=>{
-    const d=new Date(e.date+'T00:00:00');
-    if(d.getFullYear()!==yr||d.getMonth()+1!==mo) return false;
-    if(search&&!e.client.toLowerCase().includes(search)&&!e.location.toLowerCase().includes(search)) return false;
-    if(areaF&&e.area!==areaF) return false;
-    return true;
-  });
-  const tbody=document.getElementById('master-tbody');
-  const empty=document.getElementById('master-empty');
-  if(!rows.length){tbody.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  tbody.innerHTML=rows.map((e,i)=>`
-    <tr class="${e.rejected?'rejected':''}">
-      <td>${i+1}</td>
-      <td>${fmtDate(e.date)}</td>
-      <td><strong>${e.client}</strong>${e.rejected?`<br><span class="badge badge-rejected">${e.autoRejected?'AUTO-':''}REJECTED: ${e.rejectReason}</span>`:''}</td>
-      <td>${e.location||'—'}</td>
-      <td style="font-size:11px"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
-      <td>${fmtTime(e.timeBatched)}</td>
-      <td>${fmtTime(e.time)}</td>
-      <td>${e.structure||'—'}</td>
-      <td>${e.coord||'—'}</td>
-      <td>${e.testingCoord?`<span style='font-size:11px;color:#1565C0;font-weight:600'>${e.testingCoord}</span>`:'<span style="color:#ccc">—</span>'}</td>
-      <td style="white-space:nowrap">${e.samples||'—'} <span style="font-size:11px;color:#666">(${e.kind||'—'})</span></td>
-      <td>${e.sampleRemarks?`<span style="font-size:11px;color:#1565C0;font-weight:600">${e.sampleRemarks}</span>`:`<span style="color:#ccc">—</span>`}</td>
-      <td>${e.slip||'—'}</td>
-      <td>${e.vol||'—'}</td>
-      <td><input type="text" value="${e.remarks||''}" onchange="saveRemarks(${e.id},this.value)" style="width:120px;font-size:11px;padding:3px 6px;border:1px solid #ddd;border-radius:3px" placeholder="Notes..."></td>
-      <td class="no-print" style="white-space:nowrap">
-        <button class="btn btn-sm" style="background:#1565C0;color:#fff;margin-right:4px" onclick="editEntry(${e.id})">✏️ Edit</button>
-        <button class="btn btn-sm btn-red" onclick="deleteEntry(${e.id})">✕</button>
-      </td>
-    </tr>`).join('');
-}
 
-// ===== RENDER MOLD COLLECTION =====
 function initMoldDateSelector(){
   const sel=document.getElementById('mold-filter-date');
   if(!sel) return;
@@ -3430,7 +3390,6 @@ function initTestingDateSelector(){
 }
 
 // ===== RENDER TESTING SCHEDULE =====
-const TESTING_COORDS = ['Dio Balili','Joshua Facun','Roni Aguilar','Teodoro Taysa','JM Buitizon'];
 
 function renderTesting(){
   const sel=document.getElementById('test-date-filter');
