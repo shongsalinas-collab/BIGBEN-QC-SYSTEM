@@ -1137,15 +1137,13 @@ function getKpi1ChartData(){
 }
 
 function renderKpi1ComboChart(){
-  const chartPanel=document.getElementById('tab-kpi-chart');
   const ctx=document.getElementById('chart-kpi1-combo');
   if(!ctx||!window.Chart) return;
   if(chartKpi1Combo) chartKpi1Combo.destroy();
   const data=getKpi1ChartData();
-  if(!data.labels.length){if(chartPanel)chartPanel.style.display='none';return;}
-  if(chartPanel)chartPanel.style.display='block';
   const lbl=document.getElementById('kpi1-chart-month-label');
-  if(lbl)lbl.textContent=data.monthLabel;
+  if(lbl)lbl.textContent=data.monthLabel||'This Month';
+  if(!data.labels.length) return;
   chartKpi1Combo=new Chart(ctx,{
     type:'bar',
     data:{labels:data.labels,datasets:[
