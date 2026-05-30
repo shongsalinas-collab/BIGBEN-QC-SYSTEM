@@ -1156,6 +1156,19 @@ function loadSettingsUI(){
   `;
 }
 
+function showTab(name){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(name==='kpi') renderKPI();
+  if(name==='testmon') renderTestMon();
+  if(name==='monitoring') renderMonitoring();
+  if(name==='mold') renderMold();
+  if(name==='testing') renderTesting();
+  if(name==='master') renderMaster();
+}
+
 function clearForm(){
   // Restore all update buttons back to Add Entry if in edit mode
   document.querySelectorAll('[onclick^="updateEntry"]').forEach(btn=>{
