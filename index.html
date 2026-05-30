@@ -2134,13 +2134,13 @@ function updateEntry(id){
     slumpMin:'', slumpMax:'',
     actualSlump:'', temp:'', actualTemp:'',
     vol:parseFloat((document.getElementById('f-vol')||{}).value)||0,
-    volRejected:parseFloat((document.getElementById('f-vol-rejected')||{}).value)||0,
-    drNo:(document.getElementById('f-dr-no')||{}).value||'',
+    volRejected:parseFloat(document.getElementById('f-vol-rejected').value)||0,
+    drNo:document.getElementById('f-dr-no').value||'',
     rejected:finalRejected,
-    rejectReason:finalRejected?(isRejected?((document.getElementById('f-reject-reason')||{}).value||''):autoRejected.reason):'',
-    rejectDetail:finalRejected?(isRejected?((document.getElementById('f-reject-detail')||{}).value||''):autoRejected.detail):'',
+    rejectReason:finalRejected?(isRejected?(document.getElementById('f-reject-reason').value||''):autoRejected.reason):'',
+    rejectDetail:finalRejected?(isRejected?(document.getElementById('f-reject-detail').value||''):autoRejected.detail):'',
     autoRejected:autoRejected.rejected,
-    mixer:(document.getElementById('f-mixer')||{}).value||'',
+    mixer:document.getElementById('f-mixer').value||'',
     area:getArea(document.getElementById('f-location').value)
   };
   save();
