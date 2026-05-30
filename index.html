@@ -1357,9 +1357,11 @@ function renderKpi3ComboChart(entries){
     testDays.forEach(d=>{
       const res=e['tr_'+d]||{};
       const schedDate=addDays(normalizeDate(e.date||''),d);
+      // Same logic as KPI 3 card: count if past due OR has actual test date
       if(schedDate>todayStr && !res.testDate) return;
       const actualDate=res.testDate||'';
-      actualDate&&actualDate<=schedDate?onTimeCount++:lateCount++;
+      if(actualDate&&actualDate<=schedDate) onTimeCount++;
+      else lateCount++;
     });
   });
   const total=onTimeCount+lateCount;
