@@ -661,7 +661,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <div style="font-size:36px;font-weight:700;color:var(--maroon)" id="kpi1-val">—</div>
             <div style="font-size:11px;color:#666;margin-top:4px" id="kpi1-sub">Acceptance rate this month</div>
             <div style="margin-top:10px">
-              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi1-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div></div>
+              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi1-bar" style="height:100%;background:#546E7A;transition:width .4s;width:0%"></div></div>
               <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: ≥95%</span><span>100%</span></div>
             </div>
           </div>
@@ -675,7 +675,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <div style="font-size:36px;font-weight:700;color:var(--maroon)" id="kpi2-val">—</div>
             <div style="font-size:11px;color:#666;margin-top:4px" id="kpi2-sub">Pass rate this month</div>
             <div style="margin-top:10px">
-              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi2-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div></div>
+              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi2-bar" style="height:100%;background:#546E7A;transition:width .4s;width:0%"></div></div>
               <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: ≥95%</span><span>100%</span></div>
             </div>
           </div>
@@ -3014,19 +3014,19 @@ function renderKPI(){
   document.getElementById('kpi1-val').className='kpi-value '+(kpi1>=95?'kpi-good':kpi1>=80?'kpi-warn':'kpi-bad');
   document.getElementById('kpi1-sub').textContent=`Accepted: ${acceptedVol.toFixed(1)} m³ / Total: ${totalVol.toFixed(1)} m³ | Rejected: ${rejVol.toFixed(1)} m³`;
   document.getElementById('kpi1-bar').style.width=(kpi1||0)+'%';
-  document.getElementById('kpi1-bar').style.background=kpi1>=95?'var(--green)':kpi1>=80?'var(--orange)':'var(--red)';
+  document.getElementById('kpi1-bar').style.background=kpi1>=95?'#37474F':kpi1>=80?'#546E7A':'#6B1A1A';
   
   const kpi2pass=testedGroups?((passedGroups/testedGroups)*100).toFixed(1):null;
   document.getElementById('kpi2-val').textContent=kpi2pass!==null?kpi2pass+'%':'N/A';
   document.getElementById('kpi2-val').className='kpi-value '+(kpi2pass>=95?'kpi-good':kpi2pass>=80?'kpi-warn':'kpi-bad');
   document.getElementById('kpi2-sub').textContent=`${passedGroups} passed / ${testedGroups} tested`;
   document.getElementById('kpi2-bar').style.width=(kpi2pass||0)+'%';
-  document.getElementById('kpi2-bar').style.background=kpi2pass>=95?'var(--green)':kpi2pass>=80?'var(--orange)':'var(--red)';
+  document.getElementById('kpi2-bar').style.background=kpi2pass>=95?'#37474F':kpi2pass>=80?'#546E7A':'#6B1A1A';
   
   document.getElementById('kpi3-val').textContent=kpi3!==null?kpi3+'%':'N/A';
   document.getElementById('kpi3-sub').textContent=`${onTimeCount} on time / ${dueCount} due`;
   document.getElementById('kpi3-bar').style.width=(kpi3||0)+'%';
-  document.getElementById('kpi3-bar').style.background=kpi3>=100?'var(--green)':kpi3>=80?'var(--orange)':'var(--red)';
+  document.getElementById('kpi3-bar').style.background=kpi3>=100?'#37474F':kpi3>=80?'#546E7A':'#6B1A1A';
   
   // Render Rejection Log
   const rejEntries=entries.filter(e=>e.rejected);
