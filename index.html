@@ -1461,40 +1461,54 @@ function printDelayLog(){
 
 function printKpi2Chart(){
   const canvas=document.getElementById('chart-kpi2-combo');
-  if(!canvas) return;
+  if(!canvas){alert('Chart not loaded yet. Please wait a moment.');return;}
   const img=canvas.toDataURL('image/png');
   const mon=document.getElementById('kpi-month').value||'';
   const [yr,mo]=mon.split('-').map(Number);
-  const monthLabel=mon?new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'}):'';
-  const w=window.open('','_blank');
+  const monthLabel=mon==='all'?'All Months':(mon?new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'}):'');
+  const sub=document.getElementById('kpi2-val').textContent;
+  const info=document.getElementById('kpi2-sub').textContent;
+  const w=window.open('','_blank','width=700,height=600');
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>KPI 2 Chart</title>
-  <style>body{font-family:Arial,sans-serif;padding:20px;text-align:center}h2{color:#1565C0}
-  img{max-width:500px;border:1px solid #ddd;border-radius:4px}
-  .btn{margin-top:14px;padding:8px 24px;background:#1565C0;color:#fff;border:none;border-radius:4px;cursor:pointer}
+  <style>body{font-family:Arial,sans-serif;padding:24px;background:#fff;text-align:center}
+  h2{color:#6B1A1A;margin:0 0 4px}p{color:#666;font-size:12px;margin:0 0 16px}
+  img{max-width:500px;width:100%}
+  .info{margin-top:12px;font-size:13px;color:#333}
+  .btn{margin-top:16px;display:inline-block;padding:8px 24px;background:#6B1A1A;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}
   @media print{.btn{display:none}}</style></head><body>
-  <h2>BIG BEN RMC — KPI 2: Hardened Concrete | ${monthLabel}</h2>
-  <img src="${img}"><br>
-  <button class="btn" onclick="window.print()">🖨 Print / Save PDF</button>
-  </body></html>`);w.document.close();
+  <h2>BIG BEN READY MIX CONCRETE — QC System</h2>
+  <p>KPI 2: Hardened Concrete Acceptance Rate | ${monthLabel} | ${new Date().toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}</p>
+  <img src="${img}">
+  <div class="info">Pass Rate: <strong style="color:#6B1A1A">${sub}</strong> &nbsp;|&nbsp; ${info}</div>
+  <br><button class="btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  </body></html>`);
+  w.document.close();
 }
 
 function printKpi3Chart(){
   const canvas=document.getElementById('chart-kpi3-combo');
-  if(!canvas) return;
+  if(!canvas){alert('Chart not loaded yet. Please wait a moment.');return;}
   const img=canvas.toDataURL('image/png');
   const mon=document.getElementById('kpi-month').value||'';
   const [yr,mo]=mon.split('-').map(Number);
-  const monthLabel=mon?new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'}):'';
-  const w=window.open('','_blank');
+  const monthLabel=mon==='all'?'All Months':(mon?new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'}):'');
+  const sub=document.getElementById('kpi3-val').textContent;
+  const info=document.getElementById('kpi3-sub').textContent;
+  const w=window.open('','_blank','width=700,height=600');
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>KPI 3 Chart</title>
-  <style>body{font-family:Arial,sans-serif;padding:20px;text-align:center}h2{color:#2E7D32}
-  img{max-width:500px;border:1px solid #ddd;border-radius:4px}
-  .btn{margin-top:14px;padding:8px 24px;background:#2E7D32;color:#fff;border:none;border-radius:4px;cursor:pointer}
+  <style>body{font-family:Arial,sans-serif;padding:24px;background:#fff;text-align:center}
+  h2{color:#6B1A1A;margin:0 0 4px}p{color:#666;font-size:12px;margin:0 0 16px}
+  img{max-width:500px;width:100%}
+  .info{margin-top:12px;font-size:13px;color:#333}
+  .btn{margin-top:16px;display:inline-block;padding:8px 24px;background:#6B1A1A;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}
   @media print{.btn{display:none}}</style></head><body>
-  <h2>BIG BEN RMC — KPI 3: On-Time Testing | ${monthLabel}</h2>
-  <img src="${img}"><br>
-  <button class="btn" onclick="window.print()">🖨 Print / Save PDF</button>
-  </body></html>`);w.document.close();
+  <h2>BIG BEN READY MIX CONCRETE — QC System</h2>
+  <p>KPI 3: On-Time Testing Rate | ${monthLabel} | ${new Date().toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}</p>
+  <img src="${img}">
+  <div class="info">On-Time Rate: <strong style="color:#6B1A1A">${sub}</strong> &nbsp;|&nbsp; ${info}</div>
+  <br><button class="btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  </body></html>`);
+  w.document.close();
 }
 
 function printRejectionLog(){
