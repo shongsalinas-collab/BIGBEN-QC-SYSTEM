@@ -701,13 +701,13 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
         <!-- KPI 1 REJECTION LOG -->
         <div class="panel" style="margin:0">
-          <div class="panel-header" style="font-size:12px;background:#C62828;display:flex;align-items:center;justify-content:space-between">
+          <div class="panel-header" style="font-size:12px;background:var(--maroon);display:flex;align-items:center;justify-content:space-between">
             ⛔ KPI 1 — Rejection Log
             <button class="btn btn-sm no-print" style="background:#fff;color:#C62828;border:none;padding:2px 8px" onclick="printRejectionLog()">🖨 Print</button>
           </div>
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
-              <thead><tr style="background:#C62828">
+              <thead><tr style="background:var(--maroon)">
                 <th>#</th><th>Date</th><th>Client</th><th>TM No.</th><th>DR No.</th><th>Reason</th><th>Vol. Rej.</th><th>%</th>
               </tr></thead>
               <tbody id="rejection-log-tbody" style="display:table-row-group!important"></tbody>
@@ -3014,19 +3014,19 @@ function renderKPI(){
   document.getElementById('kpi1-val').className='kpi-value '+(kpi1>=95?'kpi-good':kpi1>=80?'kpi-warn':'kpi-bad');
   document.getElementById('kpi1-sub').textContent=`Accepted: ${acceptedVol.toFixed(1)} m³ / Total: ${totalVol.toFixed(1)} m³ | Rejected: ${rejVol.toFixed(1)} m³`;
   document.getElementById('kpi1-bar').style.width=(kpi1||0)+'%';
-  document.getElementById('kpi1-bar').style.background=kpi1>=95?'#37474F':kpi1>=80?'#546E7A':'#6B1A1A';
+  document.getElementById('kpi1-bar').style.background='#546E7A';
   
   const kpi2pass=testedGroups?((passedGroups/testedGroups)*100).toFixed(1):null;
   document.getElementById('kpi2-val').textContent=kpi2pass!==null?kpi2pass+'%':'N/A';
   document.getElementById('kpi2-val').className='kpi-value '+(kpi2pass>=95?'kpi-good':kpi2pass>=80?'kpi-warn':'kpi-bad');
   document.getElementById('kpi2-sub').textContent=`${passedGroups} passed / ${testedGroups} tested`;
   document.getElementById('kpi2-bar').style.width=(kpi2pass||0)+'%';
-  document.getElementById('kpi2-bar').style.background=kpi2pass>=95?'#37474F':kpi2pass>=80?'#546E7A':'#6B1A1A';
+  document.getElementById('kpi2-bar').style.background='#546E7A';
   
   document.getElementById('kpi3-val').textContent=kpi3!==null?kpi3+'%':'N/A';
   document.getElementById('kpi3-sub').textContent=`${onTimeCount} on time / ${dueCount} due`;
   document.getElementById('kpi3-bar').style.width=(kpi3||0)+'%';
-  document.getElementById('kpi3-bar').style.background=kpi3>=100?'#37474F':kpi3>=80?'#546E7A':'#6B1A1A';
+  document.getElementById('kpi3-bar').style.background='#546E7A';
   
   // Render Rejection Log
   const rejEntries=entries.filter(e=>e.rejected);
