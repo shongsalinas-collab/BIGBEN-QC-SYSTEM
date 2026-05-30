@@ -2985,9 +2985,8 @@ function renderTestMon(){
             ${(()=>{
               // Build sample inputs dynamically
               const sampleKeys=Object.keys(res).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
-              // Always show at least r1, r2, r3
-              const minKeys=['r1','r2','r3'];
-              minKeys.forEach(k=>{if(!sampleKeys.includes(k))sampleKeys.push(k);});
+              // Show only saved keys, minimum r1
+              if(!sampleKeys.length) sampleKeys.push('r1');
               sampleKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
               return sampleKeys.map(k=>`
                 <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
