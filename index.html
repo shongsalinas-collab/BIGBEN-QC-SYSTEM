@@ -943,10 +943,16 @@ function initMonthSelectors(){
     const lbl = d.toLocaleDateString('en-PH',{month:'long',year:'numeric'});
     options.push(`<option value="${val}">${lbl}</option>`);
   }
-  ['filter-month','kpi-month'].forEach(id=>{
+  ['filter-month'].forEach(id=>{
     const el=document.getElementById(id);
     if(el){el.innerHTML=options.join('');el.value=options[0].match(/value="([^"]+)"/)[1];}
   });
+  // kpi-month gets All Dates option
+  const kpiMonEl=document.getElementById('kpi-month');
+  if(kpiMonEl){
+    kpiMonEl.innerHTML='<option value="all">All Dates</option>'+options.join('');
+    kpiMonEl.value=options[0].match(/value="([^"]+)"/)[1];
+  }
   // testmon-month gets All Months option
   const testmonEl=document.getElementById('testmon-month');
   if(testmonEl){
@@ -1097,12 +1103,18 @@ let chartKpi1=null,chartKpi2=null,chartRsn=null,chartTrend=null,chartKpi1Combo=n
 function getKpi1ChartData(){
   const mon=document.getElementById('kpi-month').value||'';
   if(!mon) return {accVol:0,rejVol:0,accPct:0,rejPct:0,monthLabel:'',totalVol:0};
-  const [yr,mo]=mon.split('-').map(Number);
-  const monthLabel=new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'});
-  const entries=db.entries.filter(e=>{
-    const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
-    return d.getFullYear()===yr&&d.getMonth()+1===mo;
-  });
+  let entries, monthLabel;
+  if(mon==='all'){
+    entries=db.entries;
+    monthLabel='All Dates';
+  } else {
+    const [yr,mo]=mon.split('-').map(Number);
+    monthLabel=new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+    entries=db.entries.filter(e=>{
+      const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+      return d.getFullYear()===yr&&d.getMonth()+1===mo;
+    });
+  }
   const totalVol=entries.reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
   const rejVol=entries.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.volRejected)||0),0);
   const accVol=Math.max(0,totalVol-rejVol);
@@ -2952,11 +2964,16 @@ function closeModal(){
 function renderKPI(){
   const mon=document.getElementById('kpi-month').value;
   if(!mon) return;
-  const [yr,mo]=mon.split('-').map(Number);
-  const entries=db.entries.filter(e=>{
-    const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
-    return d.getFullYear()===yr&&d.getMonth()+1===mo;
-  });
+  let entries;
+  if(mon==='all'){
+    entries=db.entries;
+  } else {
+    const [yr,mo]=mon.split('-').map(Number);
+    entries=db.entries.filter(e=>{
+      const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+      return d.getFullYear()===yr&&d.getMonth()+1===mo;
+    });
+  }
   
   const totalVol=entries.reduce((a,e)=>a+(e.vol||0),0);
   const rejVol=entries.reduce((a,e)=>a+(parseFloat(e.volRejected)||0),0);
