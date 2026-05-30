@@ -719,14 +719,19 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           </div>
           <div id="rejection-log-empty" style="text-align:center;padding:14px;color:#999;font-size:12px;display:none!important">No rejections. 🎉</div>
           <div id="rejection-log-summary" style="padding:8px 12px;background:#fff5f5;border-top:1px solid #EF9A9A;font-size:11px;font-weight:600;color:#C62828"></div>
+          </div>
         </div>
 
         <!-- KPI 2 FAILED LOG -->
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px;background:var(--maroon);display:flex;align-items:center;justify-content:space-between">
             ❌ KPI 2 — Failed Log
-            <button class="btn btn-sm no-print" style="background:#fff;color:var(--maroon);border:none;padding:2px 8px" onclick="printFailedLog()">🖨 Print</button>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm no-print" style="background:#fff;color:var(--maroon);border:none;padding:2px 8px" onclick="printFailedLog()">🖨 Print</button>
+              <button class="btn btn-sm no-print" id="toggle-failed" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.5);padding:2px 8px" onclick="toggleLog('failed-log-body','toggle-failed')">▼ Show</button>
+            </div>
           </div>
+          <div id="failed-log-body" style="display:none">
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
               <thead><tr style="background:var(--maroon)">
@@ -737,14 +742,19 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           </div>
           <div id="failed-log-empty" style="text-align:center;padding:14px;color:#999;font-size:12px">No failed tests. ✅</div>
           <div id="failed-log-summary" style="padding:8px 12px;background:#ECEFF1;border-top:1px solid #B0BEC5;font-size:11px;font-weight:600;color:var(--maroon)"></div>
+          </div>
         </div>
 
         <!-- KPI 3 DELAY LOG -->
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px;background:var(--maroon);display:flex;align-items:center;justify-content:space-between">
             ⏰ KPI 3 — Delay Testing Log
-            <button class="btn btn-sm no-print" style="background:#fff;color:var(--maroon);border:none;padding:2px 8px" onclick="printDelayLog()">🖨 Print</button>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm no-print" style="background:#fff;color:var(--maroon);border:none;padding:2px 8px" onclick="printDelayLog()">🖨 Print</button>
+              <button class="btn btn-sm no-print" id="toggle-delay" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.5);padding:2px 8px" onclick="toggleLog('delay-log-body','toggle-delay')">▼ Show</button>
+            </div>
           </div>
+          <div id="delay-log-body" style="display:none">
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
               <thead><tr style="background:var(--maroon)">
