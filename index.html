@@ -1262,7 +1262,7 @@ function renderDelayLog(entries, kpi3){
       if(actualDate&&actualDate>schedDate){
         const daysLate=Math.round((new Date(actualDate+'T00:00:00')-new Date(schedDate+'T00:00:00'))/(1000*60*60*24));
         delayRows.push({e,d,schedDate,actualDate,daysLate,pending:false});
-      } else if(!actualDate&&schedDate<todayStr){
+      } else if(!actualDate&&schedDate<=todayStr){
         const daysLate=Math.round((new Date(todayStr+'T00:00:00')-new Date(schedDate+'T00:00:00'))/(1000*60*60*24));
         delayRows.push({e,d,schedDate,actualDate:'Pending',daysLate,pending:true});
       }
@@ -1357,7 +1357,7 @@ function renderKpi3ComboChart(entries){
     testDays.forEach(d=>{
       const res=e['tr_'+d]||{};
       const schedDate=addDays(normalizeDate(e.date||''),d);
-      if(schedDate>todayStr) return;
+      if(schedDate>todayStr && !res.testDate) return;
       const actualDate=res.testDate||'';
       actualDate&&actualDate<=schedDate?onTimeCount++:lateCount++;
     });
