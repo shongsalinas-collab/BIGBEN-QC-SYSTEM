@@ -457,6 +457,26 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
             <td style="padding:3px 8px;text-align:right;font-weight:800;color:#E65100;font-size:13px" id="s-margin">—</td>
           </tr>
         </table>
+        <table class="sum-table" style="width:100%;border-top:2px solid #1565C0">
+          <tr style="background:#E3F2FD">
+            <td style="padding:4px 8px;font-size:11px;font-weight:700;color:#0D47A1;text-transform:uppercase;letter-spacing:.4px" colspan="2">🎯 Target Profit</td>
+          </tr>
+          <tr>
+            <td class="s-lbl" style="font-size:12px">Target Profit/m³ (₱)</td>
+            <td><input class="s-inp" id="p-target" type="number" value="500" step="50" oninput="liveUpdate()" style="color:#0D47A1;font-weight:700;border-bottom-color:#0D47A1"></td>
+          </tr>
+          <tr style="background:#E8F5E9">
+            <td style="padding:3px 8px;font-size:12px;font-weight:700;color:#1B5E20">Required Quote (Vat Ex)</td>
+            <td style="padding:3px 8px;text-align:right;font-weight:800;color:#1B5E20;font-size:13px" id="s-req-vatex">—</td>
+          </tr>
+          <tr style="background:#C8E6C9">
+            <td style="padding:3px 8px;font-size:12px;font-weight:700;color:#1B5E20">Required Quote (Vat In)</td>
+            <td style="padding:3px 8px;text-align:right;font-weight:800;color:#1B5E20;font-size:14px" id="s-req-vatin">—</td>
+          </tr>
+          <tr id="status-row">
+            <td colspan="2" style="padding:4px 8px;text-align:center;font-weight:700;font-size:12px" id="s-status">—</td>
+          </tr>
+        </table>
       </div>
 
     </div><!-- end sheet-right -->
@@ -682,6 +702,35 @@ function liveUpdate(){
   st('s-vatin',   '₱'+f(vatIn));
   st('s-profit',  quoted>0?'₱'+f(netProfit):'—');
   st('s-margin',  quoted>0?(margin*100).toFixed(2)+'%':'—');
+
+  // Target Profit
+  const target     = gv('p-target');
+  const reqVatEx   = vatEx + target - cemSavings;
+  const reqVatIn   = reqVatEx * 1.12;
+  st('s-req-vatex', '₱'+f(reqVatEx));
+  st('s-req-vatin', '₱'+f(reqVatIn));
+  // Status indicator
+  const statusEl = document.getElementById('s-status');
+  if(quoted > 0) {
+    const diff = quotedExVAT - reqVatEx;
+    if(diff >= 0) {
+      statusEl.textContent = '🟢 Above Target  (+₱'+f(diff)+'/m³)';
+      statusEl.parentElement.style.background = '#E8F5E9';
+      statusEl.style.color = '#1B5E20';
+    } else if(diff >= -200) {
+      statusEl.textContent = '🟡 Close to Target  (−₱'+f(Math.abs(diff))+'/m³)';
+      statusEl.parentElement.style.background = '#FFF9C4';
+      statusEl.style.color = '#F57F17';
+    } else {
+      statusEl.textContent = '🔴 Below Target  (−₱'+f(Math.abs(diff))+'/m³)';
+      statusEl.parentElement.style.background = '#FFEBEE';
+      statusEl.style.color = '#B71C1C';
+    }
+  } else {
+    statusEl.textContent = 'Enter quoted price to see status';
+    statusEl.parentElement.style.background = '#F5F5F5';
+    statusEl.style.color = '#999';
+  }
 
   // Save for log
   const psi=gs('f-psi'), days=gs('f-days'), aggType=gs('f-agg'), sandType=gs('m-sand-type');
