@@ -2643,9 +2643,12 @@ function renderKPI(){
   document.getElementById('kpi1-bar').style.width=(kpi1||0)+'%';
   document.getElementById('kpi1-bar').style.background=kpi1>=95?'var(--green)':kpi1>=80?'var(--orange)':'var(--red)';
   
-  document.getElementById('kpi2-val').textContent=kpi2!==null?kpi2+'%':'N/A';
-  document.getElementById('kpi2-sub').textContent=`${failed.length} failed / ${tested.length} tested`;
-  document.getElementById('kpi2-bar').style.width=(kpi2||0)+'%';
+  const kpi2pass=tested.length?((tested.length-failed.length)/tested.length*100).toFixed(1):null;
+  document.getElementById('kpi2-val').textContent=kpi2pass!==null?kpi2pass+'%':'N/A';
+  document.getElementById('kpi2-val').className='kpi-value '+(kpi2pass>=95?'kpi-good':kpi2pass>=80?'kpi-warn':'kpi-bad');
+  document.getElementById('kpi2-sub').textContent=`${tested.length-failed.length} passed / ${tested.length} tested`;
+  document.getElementById('kpi2-bar').style.width=(kpi2pass||0)+'%';
+  document.getElementById('kpi2-bar').style.background=kpi2pass>=95?'var(--green)':kpi2pass>=80?'var(--orange)':'var(--red)';
   
   document.getElementById('kpi3-val').textContent=kpi3!==null?kpi3+'%':'N/A';
   document.getElementById('kpi3-sub').textContent=`${onTime} on time / ${due.length} due`;
@@ -2760,6 +2763,10 @@ function renderAll(){
       const rv=ents.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
       renderKPISVGCharts(ents,tv>0?Math.round((tv-rv)/tv*100):0,tv,rv);
       renderKpi1ComboChart();
+      renderFailedLog(ents, document.getElementById('kpi2-val').textContent);
+      renderDelayLog(ents, document.getElementById('kpi3-val').textContent);
+      renderKpi2ComboChart(ents);
+      renderKpi3ComboChart(ents);
     },200);
   }
 }
