@@ -1969,6 +1969,11 @@ function loadSettingsUI(){
 }
 
 function clearForm(){
+  // Restore all update buttons back to Add Entry if in edit mode
+  document.querySelectorAll('[onclick^="updateEntry"]').forEach(btn=>{
+    btn.textContent='➕ Add Entry';
+    btn.setAttribute('onclick','addEntry()');
+  });
   ['f-date','f-client','f-location','f-design','f-agg','f-days','f-time','f-time-batched','f-mixer','f-structure','f-coord','f-testing-coord','f-samples','f-sample-remarks','f-sample-remarks-other','f-kind','f-slip','f-slump-min','f-slump-max','f-actual-slump','f-temp','f-actual-temp','f-vol','f-vol-rejected','f-dr-no','f-agg-other','f-reject-reason','f-reject-detail'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value='';
@@ -2092,12 +2097,11 @@ function editEntry(id){
   document.getElementById('entry-form').style.display='block';
   // Scroll to top
   window.scrollTo({top:0,behavior:'smooth'});
-  // Change Add button to Update
-  const addBtn=document.querySelector('[onclick="addEntry()"]');
-  if(addBtn){
-    addBtn.textContent='💾 Update Entry';
-    addBtn.setAttribute('onclick',`updateEntry(${id})`);
-  }
+  // Change ALL Add buttons to Update
+  document.querySelectorAll('[onclick="addEntry()"]').forEach(btn=>{
+    btn.textContent='💾 Update Entry';
+    btn.setAttribute('onclick',`updateEntry(${id})`);
+  });
 }
 
 function updateEntry(id){
@@ -2148,9 +2152,11 @@ function updateEntry(id){
   };
   save();
   clearForm();
-  // Restore Add button
-  const addBtn=document.querySelector('[onclick^="updateEntry"]');
-  if(addBtn){addBtn.textContent='➕ Add Entry';addBtn.setAttribute('onclick','addEntry()');}
+  // Restore ALL buttons back to Add Entry
+  document.querySelectorAll('[onclick^="updateEntry"]').forEach(btn=>{
+    btn.textContent='➕ Add Entry';
+    btn.setAttribute('onclick','addEntry()');
+  });
   renderAll();
 }
 
