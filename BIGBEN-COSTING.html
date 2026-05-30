@@ -12,8 +12,7 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 /* HEADER */
 .hdr{background:linear-gradient(135deg,#4A0E0E,#6B1A1A 60%,#9B2C2C);color:#fff;
   padding:10px 18px;display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:200;box-shadow:0 3px 12px rgba(107,26,26,.3)}
-.hdr-l{display:flex;align-items:center;gap:10px}
+  position:sticky;top:0;z-index:200;align-items:center;gap:10px}
 .logo{width:38px;height:38px;border-radius:6px;background:rgba(255,255,255,.15);
   border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;
   font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800}
@@ -23,7 +22,7 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
   font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
 
 /* NAV TABS */
-.tabs{background:#fff;border-bottom:2px solid #DDD6CC;display:flex;gap:0;padding:0 16px}
+.tabs{background:#fff;display:flex;gap:0;padding:0 16px}
 .tab{padding:9px 18px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
   font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
   color:#7A6E68;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
@@ -35,7 +34,7 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .page.active{display:block}
 
 /* ===== COSTING SHEET ===== */
-.sheet-wrap{background:#fff;max-width:1100px;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.sheet-wrap{background:#fff;max-width:1100px}
 
 /* Top bar */
 .sheet-topbar{background:#6B1A1A;color:#fff;padding:5px 10px;
@@ -44,73 +43,73 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .sheet-topbar span{font-size:11px;opacity:.8}
 
 /* Main sheet grid: left + right */
-.sheet-main{display:grid;grid-template-columns:1fr 230px}
+.sheet-main{display:grid;grid-template-columns:1fr 230px;}
 
 /* ===== LEFT SECTION ===== */
-.sheet-left{border-right:1px solid #F0EDE8}
+.sheet-left{}
 
 /* Project info rows */
-.proj-table{width:100%;border-collapse:collapse}
-.proj-table td{padding:4px 10px;border-bottom:1px solid #F5F2EE;font-size:12.5px;vertical-align:middle}
+.proj-table{width:100%;}
+.proj-table td{padding:3px 8px;font-size:12.5px;vertical-align:middle}
 .proj-table .lbl{color:#333;width:130px;white-space:nowrap}
 .proj-table .inp-cell{min-width:200px}
-.proj-table input.pi{border:none;border-bottom:1.5px solid #999;background:transparent;
+.proj-table input.pi{border-bottom:1.5px solid #999;background:transparent;
   font-family:'Barlow',sans-serif;font-size:12.5px;font-weight:700;color:#000;
   padding:1px 4px;width:100%;outline:none;transition:border-color .2s}
 .proj-table input.pi:focus{border-bottom-color:#6B1A1A;background:#FFF9F9}
 .proj-label-val{font-size:12px;color:#333;padding:3px 8px}
 
 /* Design Mix row */
-.dm-row{background:#F7F4F0;border-top:none;border-bottom:none;
+.dm-row{background:#F0F0F0;
   padding:4px 8px;font-size:12.5px;display:flex;align-items:center;gap:8px}
 .dm-row .dm-lbl{color:#333;width:120px}
 .dm-row .dm-val{font-weight:700;color:#000}
 .dm-selects{display:flex;gap:6px;align-items:center}
-.dm-selects select{border:none;border-bottom:1.5px solid #999;background:transparent;
+.dm-selects select{border-bottom:1.5px solid #999;background:transparent;
   font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:1px 2px;
   outline:none;cursor:pointer;color:#000}
 .dm-selects select:focus{border-bottom-color:#6B1A1A}
 
 /* Section header */
-.sec-lbl{background:#6B1A1A;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.8px}
+.sec-lbl{background:#333;color:#fff;padding:4px 8px;font-size:12px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px}
 
 /* Material table */
-.mat-table{width:100%;border-collapse:collapse}
-.mat-table th{background:#F7F4F0;padding:5px 8px;font-size:11px;font-weight:700;
-  text-align:center;border:none;border-bottom:2px solid #E0D8D0;color:#555;letter-spacing:.3px}
+.mat-table{width:100%;}
+.mat-table th{background:#F0F0F0;padding:3px 6px;font-size:11px;font-weight:700;
+  text-align:center;color:#333;letter-spacing:.3px}
 .mat-table th.lh{text-align:left}
 .mat-table th.orange{color:#E65100;font-weight:800}
-.mat-table td{padding:4px 8px;border:none;border-bottom:1px solid #F5F2EE;font-size:12.5px;vertical-align:middle}
+.mat-table td{padding:2px 6px;font-size:12.5px;vertical-align:middle}
 .mat-table td.mat-lbl{color:#333;font-weight:600;white-space:nowrap}
-.mat-table input.mi{border:none;border-bottom:1.5px solid #999;background:transparent;
+.mat-table input.mi{border-bottom:1.5px solid #999;background:transparent;
   font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:#000;
   width:100%;padding:1px 3px;outline:none;text-align:center;transition:border-color .2s}
 .mat-table input.mi:focus{border-bottom-color:#6B1A1A;background:#FFF9F9}
 .auto{color:#E65100;font-weight:700;font-size:12px;text-align:center;white-space:nowrap}
 .unit-lbl{color:#555;font-size:11.5px;text-align:center}
-.mat-total-row td{background:#F0EDE8;font-weight:800;font-size:13px;padding:6px 10px;border:none;border-top:2px solid #D0C8C0}
+.mat-total-row td{background:#D0D0D0;font-weight:800;font-size:13px;padding:4px 8px;}
 
 /* ===== RIGHT SECTION ===== */
 .sheet-right{display:flex;flex-direction:column}
 
 /* Price inputs top */
-.prices-top{border-bottom:1px solid #F0EDE8}
-.pt-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #F5F2EE;
-  padding:3px 10px;align-items:center;min-height:28px}
-.pt-row:last-child{border-bottom:none}
+.prices-top{}
+.pt-row{display:grid;grid-template-columns:1fr 1fr;
+  padding:2px 8px;align-items:center;min-height:26px}
+.pt-row:last-child{}
 .pt-lbl{font-size:12px;color:#333}
-.pt-inp{border:none;border-bottom:1.5px solid #999;background:transparent;
+.pt-inp{border-bottom:1.5px solid #999;background:transparent;
   font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:#000;
   width:100%;padding:1px 3px;outline:none;text-align:right;transition:border-color .2s}
 .pt-inp:focus{border-bottom-color:#6B1A1A;background:#FFF9F9}
 
 /* Summary bottom */
-.sum-table{width:100%;border-collapse:collapse}
-.sum-table td{padding:4px 10px;border-bottom:1px solid #F5F2EE;font-size:12.5px;vertical-align:middle}
+.sum-table{width:100%;}
+.sum-table td{padding:3px 8px;font-size:12.5px;vertical-align:middle}
 .sum-table .s-lbl{color:#333;white-space:nowrap}
 .sum-table .s-val{font-weight:700;font-size:13px;text-align:right;color:#000;white-space:nowrap}
-.sum-table .s-inp{border:none;border-bottom:1.5px solid #999;background:transparent;
+.sum-table .s-inp{border-bottom:1.5px solid #999;background:transparent;
   font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:#000;
   width:100%;padding:1px 3px;outline:none;text-align:right}
 .sum-table .s-inp:focus{border-bottom-color:#6B1A1A;background:#FFF9F9}
@@ -122,14 +121,13 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .vat-row .v-val{text-align:right;font-size:14px}
 
 /* Compute button */
-.compute-bar{padding:10px 16px;background:#F7F4F0;border-top:1px solid #DDD6CC;
+.compute-bar{padding:10px 16px;background:#F7F4F0;
   display:flex;gap:10px;align-items:center;max-width:1100px}
 .btn-go{padding:9px 24px;background:linear-gradient(135deg,#4A0E0E,#6B1A1A);color:#fff;
-  border:none;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
+  border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
   font-size:14px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
-  box-shadow:0 3px 10px rgba(107,26,26,.3);transition:all .2s}
-.btn-go:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(107,26,26,.4)}
-.btn-save{padding:9px 20px;background:#C9A84C;color:#4A0E0E;border:none;border-radius:6px;
+  transition:all .2s}
+.btn-go:hover{transform:translateY(-1px);background:#C9A84C;color:#4A0E0E;border-radius:6px;
   cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
   letter-spacing:.5px;transition:all .2s}
 .btn-save:hover{background:#DDB850}
@@ -140,7 +138,7 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 
 /* ===== LOG PAGE ===== */
 .log-bar{display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:12px;padding:10px 14px;background:#fff;border-radius:7px;border:1px solid #DDD6CC}
+  margin-bottom:12px;padding:10px 14px;background:#fff;border-radius:7px;}
 .log-bar h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;
   color:#6B1A1A;text-transform:uppercase;letter-spacing:.5px}
 .log-actions{display:flex;gap:7px}
@@ -152,12 +150,12 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .btn-sm.pr:hover{background:#4A0E0E;color:#fff}
 .btn-sm.danger:hover{border-color:#B71C1C;color:#B71C1C}
 
-table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
-  border:1px solid #DDD6CC;border-radius:7px;overflow:hidden;white-space:nowrap}
+table.lt{width:100%;font-size:12px;background:#fff;
+  border-radius:7px;overflow:hidden;white-space:nowrap}
 .lt thead th{padding:8px 11px;background:#F7F4F0;font-size:10px;font-weight:700;
   text-transform:uppercase;letter-spacing:.5px;color:#7A6E68;
-  border-bottom:2px solid #DDD6CC;text-align:left}
-.lt tbody tr{border-bottom:1px solid #EEE;transition:background .15s}
+  text-align:left}
+.lt tbody tr{transition:background .15s}
 .lt tbody tr:hover{background:#FBF9F6}
 .lt td{padding:7px 11px}
 .tag{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
@@ -168,7 +166,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
 @media print{
   .hdr,.tabs,.compute-bar,.log-page,.btn-go,.btn-save,.btn-prt{display:none!important}
   .page{display:block!important;padding:0}
-  .sheet-wrap{border:none;max-width:100%}
+  .sheet-wrap{max-width:100%}
   body{background:#fff}
 }
 </style>
@@ -337,7 +335,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
           <!-- Vibro Sand -->
           <tr>
             <td class="mat-lbl">
-              <select id="m-sand-type" onchange="autoFill();liveUpdate()" style="border:none;background:transparent;font-weight:600;font-size:12.5px;cursor:pointer;outline:none;color:#333">
+              <select id="m-sand-type" onchange="autoFill();liveUpdate()" style="background:transparent;font-weight:600;font-size:12.5px;cursor:pointer;outline:none;color:#333">
                 <option value="VS">Vibro Sand</option>
                 <option value="S1">Sand S1</option>
                 <option value="2MM">Sand 2MM</option>
@@ -391,7 +389,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
       </table>
 
       <!-- CS Cement Savings row (hidden by default) -->
-      <div id="cs-savings-row" style="display:none;background:#E3F2FD;border-top:1px solid #90CAF9;padding:5px 10px;font-size:12px">
+      <div id="cs-savings-row" style="display:none;background:#E3F2FD;padding:5px 10px;font-size:12px">
         <span style="color:#0D47A1;font-weight:700">CEMENT SUPPLY MODE:</span>
         <span style="color:#555;margin-left:8px">ACAP Bags:</span>
         <input class="mi" id="m-acap" type="number" step="0.5" placeholder="e.g. 17" style="width:60px;margin:0 6px" oninput="liveUpdate()">
@@ -407,7 +405,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
 
       <!-- Material Prices (top) -->
       <div class="prices-top">
-        <div style="background:#6B1A1A;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.8px">MATERIAL PRICES</div>
+        <div style="background:#555;color:#fff;padding:3px 8px;font-size:11px;font-weight:700;letter-spacing:.5px">MATERIAL PRICES</div>
         <div class="pt-row"><span class="pt-lbl">Cement</span><input class="pt-inp" id="p-cem" type="number" value="190" step="5" oninput="liveUpdate()"></div>
         <div class="pt-row"><span class="pt-lbl">Fly Ash</span><input class="pt-inp" id="p-fa" type="number" value="108" step="5" oninput="liveUpdate()"></div>
         <div class="pt-row"><span class="pt-lbl">Admixture</span><input class="pt-inp" id="p-adm" type="number" value="45" step="5" oninput="liveUpdate()"></div>
@@ -439,7 +437,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
             <td><input class="s-inp" id="p-quoted" type="number" placeholder="0" step="50" oninput="liveUpdate()"></td>
           </tr>
         </table>
-        <table class="sum-table" style="width:100%;border-top:1px solid #F0EDE8">
+        <table class="sum-table" style="width:100%;">
           <tr class="vat-row vat-ex">
             <td class="v-lbl">Vat Ex</td>
             <td class="v-val" id="s-vatex">—</td>
@@ -457,7 +455,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
             <td style="padding:3px 8px;text-align:right;font-weight:800;color:#E65100;font-size:13px" id="s-margin">—</td>
           </tr>
         </table>
-        <table class="sum-table" style="width:100%;border-top:1px solid #F0EDE8;margin-top:4px">
+        <table class="sum-table" style="width:100%;">
           <tr style="background:#E3F2FD">
             <td style="padding:4px 8px;font-size:11px;font-weight:700;color:#0D47A1;text-transform:uppercase;letter-spacing:.4px" colspan="2">🎯 Target Profit</td>
           </tr>
@@ -817,25 +815,25 @@ function printQ(i){
   <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Barlow',sans-serif;padding:24px 28px;background:#fff;color:#111;font-size:12.5px}
-  .hdr{display:flex;align-items:center;gap:12px;border-bottom:3px solid #6B1A1A;padding-bottom:10px;margin-bottom:14px}
+  .hdr{display:flex;align-items:center;gap:12px;padding-bottom:10px;margin-bottom:14px}
   .logo{width:44px;height:44px;background:#6B1A1A;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;border-radius:6px}
   h1{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:#6B1A1A;margin:0}
   .sub{font-size:10px;color:#888;margin-top:2px}
-  .main{display:grid;grid-template-columns:1fr 200px;gap:0;border:1px solid #bbb}
-  .left{border-right:1px solid #bbb}
+  .main{display:grid;grid-template-columns:1fr 200px;gap:0;}
+  .left{}
   .right{}
-  table{width:100%;border-collapse:collapse}
-  td,th{padding:4px 8px;border:1px solid #ddd;font-size:12px}
+  table{width:100%;}
+  td,th{padding:4px 8px;font-size:12px}
   th{background:#F0F0F0;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
   .lbl{color:#555;font-size:12px}.val{font-weight:700}
   .auto{color:#E65100;font-weight:700;text-align:right}
-  .sec{background:#333;color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border:none}
+  .sec{background:#333;color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;}
   .tot{background:#D0D0D0;font-weight:800;font-size:13px}
   .vex{background:#4CAF50;color:#fff;font-weight:800;font-size:13px}
   .vin{background:#2E7D32;color:#fff;font-weight:800;font-size:13px}
-  .right-sec{background:#555;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;padding:3px 8px;border:none}
-  .proj-row td{border:none;border-bottom:1px solid #eee;padding:3px 8px}
-  .btn{margin:16px auto 0;display:block;padding:9px 28px;background:#6B1A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700}
+  .right-sec{background:#555;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;padding:3px 8px;}
+  .proj-row td{padding:3px 8px}
+  .btn{margin:16px auto 0;display:block;padding:9px 28px;background:#6B1A1A;color:#fff;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700}
   @media print{.btn{display:none}}
   </style></head><body>
   <div class="hdr">
@@ -847,7 +845,7 @@ function printQ(i){
   </div>
   <div class="main">
     <div class="left">
-      <table class="proj-row" style="border-collapse:collapse;margin-bottom:0">
+      <table class="proj-row" style="margin-bottom:0">
         <tr><td class="lbl" style="width:140px">Account Executive</td><td class="val">${e.ae||'—'}</td></tr>
         <tr><td class="lbl">Contractor</td><td class="val">${e.contractor||'—'}</td></tr>
         <tr><td class="lbl">Project Title</td><td class="val">${e.project||'—'}</td></tr>
@@ -856,9 +854,9 @@ function printQ(i){
         <tr><td class="lbl">Distance</td><td class="val">${e.dist||0} km</td></tr>
         <tr><td class="lbl">Tollfee</td><td class="val">₱${f(e.toll*e.tvol)} per truck</td></tr>
       </table>
-      <table style="border-collapse:collapse;width:100%;margin:0">
-        <tr><td colspan="7" style="background:#F0F0F0;padding:3px 8px;font-size:12px;font-weight:700;border-bottom:1px solid #bbb">Design Mix: <span style="color:#000">${e.mixLbl}</span></td></tr>
-        <tr style="background:#333;color:#fff"><th style="text-align:left;border:none">Material</th><th style="border:none">Input</th><th style="color:#E65100;border:none">UW</th><th style="border:none">Qty</th><th style="border:none">Unit</th><th style="border:none">Price</th><th style="border:none">Cost</th></tr>
+      <table style="width:100%;margin:0">
+        <tr><td colspan="7" style="background:#F0F0F0;padding:3px 8px;font-size:12px;font-weight:700;">Design Mix: <span style="color:#000">${e.mixLbl}</span></td></tr>
+        <tr style="background:#333;color:#fff"><th style="text-align:left;">Material</th><th style="">Input</th><th style="color:#E65100;">UW</th><th style="">Qty</th><th style="">Unit</th><th style="">Price</th><th style="">Cost</th></tr>
         <tr><td>Cement</td><td class="auto">${e.contractType==='SC'?f2(e.cf):'CS'}</td><td style="text-align:center">—</td><td class="auto">${e.contractType==='SC'?f2(e.cf)+' bags':'0 (CS)'}</td><td>bags</td><td>₱${f2(e.pCem)}</td><td class="auto">₱${f(e.cemCost)}</td></tr>
         <tr><td>Fly-Ash</td><td class="auto">${f2(e.fa)}</td><td style="text-align:center">—</td><td class="auto">${f2(e.fa)} bags</td><td>bags</td><td>₱${f2(e.pFa)}</td><td class="auto">₱${f(e.faCost)}</td></tr>
         <tr><td>Admix</td><td class="auto">${f2(e.adm)}</td><td style="text-align:center">—</td><td class="auto">${f2(e.adm)} ltrs</td><td>ltrs</td><td>₱${f2(e.pAdm)}</td><td class="auto">₱${f(e.admCost)}</td></tr>
@@ -870,7 +868,7 @@ function printQ(i){
       </table>
     </div>
     <div class="right">
-      <table style="border-collapse:collapse;width:100%;height:100%">
+      <table style="width:100%;height:100%">
         <tr><td colspan="2" class="right-sec">Material Prices</td></tr>
         <tr><td class="lbl">Cement</td><td class="val" style="text-align:right">₱${f2(e.pCem)}</td></tr>
         <tr><td class="lbl">Fly Ash</td><td class="val" style="text-align:right">₱${f2(e.pFa)}</td></tr>
