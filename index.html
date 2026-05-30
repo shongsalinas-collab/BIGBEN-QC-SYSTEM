@@ -2077,21 +2077,16 @@ function editEntry(id){
   toggleSampleRemarks();
   document.getElementById('f-kind').value=e.kind||'';
   document.getElementById('f-slip').value=e.slip||'';
-  document.getElementById('f-slump-min').value=e.slumpMin||'';
-  document.getElementById('f-slump-max').value=e.slumpMax||'';
-  document.getElementById('f-actual-slump').value=e.actualSlump||'';
-  document.getElementById('f-temp').value=e.temp||'';
-  document.getElementById('f-actual-temp').value=e.actualTemp||'';
-  document.getElementById('f-vol').value=e.vol||'';
+  const volEl=document.getElementById('f-vol'); if(volEl) volEl.value=e.vol||'';
   document.getElementById('f-rejected').checked=e.rejected||false;
   if(e.rejected){
-    document.getElementById('rejection-block').style.display='block';
-    document.getElementById('f-reject-reason').value=e.rejectReason||'';
+    const rb=document.getElementById('rejection-block'); if(rb) rb.style.display='block';
+    const rr=document.getElementById('f-reject-reason'); if(rr) rr.value=e.rejectReason||'';
     toggleRejectDetail();
-    document.getElementById('f-reject-detail').value=e.rejectDetail||'';
-    document.getElementById('f-mixer').value=e.mixer||'';
-    document.getElementById('f-dr-no').value=e.drNo||'';
-    document.getElementById('f-vol-rejected').value=e.volRejected||'';
+    const rd=document.getElementById('f-reject-detail'); if(rd) rd.value=e.rejectDetail||'';
+    const mx=document.getElementById('f-mixer'); if(mx) mx.value=e.mixer||'';
+    const dr=document.getElementById('f-dr-no'); if(dr) dr.value=e.drNo||'';
+    const vr=document.getElementById('f-vol-rejected'); if(vr) vr.value=e.volRejected||'';
   }
   // Show form
   document.getElementById('entry-form').style.display='block';
