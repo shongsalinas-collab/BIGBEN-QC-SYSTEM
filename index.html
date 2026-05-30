@@ -2961,21 +2961,37 @@ function renderKPI(){
   const acceptedVol=totalVol-rejVol;
   const kpi1=totalVol?((acceptedVol/totalVol)*100).toFixed(1):null;
   
-  const tested=entries.filter(e=>e.testResults&&e.testResults.length>0);
-  const failed=tested.filter(e=>{
+  // KPI 2 - count each test day group (tr_7, tr_14, tr_28) as one test
+  let testedGroups=0, failedGroups=0;
+  entries.forEach(e=>{
+    const days=e.days||'28 Days';
+    const testDays=TEST_DAYS_MAP[days]||[7,14,28];
+    const theoMap=THEO_PCTS[days]||{};
     const design=parseFloat(e.design)||0;
-    const ave=e.testResults.reduce((a,b)=>a+b,0)/e.testResults.length;
-    const reqPct=DESIGN_PCT[e.days]||100;
-    return design&&(ave/design*100)<reqPct;
+    testDays.forEach(d=>{
+      const res=e['tr_'+d]||{};
+      if(!res.ave) return;
+      testedGroups++;
+      const ave=parseFloat(res.ave);
+      const theo=theoMap[d]||100;
+      if(design&&ave<(design*theo/100)) failedGroups++;
+    });
   });
-  const kpi2=tested.length?((failed.length/tested.length)*100).toFixed(1):null;
+  const passedGroups=testedGroups-failedGroups;
+  // Legacy for old code compatibility
+  const tested={length:testedGroups};
+  const failed={length:failedGroups};
+  const kpi2=testedGroups?((failedGroups/testedGroups)*100).toFixed(1):null;
   
   const today=new Date().toISOString().split('T')[0];
   const due=entries.filter(e=>{
     const testDays=getTestDays(e.days);
     return testDays.some(d=>addDays(e.date,d)<=today);
   });
-  const onTime=due.filter(e=>e.testResults&&e.testResults.length>0).length;
+  const onTime=due.filter(e=>{
+    const tdays=getTestDays(e.days);
+    return tdays.some(d=>{const res=e['tr_'+d]||{};return res.ave&&res.testDate&&res.testDate<=addDays(normalizeDate(e.date||''),d);});
+  }).length;
   const kpi3=due.length?((onTime/due.length)*100).toFixed(1):null;
   
   document.getElementById('kpi-cards').innerHTML=`
@@ -2991,10 +3007,10 @@ function renderKPI(){
   document.getElementById('kpi1-bar').style.width=(kpi1||0)+'%';
   document.getElementById('kpi1-bar').style.background=kpi1>=95?'var(--green)':kpi1>=80?'var(--orange)':'var(--red)';
   
-  const kpi2pass=tested.length?((tested.length-failed.length)/tested.length*100).toFixed(1):null;
+  const kpi2pass=testedGroups?((passedGroups/testedGroups)*100).toFixed(1):null;
   document.getElementById('kpi2-val').textContent=kpi2pass!==null?kpi2pass+'%':'N/A';
   document.getElementById('kpi2-val').className='kpi-value '+(kpi2pass>=95?'kpi-good':kpi2pass>=80?'kpi-warn':'kpi-bad');
-  document.getElementById('kpi2-sub').textContent=`${tested.length-failed.length} passed / ${tested.length} tested`;
+  document.getElementById('kpi2-sub').textContent=`${passedGroups} passed / ${testedGroups} tested`;
   document.getElementById('kpi2-bar').style.width=(kpi2pass||0)+'%';
   document.getElementById('kpi2-bar').style.background=kpi2pass>=95?'var(--green)':kpi2pass>=80?'var(--orange)':'var(--red)';
   
