@@ -2993,6 +2993,7 @@ function renderTestMon(){
                   <input type="number" value="${res[k]||''}"
                     onchange="saveTrField(${e.id},${d},'${k}',this.value);autoCalcAve(${e.id},${d})"
                     style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+                  ${k!=='r1'?`<button onclick="removeSample(${e.id},${d},'${k}')" style="font-size:9px;padding:0 4px;background:#C62828;color:#fff;border:none;border-radius:2px;cursor:pointer;line-height:16px">✕</button>`:''}
                 </div>`).join('')+
                 `<button onclick="addSample(${e.id},${d})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
             })()}
@@ -3078,6 +3079,21 @@ function autoCalcAve(entryId, day){
   updateRemainingDisplay(entryId);
 }
 
+function renderSamplesDiv(samplesDiv, res, entryId, day){
+  let sampleKeys=Object.keys(res).filter(k=>k.match(/^r\d+$/));
+  if(!sampleKeys.length) sampleKeys=['r1'];
+  sampleKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
+  samplesDiv.innerHTML=sampleKeys.map(k=>`
+    <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
+      <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
+      <input type="number" value="${res[k]||''}"
+        onchange="saveTrField(${entryId},${day},'${k}',this.value);autoCalcAve(${entryId},${day})"
+        style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
+      ${k!=='r1'?`<button onclick="removeSample(${entryId},${day},'${k}')" style="font-size:9px;padding:0 4px;background:#C62828;color:#fff;border:none;border-radius:2px;cursor:pointer;line-height:16px">✕</button>`:''}
+    </div>`).join('')+
+    `<button onclick="addSample(${entryId},${day})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
+}
+
 function addSample(entryId, day){
   const e=db.entries.find(x=>x.id===entryId);
   if(!e) return;
@@ -3085,26 +3101,11 @@ function addSample(entryId, day){
   if(!e[key]) e[key]={};
   // Find next sample number
   const existing=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/));
-  const nextNum=existing.length>0?Math.max(...existing.map(k=>parseInt(k.slice(1))))+1:4;
+  const nextNum=existing.length>0?Math.max(...existing.map(k=>parseInt(k.slice(1))))+1:2;
   e[key][`r${nextNum}`]='';
   saveQuiet();
-  // Re-render just the samples div
   const samplesDiv=document.getElementById(`samples_${entryId}_${day}`);
-  if(samplesDiv){
-    const sampleKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
-    const minKeys=['r1','r2','r3'];
-    minKeys.forEach(k=>{if(!sampleKeys.includes(k))sampleKeys.push(k);});
-    sampleKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
-    samplesDiv.innerHTML=sampleKeys.map(k=>`
-      <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
-        <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
-        <input type="number" value="${e[key][k]||''}"
-          onchange="saveTrField(${entryId},${day},'${k}',this.value);autoCalcAve(${entryId},${day})"
-          style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
-        ${parseInt(k.slice(1))>3?`<button onclick="removeSample(${entryId},${day},'${k}')" style="font-size:9px;padding:0 4px;background:#C62828;color:#fff;border:none;border-radius:2px;cursor:pointer;line-height:16px">✕</button>`:''}
-      </div>`).join('')+
-      `<button onclick="addSample(${entryId},${day})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
-  }
+  if(samplesDiv) renderSamplesDiv(samplesDiv, e[key], entryId, day);
 }
 
 function removeSample(entryId, day, sampleKey){
@@ -3118,23 +3119,8 @@ function removeSample(entryId, day, sampleKey){
   const vals=sampleKeys.map(k=>parseFloat(e[key][k])||0).filter(x=>x>0);
   e[key].ave=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):'';
   saveQuiet();
-  // Re-render samples div
   const samplesDiv=document.getElementById(`samples_${entryId}_${day}`);
-  if(samplesDiv){
-    const remainingKeys=Object.keys(e[key]).filter(k=>k.match(/^r\d+$/)).sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
-    const minKeys=['r1','r2','r3'];
-    minKeys.forEach(k=>{if(!remainingKeys.includes(k))remainingKeys.push(k);});
-    remainingKeys.sort((a,b)=>parseInt(a.slice(1))-parseInt(b.slice(1)));
-    samplesDiv.innerHTML=remainingKeys.map(k=>`
-      <div style="display:flex;align-items:center;gap:1px;margin-bottom:2px">
-        <span style="font-size:8px;color:#888;width:14px">${k.toUpperCase()}</span>
-        <input type="number" value="${e[key][k]||''}"
-          onchange="saveTrField(${entryId},${day},'${k}',this.value);autoCalcAve(${entryId},${day})"
-          style="width:48px;font-size:10px;padding:1px 3px;border:1px solid #ddd;border-radius:2px;text-align:center">
-        ${parseInt(k.slice(1))>3?`<button onclick="removeSample(${entryId},${day},'${k}')" style="font-size:9px;padding:0 4px;background:#C62828;color:#fff;border:none;border-radius:2px;cursor:pointer;line-height:16px">✕</button>`:''}
-      </div>`).join('')+
-      `<button onclick="addSample(${entryId},${day})" style="font-size:9px;padding:1px 5px;background:#6B1A1A;color:#fff;border:none;border-radius:2px;cursor:pointer;margin-top:2px">+S</button>`;
-  }
+  if(samplesDiv) renderSamplesDiv(samplesDiv, e[key], entryId, day);
   // Update ave display
   const aveEl=document.getElementById(`ave_${entryId}_${day}`);
   if(aveEl) aveEl.textContent=e[key].ave||'—';
