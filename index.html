@@ -729,6 +729,23 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div id="rejection-log-empty" style="text-align:center;padding:20px;color:#999;font-size:13px;display:none!important">No rejections this month. 🎉</div>
         <div id="rejection-log-summary" style="padding:10px 14px;background:#fff5f5;border-top:1px solid #EF9A9A;font-size:12px;font-weight:600;color:#C62828"></div>
       </div>
+
+      <!-- KPI 1 COMBO CHART -->
+      <div class="panel" style="margin-top:14px" id="kpi1-chart-panel">
+        <div class="panel-header" style="font-size:12px;display:flex;align-items:center;justify-content:space-between">
+          📊 KPI 1 — Fresh Concrete Acceptance Rate (Last 6 Months)
+          <button class="btn btn-sm no-print" onclick="printKpi1Chart()" style="background:#fff;color:var(--maroon);border:1px solid var(--maroon);font-size:11px">🖨 Copy for PPT</button>
+        </div>
+        <div class="panel-body" style="padding:16px">
+          <div style="position:relative;height:320px"><canvas id="chart-kpi1-combo"></canvas></div>
+          <div style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(46,125,50,0.8);border-radius:2px;display:inline-block"></span>Accepted Volume (m³)</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(198,40,40,0.8);border-radius:2px;display:inline-block"></span>Rejected Volume (m³)</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;height:3px;background:#6B1A1A;display:inline-block;border-radius:2px"></span>Acceptance Rate (%)</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;border-top:2px dashed #aaa;display:inline-block"></span>Target 95%</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1027,7 +1044,87 @@ function fixCorruptedDates(){
 
 const TESTING_COORDS = ['Dio Balili','Joshua Facun','Roni Aguilar','Teodoro Taysa','JM Buitizon'];
 
-let chartKpi1=null,chartKpi2=null,chartRsn=null,chartTrend=null;
+let chartKpi1=null,chartKpi2=null,chartRsn=null,chartTrend=null,chartKpi1Combo=null;
+
+function getKpi1ChartData(){
+  const months=[];
+  const now=new Date();
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push({label:d.toLocaleDateString('en-PH',{month:'short',year:'2-digit'}),yr:d.getFullYear(),mo:d.getMonth()+1});
+  }
+  const labels=[],accepted=[],rejected=[],rate=[];
+  months.forEach(m=>{
+    const ents=db.entries.filter(e=>{const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');return d.getFullYear()===m.yr&&d.getMonth()+1===m.mo;});
+    const tv=ents.reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
+    const rv=ents.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.volRejected)||0),0);
+    const av=Math.max(0,tv-rv);
+    labels.push(m.label);
+    accepted.push(parseFloat(av.toFixed(1)));
+    rejected.push(parseFloat(rv.toFixed(1)));
+    rate.push(tv>0?parseFloat((av/tv*100).toFixed(1)):null);
+  });
+  return {labels,accepted,rejected,rate};
+}
+
+function renderKpi1ComboChart(){
+  const ctx=document.getElementById('chart-kpi1-combo');
+  if(!ctx||!window.Chart) return;
+  if(chartKpi1Combo) chartKpi1Combo.destroy();
+  const data=getKpi1ChartData();
+  chartKpi1Combo=new Chart(ctx,{
+    type:'bar',
+    data:{labels:data.labels,datasets:[
+      {type:'bar',label:'Accepted Volume (m³)',data:data.accepted,backgroundColor:'rgba(46,125,50,0.8)',yAxisID:'y',borderRadius:4,order:2},
+      {type:'bar',label:'Rejected Volume (m³)',data:data.rejected,backgroundColor:'rgba(198,40,40,0.8)',yAxisID:'y',borderRadius:4,order:2},
+      {type:'line',label:'Acceptance Rate (%)',data:data.rate,borderColor:'#6B1A1A',backgroundColor:'rgba(107,26,26,.08)',tension:.3,pointRadius:5,pointBackgroundColor:'#6B1A1A',yAxisID:'y2',order:1,borderWidth:2.5,fill:true},
+      {type:'line',label:'Target 95%',data:data.labels.map(()=>95),borderColor:'#aaa',borderDash:[6,4],borderWidth:1.5,pointRadius:0,yAxisID:'y2',order:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        y:{beginAtZero:true,title:{display:true,text:'Volume (m³)',font:{size:11}},grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10}}},
+        y2:{position:'right',min:0,max:100,title:{display:true,text:'Acceptance Rate (%)',font:{size:11}},grid:{display:false},ticks:{callback:v=>v+'%',font:{size:10}}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y2'?(c.raw!=null?c.raw+'%':'N/A'):(c.raw||0)+' m³')}}}
+    }
+  });
+}
+
+function printKpi1Chart(){
+  const data=getKpi1ChartData();
+  const w=window.open('','_blank','width=950,height=650');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>KPI 1 Chart</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>
+  <style>body{font-family:Arial,sans-serif;padding:24px;background:#fff;margin:0}
+  h2{color:#6B1A1A;text-align:center;margin:0 0 4px}p{text-align:center;color:#666;font-size:12px;margin:0 0 16px}
+  .leg{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:11px;flex-wrap:wrap}
+  .li{display:flex;align-items:center;gap:5px}.box{width:12px;height:12px;border-radius:2px;display:inline-block}
+  .btn{margin-top:16px;display:block;margin-left:auto;margin-right:auto;padding:8px 24px;background:#6B1A1A;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}
+  @media print{.btn{display:none}}</style></head><body>
+  <h2>BIG BEN READY MIX CONCRETE — QC System</h2>
+  <p>KPI 1: Fresh Concrete Acceptance Rate | Last 6 Months | ${new Date().toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}</p>
+  <div style="position:relative;height:400px"><canvas id="c"></canvas></div>
+  <div class="leg">
+    <span class="li"><span class="box" style="background:rgba(46,125,50,0.8)"></span>Accepted Vol (m³)</span>
+    <span class="li"><span class="box" style="background:rgba(198,40,40,0.8)"></span>Rejected Vol (m³)</span>
+    <span class="li"><span style="width:20px;height:3px;background:#6B1A1A;display:inline-block;border-radius:2px"></span>Acceptance Rate</span>
+    <span class="li"><span style="width:20px;border-top:2px dashed #aaa;display:inline-block"></span>Target 95%</span>
+  </div>
+  <button class="btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  <script>
+  new Chart(document.getElementById('c'),{type:'bar',data:{labels:${JSON.stringify(data.labels)},datasets:[
+    {type:'bar',label:'Accepted Volume (m³)',data:${JSON.stringify(data.accepted)},backgroundColor:'rgba(46,125,50,0.8)',yAxisID:'y',borderRadius:4,order:2},
+    {type:'bar',label:'Rejected Volume (m³)',data:${JSON.stringify(data.rejected)},backgroundColor:'rgba(198,40,40,0.8)',yAxisID:'y',borderRadius:4,order:2},
+    {type:'line',label:'Acceptance Rate (%)',data:${JSON.stringify(data.rate)},borderColor:'#6B1A1A',backgroundColor:'rgba(107,26,26,.08)',tension:.3,pointRadius:5,pointBackgroundColor:'#6B1A1A',yAxisID:'y2',order:1,borderWidth:2.5,fill:true},
+    {type:'line',label:'Target 95%',data:${JSON.stringify(data.labels.map(()=>95))},borderColor:'#aaa',borderDash:[6,4],borderWidth:1.5,pointRadius:0,yAxisID:'y2',order:1}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    scales:{y:{beginAtZero:true,title:{display:true,text:'Volume (m³)'},grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}}},
+    y2:{position:'right',min:0,max:100,title:{display:true,text:'Acceptance Rate (%)'},grid:{display:false},ticks:{callback:v=>v+'%',font:{size:11}}}},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y2'?(c.raw!=null?c.raw+'%':'N/A'):(c.raw||0)+' m³')}}}}});
+  <\/script></body></html>`);
+  w.document.close();
+}
 
 function renderKPICharts(entries){
   const ctx1=document.getElementById('chart-kpi1');
@@ -2648,6 +2745,7 @@ function renderAll(){
       const tv=ents.reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
       const rv=ents.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
       renderKPISVGCharts(ents,tv>0?Math.round((tv-rv)/tv*100):0,tv,rv);
+      renderKpi1ComboChart();
     },200);
   }
 }
