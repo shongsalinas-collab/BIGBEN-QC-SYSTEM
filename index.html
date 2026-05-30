@@ -19,7 +19,7 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
 .nav-tab.active{color:var(--maroon);border-bottom-color:var(--maroon);background:#fdf8f8}
 .nav-tab:hover{background:#fdf8f8;color:var(--maroon)}
 .tab-content{display:none;padding:16px}
-.tab-content.active{display:block}
+.tab-content.active{display:block!important}
 
 /* FORM ELEMENTS */
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:12px}
@@ -1536,10 +1536,10 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
                 <th>% Rejected</th>
               </tr>
             </thead>
-            <tbody id="rejection-log-tbody"></tbody>
+            <tbody id="rejection-log-tbody" style="display:table-row-group!important"></tbody>
           </table>
         </div>
-        <div id="rejection-log-empty" style="text-align:center;padding:20px;color:#999;font-size:13px;display:none">No rejections this month. 🎉</div>
+        <div id="rejection-log-empty" style="text-align:center;padding:20px;color:#999;font-size:13px;display:none!important">No rejections this month. 🎉</div>
         <div id="rejection-log-summary" style="padding:10px 14px;background:#fff5f5;border-top:1px solid #EF9A9A;font-size:12px;font-weight:600;color:#C62828"></div>
       </div>
     </div>
