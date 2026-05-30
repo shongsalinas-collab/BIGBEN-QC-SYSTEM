@@ -2599,14 +2599,14 @@ function renderKPI(){
   }
 
   // Chart 3: Compressive Strength Pass vs Fail (Doughnut)
-  const tested=entries.filter(e=>e.testResults&&e.testResults.length>0);
-  const pass=tested.filter(e=>{
+  const testedChart=entries.filter(e=>e.testResults&&e.testResults.length>0);
+  const pass=testedChart.filter(e=>{
     const design=parseFloat(e.design)||0;
     const ave=e.testResults.reduce((a,b)=>a+b,0)/e.testResults.length;
     const reqPct=DESIGN_PCT[e.days]||100;
     return design&&(ave/design*100)>=reqPct;
   }).length;
-  const fail=tested.length-pass;
+  const fail=testedChart.length-pass;
   const pending=entries.filter(e=>!e.testResults||!e.testResults.length).length;
   const ctx3=document.getElementById('chart-strength');
   if(ctx3){
