@@ -703,8 +703,12 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px;background:var(--maroon);display:flex;align-items:center;justify-content:space-between">
             ⛔ KPI 1 — Rejection Log
-            <button class="btn btn-sm no-print" style="background:#fff;color:#C62828;border:none;padding:2px 8px" onclick="printRejectionLog()">🖨 Print</button>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm no-print" style="background:#fff;color:#C62828;border:none;padding:2px 8px" onclick="printRejectionLog()">🖨 Print</button>
+              <button class="btn btn-sm no-print" id="toggle-rej" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.5);padding:2px 8px" onclick="toggleLog('rej-log-body','toggle-rej')">▼ Show</button>
+            </div>
           </div>
+          <div id="rej-log-body" style="display:none">
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
               <thead><tr style="background:var(--maroon)">
@@ -1215,6 +1219,15 @@ function printKpi1Chart(){
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.dataset.yAxisID==='y2'?(c.raw!=null?c.raw+'%':'N/A'):(c.raw||0)+' m³')}}}}});
   <\/script></body></html>`);
   w.document.close();
+}
+
+function toggleLog(bodyId, btnId){
+  const body=document.getElementById(bodyId);
+  const btn=document.getElementById(btnId);
+  if(!body||!btn) return;
+  const isHidden=body.style.display==='none';
+  body.style.display=isHidden?'block':'none';
+  btn.textContent=isHidden?'▲ Hide':'▼ Show';
 }
 
 function renderFailedLog(entries, kpi2pass){
