@@ -2992,10 +2992,10 @@ function renderKPI(){
     const days=e.days||'28 Days';
     const testDays=TEST_DAYS_MAP[days]||[7,14,28];
     testDays.forEach(d=>{
-      const schedDate=addDays(normalizeDate(e.date||''),d);
-      if(schedDate>today) return; // not yet due
-      dueCount++;
       const res=e['tr_'+d]||{};
+      const schedDate=addDays(normalizeDate(e.date||''),d);
+      if(schedDate>today && !res.testDate) return;
+      dueCount++;
       if(res.testDate&&res.testDate<=schedDate) onTimeCount++;
     });
   });
