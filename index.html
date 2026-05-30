@@ -2956,7 +2956,7 @@ function renderTestMon(){
       const theoTarget=design?(design*theo/100).toFixed(0):'-';
       const testDate=addDays(normalizeDate(e.date||''),d);
       // Count used samples = number of filled S1/S2/S3
-      const samplesUsed=[res.r1,res.r2,res.r3].filter(x=>x&&parseFloat(x)>0).length;
+      const samplesUsed=Object.keys(res).filter(k=>k.match(/^r\d+$/)&&parseFloat(res[k])>0).length;
       usedSoFar+=samplesUsed;
       const remaining=totalSamples-usedSoFar;
       const ave=res.ave||'';
