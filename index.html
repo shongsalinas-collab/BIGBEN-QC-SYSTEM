@@ -650,8 +650,8 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       <div class="kpi-row" id="kpi-cards"></div>
       <div class="section-divider"></div>
 
+      <!-- KPI CARDS ROW -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px">
-        <!-- KPI 1 -->
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px">KPI 1 — Fresh Concrete Acceptance Rate</div>
           <div class="panel-body">
@@ -659,31 +659,23 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <div style="font-size:32px;font-weight:700;color:var(--maroon)" id="kpi1-val">—</div>
             <div style="font-size:11px;color:#666;margin-top:4px" id="kpi1-sub">Acceptance rate this month</div>
             <div style="margin-top:10px">
-              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden">
-                <div id="kpi1-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div>
-              </div>
+              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi1-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div></div>
               <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: ≥95%</span><span>100%</span></div>
             </div>
           </div>
         </div>
-
-        <!-- KPI 2 -->
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px">KPI 2 — Hardened Concrete Acceptance Rate</div>
           <div class="panel-body">
-            <div style="font-size:11px;color:#666;margin-bottom:8px">Formula: (No. Failed ÷ Total Tested) × 100%</div>
+            <div style="font-size:11px;color:#666;margin-bottom:8px">Formula: (Passed ÷ Total Tested) × 100% | Target: ≥95%</div>
             <div style="font-size:32px;font-weight:700;color:var(--maroon)" id="kpi2-val">—</div>
-            <div style="font-size:11px;color:#666;margin-top:4px" id="kpi2-sub">Failure rate this month</div>
+            <div style="font-size:11px;color:#666;margin-top:4px" id="kpi2-sub">Pass rate this month</div>
             <div style="margin-top:10px">
-              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden">
-                <div id="kpi2-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: 0%</span><span>100%</span></div>
+              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi2-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: ≥95%</span><span>100%</span></div>
             </div>
           </div>
         </div>
-
-        <!-- KPI 3 -->
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px">KPI 3 — On-Time Testing Rate</div>
           <div class="panel-body">
@@ -691,64 +683,125 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <div style="font-size:32px;font-weight:700;color:var(--maroon)" id="kpi3-val">—</div>
             <div style="font-size:11px;color:#666;margin-top:4px" id="kpi3-sub">On-time testing this month</div>
             <div style="margin-top:10px">
-              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden">
-                <div id="kpi3-bar" style="height:100%;background:var(--green);transition:width .4s;width:0%"></div>
-              </div>
+              <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi3-bar" style="height:100%;background:var(--green);transition:width .4s;width:0%"></div></div>
               <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:3px"><span>0%</span><span>Target: 100%</span><span>100%</span></div>
             </div>
           </div>
         </div>
-
-      <!-- REJECTION LOG -->
-      <div class="panel" style="margin-top:14px;margin-bottom:0">
-        <div class="panel-header" style="font-size:12px;background:#C62828">
-          ⛔ Fresh Concrete Rejection Log
-          <button class="btn btn-sm no-print" style="background:#fff;color:#C62828" onclick="window.print()">🖨 Print</button>
-        </div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr style="background:#C62828">
-                <th>#</th>
-                <th>Date</th>
-                <th>Client</th>
-                <th>Location</th>
-                <th>Design</th>
-                <th>TM No.</th>
-                <th>DR No.</th>
-                <th>Reason</th>
-                <th>Detail</th>
-                <th>Vol. Rejected (m³)</th>
-                <th>Total Vol. (m³)</th>
-                <th>% Rejected</th>
-              </tr>
-            </thead>
-            <tbody id="rejection-log-tbody" style="display:table-row-group!important"></tbody>
-          </table>
-        </div>
-        <div id="rejection-log-empty" style="text-align:center;padding:20px;color:#999;font-size:13px;display:none!important">No rejections this month. 🎉</div>
-        <div id="rejection-log-summary" style="padding:10px 14px;background:#fff5f5;border-top:1px solid #EF9A9A;font-size:12px;font-weight:600;color:#C62828"></div>
       </div>
 
-    </div>
-  </div>
-</div>
-
-<!-- KPI 1 COMBO CHART - BELOW rejection log, full width -->
-<div id="tab-kpi-chart" style="display:none;padding:0 16px 16px">
-  <div class="panel" id="kpi1-chart-panel">
-    <div class="panel-header" style="font-size:12px;display:flex;align-items:center;justify-content:space-between">
-      📊 KPI 1 — Fresh Concrete Acceptance Rate (<span id="kpi1-chart-month-label">This Month</span>)
-      <button class="btn btn-sm no-print" onclick="printKpi1Chart()" style="background:#fff;color:var(--maroon);border:1px solid var(--maroon);font-size:11px">🖨 Copy for PPT</button>
-    </div>
-    <div class="panel-body" style="padding:16px">
-      <div style="position:relative;height:340px"><canvas id="chart-kpi1-combo"></canvas></div>
-      <div style="display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:11px;flex-wrap:wrap">
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(46,125,50,0.8);border-radius:2px;display:inline-block"></span>Accepted Volume (m³)</span>
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(198,40,40,0.8);border-radius:2px;display:inline-block"></span>Rejected Volume (m³)</span>
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;height:3px;background:#6B1A1A;display:inline-block;border-radius:2px"></span>Acceptance Rate (%)</span>
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;border-top:2px dashed #aaa;display:inline-block"></span>Target 95%</span>
+      <!-- ===== KPI 1 SECTION ===== -->
+      <div style="margin-top:24px">
+        <div style="background:var(--maroon);color:#fff;padding:8px 14px;font-size:13px;font-weight:700;border-radius:4px 4px 0 0;letter-spacing:.03em">🟥 KPI 1 — Fresh Concrete</div>
+        <div class="panel" style="margin:0;border-radius:0 0 0 0;border-top:none">
+          <div class="panel-header" style="font-size:12px;background:#C62828;border-radius:0;display:flex;align-items:center;justify-content:space-between">
+            ⛔ Fresh Concrete Rejection Log
+            <button class="btn btn-sm no-print" style="background:#fff;color:#C62828;border:none" onclick="printRejectionLog()">🖨 Print</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr style="background:#C62828">
+                <th>#</th><th>Date</th><th>Client</th><th>Location</th><th>Design</th>
+                <th>TM No.</th><th>DR No.</th><th>Reason</th><th>Detail</th>
+                <th>Vol. Rejected (m³)</th><th>Total Vol. (m³)</th><th>% Rejected</th>
+              </tr></thead>
+              <tbody id="rejection-log-tbody" style="display:table-row-group!important"></tbody>
+            </table>
+          </div>
+          <div id="rejection-log-empty" style="text-align:center;padding:16px;color:#999;font-size:13px;display:none!important">No rejections this month. 🎉</div>
+          <div id="rejection-log-summary" style="padding:10px 14px;background:#fff5f5;border-top:1px solid #EF9A9A;font-size:12px;font-weight:600;color:#C62828"></div>
+        </div>
+        <div class="panel" style="margin:3px 0 0" id="kpi1-chart-panel">
+          <div class="panel-header" style="font-size:12px;display:flex;align-items:center;justify-content:space-between;border-radius:0">
+            📊 KPI 1 Chart — <span id="kpi1-chart-month-label">This Month</span>
+            <button class="btn btn-sm no-print" onclick="printKpi1Chart()" style="background:#fff;color:var(--maroon);border:1px solid var(--maroon);font-size:11px">🖨 Copy for PPT</button>
+          </div>
+          <div class="panel-body" style="padding:16px">
+            <div style="position:relative;height:300px"><canvas id="chart-kpi1-combo"></canvas></div>
+            <div style="display:flex;gap:12px;justify-content:center;margin-top:10px;font-size:11px;flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(46,125,50,0.8);border-radius:2px;display:inline-block"></span>Accepted Vol</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(198,40,40,0.8);border-radius:2px;display:inline-block"></span>Rejected Vol</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:3px;background:#6B1A1A;display:inline-block;border-radius:2px"></span>Acceptance %</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;border-top:2px dashed #aaa;display:inline-block"></span>Target 95%</span>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- ===== KPI 2 SECTION ===== -->
+      <div style="margin-top:24px">
+        <div style="background:#1565C0;color:#fff;padding:8px 14px;font-size:13px;font-weight:700;border-radius:4px 4px 0 0;letter-spacing:.03em">🔵 KPI 2 — Hardened Concrete</div>
+        <div class="panel" style="margin:0;border-top:none">
+          <div class="panel-header" style="font-size:12px;background:#1565C0;border-radius:0;display:flex;align-items:center;justify-content:space-between">
+            ❌ Hardened Concrete Failed Log
+            <button class="btn btn-sm no-print" style="background:#fff;color:#1565C0;border:none" onclick="printFailedLog()">🖨 Print</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr style="background:#1565C0">
+                <th>#</th><th>Date</th><th>Client</th><th>Location</th><th>Design</th>
+                <th>Test Day</th><th>Ave PSI</th><th>Theo Target</th><th>Difference</th><th>Result</th>
+              </tr></thead>
+              <tbody id="failed-log-tbody"></tbody>
+            </table>
+          </div>
+          <div id="failed-log-empty" style="text-align:center;padding:16px;color:#999;font-size:13px">No failed tests this month. ✅</div>
+          <div id="failed-log-summary" style="padding:10px 14px;background:#EFF5FF;border-top:1px solid #90CAF9;font-size:12px;font-weight:600;color:#1565C0"></div>
+        </div>
+        <div class="panel" style="margin:3px 0 0" id="kpi2-chart-panel">
+          <div class="panel-header" style="font-size:12px;display:flex;align-items:center;justify-content:space-between;border-radius:0">
+            📊 KPI 2 Chart — <span id="kpi2-chart-month-label">This Month</span>
+            <button class="btn btn-sm no-print" onclick="printKpi2Chart()" style="background:#fff;color:#1565C0;border:1px solid #1565C0;font-size:11px">🖨 Copy for PPT</button>
+          </div>
+          <div class="panel-body" style="padding:16px">
+            <div style="position:relative;height:300px"><canvas id="chart-kpi2-combo"></canvas></div>
+            <div style="display:flex;gap:12px;justify-content:center;margin-top:10px;font-size:11px;flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(21,101,192,0.8);border-radius:2px;display:inline-block"></span>Passed</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(198,40,40,0.8);border-radius:2px;display:inline-block"></span>Failed</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:3px;background:#1565C0;display:inline-block;border-radius:2px"></span>Pass Rate %</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;border-top:2px dashed #aaa;display:inline-block"></span>Target 95%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== KPI 3 SECTION ===== -->
+      <div style="margin-top:24px;margin-bottom:8px">
+        <div style="background:#2E7D32;color:#fff;padding:8px 14px;font-size:13px;font-weight:700;border-radius:4px 4px 0 0;letter-spacing:.03em">🟢 KPI 3 — On-Time Testing</div>
+        <div class="panel" style="margin:0;border-top:none">
+          <div class="panel-header" style="font-size:12px;background:#2E7D32;border-radius:0;display:flex;align-items:center;justify-content:space-between">
+            ⏰ Delay Testing Log
+            <button class="btn btn-sm no-print" style="background:#fff;color:#2E7D32;border:none" onclick="printDelayLog()">🖨 Print</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr style="background:#2E7D32">
+                <th>#</th><th>Date</th><th>Client</th><th>Location</th><th>Design</th>
+                <th>Test Day</th><th>Sched. Date</th><th>Actual Date</th><th>Days Delayed</th><th>Status</th>
+              </tr></thead>
+              <tbody id="delay-log-tbody"></tbody>
+            </table>
+          </div>
+          <div id="delay-log-empty" style="text-align:center;padding:16px;color:#999;font-size:13px">No delayed tests this month. ✅</div>
+          <div id="delay-log-summary" style="padding:10px 14px;background:#F1F8E9;border-top:1px solid #A5D6A7;font-size:12px;font-weight:600;color:#2E7D32"></div>
+        </div>
+        <div class="panel" style="margin:3px 0 0" id="kpi3-chart-panel">
+          <div class="panel-header" style="font-size:12px;display:flex;align-items:center;justify-content:space-between;border-radius:0">
+            📊 KPI 3 Chart — <span id="kpi3-chart-month-label">This Month</span>
+            <button class="btn btn-sm no-print" onclick="printKpi3Chart()" style="background:#fff;color:#2E7D32;border:1px solid #2E7D32;font-size:11px">🖨 Copy for PPT</button>
+          </div>
+          <div class="panel-body" style="padding:16px">
+            <div style="position:relative;height:300px"><canvas id="chart-kpi3-combo"></canvas></div>
+            <div style="display:flex;gap:12px;justify-content:center;margin-top:10px;font-size:11px;flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(46,125,50,0.8);border-radius:2px;display:inline-block"></span>On-Time</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(230,81,0,0.8);border-radius:2px;display:inline-block"></span>Late</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:3px;background:#2E7D32;display:inline-block;border-radius:2px"></span>On-Time Rate %</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;border-top:2px dashed #aaa;display:inline-block"></span>Target 100%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
