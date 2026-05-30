@@ -950,7 +950,7 @@ function initMonthSelectors(){
   // kpi-month gets All Dates option
   const kpiMonEl=document.getElementById('kpi-month');
   if(kpiMonEl){
-    kpiMonEl.innerHTML='<option value="all">All Dates</option>'+options.join('');
+    kpiMonEl.innerHTML='<option value="all">All Months</option>'+options.join('');
     kpiMonEl.value=options[0].match(/value="([^"]+)"/)[1];
   }
   // testmon-month gets All Months option
@@ -1106,7 +1106,7 @@ function getKpi1ChartData(){
   let entries, monthLabel;
   if(mon==='all'){
     entries=db.entries;
-    monthLabel='All Dates';
+    monthLabel='All Months';
   } else {
     const [yr,mo]=mon.split('-').map(Number);
     monthLabel=new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'});
