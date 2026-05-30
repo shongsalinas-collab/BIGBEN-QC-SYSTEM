@@ -719,13 +719,13 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
         <!-- KPI 2 FAILED LOG -->
         <div class="panel" style="margin:0">
-          <div class="panel-header" style="font-size:12px;background:#1565C0;display:flex;align-items:center;justify-content:space-between">
+          <div class="panel-header" style="font-size:12px;background:var(--maroon);display:flex;align-items:center;justify-content:space-between">
             ❌ KPI 2 — Failed Log
             <button class="btn btn-sm no-print" style="background:#fff;color:var(--maroon);border:none;padding:2px 8px" onclick="printFailedLog()">🖨 Print</button>
           </div>
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
-              <thead><tr style="background:#1565C0">
+              <thead><tr style="background:var(--maroon)">
                 <th>#</th><th>Date</th><th>Client</th><th>Design</th><th>Test Day</th><th>Ave PSI</th><th>Target</th><th>Diff</th>
               </tr></thead>
               <tbody id="failed-log-tbody"></tbody>
@@ -737,13 +737,13 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
         <!-- KPI 3 DELAY LOG -->
         <div class="panel" style="margin:0">
-          <div class="panel-header" style="font-size:12px;background:#2E7D32;display:flex;align-items:center;justify-content:space-between">
+          <div class="panel-header" style="font-size:12px;background:var(--maroon);display:flex;align-items:center;justify-content:space-between">
             ⏰ KPI 3 — Delay Testing Log
             <button class="btn btn-sm no-print" style="background:#fff;color:var(--maroon);border:none;padding:2px 8px" onclick="printDelayLog()">🖨 Print</button>
           </div>
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
-              <thead><tr style="background:#2E7D32">
+              <thead><tr style="background:var(--maroon)">
                 <th>#</th><th>Date</th><th>Client</th><th>Design</th><th>Test Day</th><th>Sched.</th><th>Actual</th><th>Days Late</th>
               </tr></thead>
               <tbody id="delay-log-tbody"></tbody>
