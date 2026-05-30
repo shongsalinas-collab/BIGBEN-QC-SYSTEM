@@ -730,21 +730,24 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div id="rejection-log-summary" style="padding:10px 14px;background:#fff5f5;border-top:1px solid #EF9A9A;font-size:12px;font-weight:600;color:#C62828"></div>
       </div>
 
-      <!-- KPI 1 COMBO CHART -->
-      <div class="panel" style="margin-top:14px" id="kpi1-chart-panel">
-        <div class="panel-header" style="font-size:12px;display:flex;align-items:center;justify-content:space-between">
-          📊 KPI 1 — Fresh Concrete Acceptance Rate (Last 6 Months)
-          <button class="btn btn-sm no-print" onclick="printKpi1Chart()" style="background:#fff;color:var(--maroon);border:1px solid var(--maroon);font-size:11px">🖨 Copy for PPT</button>
-        </div>
-        <div class="panel-body" style="padding:16px">
-          <div style="position:relative;height:320px"><canvas id="chart-kpi1-combo"></canvas></div>
-          <div style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;flex-wrap:wrap">
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(46,125,50,0.8);border-radius:2px;display:inline-block"></span>Accepted Volume (m³)</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(198,40,40,0.8);border-radius:2px;display:inline-block"></span>Rejected Volume (m³)</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;height:3px;background:#6B1A1A;display:inline-block;border-radius:2px"></span>Acceptance Rate (%)</span>
-            <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;border-top:2px dashed #aaa;display:inline-block"></span>Target 95%</span>
-          </div>
-        </div>
+    </div>
+  </div>
+</div>
+
+<!-- KPI 1 COMBO CHART - BELOW rejection log, full width -->
+<div id="tab-kpi-chart" style="display:none;padding:0 16px 16px">
+  <div class="panel" id="kpi1-chart-panel">
+    <div class="panel-header" style="font-size:12px;display:flex;align-items:center;justify-content:space-between">
+      📊 KPI 1 — Fresh Concrete Acceptance Rate (<span id="kpi1-chart-month-label">This Month</span>)
+      <button class="btn btn-sm no-print" onclick="printKpi1Chart()" style="background:#fff;color:var(--maroon);border:1px solid var(--maroon);font-size:11px">🖨 Copy for PPT</button>
+    </div>
+    <div class="panel-body" style="padding:16px">
+      <div style="position:relative;height:340px"><canvas id="chart-kpi1-combo"></canvas></div>
+      <div style="display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:11px;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(46,125,50,0.8);border-radius:2px;display:inline-block"></span>Accepted Volume (m³)</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:rgba(198,40,40,0.8);border-radius:2px;display:inline-block"></span>Rejected Volume (m³)</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;height:3px;background:#6B1A1A;display:inline-block;border-radius:2px"></span>Acceptance Rate (%)</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:20px;border-top:2px dashed #aaa;display:inline-block"></span>Target 95%</span>
       </div>
     </div>
   </div>
@@ -1047,31 +1050,42 @@ const TESTING_COORDS = ['Dio Balili','Joshua Facun','Roni Aguilar','Teodoro Tays
 let chartKpi1=null,chartKpi2=null,chartRsn=null,chartTrend=null,chartKpi1Combo=null;
 
 function getKpi1ChartData(){
-  const months=[];
-  const now=new Date();
-  for(let i=5;i>=0;i--){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    months.push({label:d.toLocaleDateString('en-PH',{month:'short',year:'2-digit'}),yr:d.getFullYear(),mo:d.getMonth()+1});
-  }
+  const mon=document.getElementById('kpi-month').value;
+  if(!mon) return {labels:[],accepted:[],rejected:[],rate:[],monthLabel:'',totalVol:0,totalAcc:0,totalRej:0};
+  const [yr,mo]=mon.split('-').map(Number);
+  const monthLabel=new Date(yr,mo-1,1).toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+  const entries=db.entries.filter(e=>{
+    const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+    return d.getFullYear()===yr&&d.getMonth()+1===mo;
+  }).sort((a,b)=>normalizeDate(a.date).localeCompare(normalizeDate(b.date)));
+
   const labels=[],accepted=[],rejected=[],rate=[];
-  months.forEach(m=>{
-    const ents=db.entries.filter(e=>{const d=new Date((normalizeDate(e.date)||e.date)+'T00:00:00');return d.getFullYear()===m.yr&&d.getMonth()+1===m.mo;});
-    const tv=ents.reduce((s,e)=>s+(parseFloat(e.vol)||0),0);
-    const rv=ents.filter(e=>e.rejected).reduce((s,e)=>s+(parseFloat(e.volRejected)||0),0);
-    const av=Math.max(0,tv-rv);
-    labels.push(m.label);
-    accepted.push(parseFloat(av.toFixed(1)));
-    rejected.push(parseFloat(rv.toFixed(1)));
-    rate.push(tv>0?parseFloat((av/tv*100).toFixed(1)):null);
+  let cumAcc=0,cumRej=0;
+  entries.forEach((e,i)=>{
+    const vol=parseFloat(e.vol)||0;
+    const rejVol=e.rejected?(parseFloat(e.volRejected)||0):0;
+    const accVol=Math.max(0,vol-rejVol);
+    cumAcc+=accVol; cumRej+=rejVol;
+    labels.push(fmtDate(normalizeDate(e.date))+' ('+e.client+')');
+    accepted.push(parseFloat(accVol.toFixed(1)));
+    rejected.push(parseFloat(rejVol.toFixed(1)));
+    const cumTotal=cumAcc+cumRej;
+    rate.push(cumTotal>0?parseFloat((cumAcc/cumTotal*100).toFixed(1)):null);
   });
-  return {labels,accepted,rejected,rate};
+  const totalVol=cumAcc+cumRej;
+  return {labels,accepted,rejected,rate,monthLabel,totalVol,totalAcc:cumAcc,totalRej:cumRej};
 }
 
 function renderKpi1ComboChart(){
+  const chartPanel=document.getElementById('tab-kpi-chart');
   const ctx=document.getElementById('chart-kpi1-combo');
   if(!ctx||!window.Chart) return;
   if(chartKpi1Combo) chartKpi1Combo.destroy();
   const data=getKpi1ChartData();
+  if(!data.labels.length){if(chartPanel)chartPanel.style.display='none';return;}
+  if(chartPanel)chartPanel.style.display='block';
+  const lbl=document.getElementById('kpi1-chart-month-label');
+  if(lbl)lbl.textContent=data.monthLabel;
   chartKpi1Combo=new Chart(ctx,{
     type:'bar',
     data:{labels:data.labels,datasets:[
@@ -1103,7 +1117,7 @@ function printKpi1Chart(){
   .btn{margin-top:16px;display:block;margin-left:auto;margin-right:auto;padding:8px 24px;background:#6B1A1A;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}
   @media print{.btn{display:none}}</style></head><body>
   <h2>BIG BEN READY MIX CONCRETE — QC System</h2>
-  <p>KPI 1: Fresh Concrete Acceptance Rate | Last 6 Months | ${new Date().toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}</p>
+  <p>KPI 1: Fresh Concrete Acceptance Rate | ${data.monthLabel} | ${new Date().toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}</p>
   <div style="position:relative;height:400px"><canvas id="c"></canvas></div>
   <div class="leg">
     <span class="li"><span class="box" style="background:rgba(46,125,50,0.8)"></span>Accepted Vol (m³)</span>
