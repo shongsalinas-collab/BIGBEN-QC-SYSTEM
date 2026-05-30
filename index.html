@@ -2984,15 +2984,22 @@ function renderKPI(){
   const kpi2=testedGroups?((failedGroups/testedGroups)*100).toFixed(1):null;
   
   const today=new Date().toISOString().split('T')[0];
-  const due=entries.filter(e=>{
-    const testDays=getTestDays(e.days);
-    return testDays.some(d=>addDays(e.date,d)<=today);
+  // KPI 3 - count each test day as one due test
+  let dueCount=0, onTimeCount=0;
+  entries.forEach(e=>{
+    const days=e.days||'28 Days';
+    const testDays=TEST_DAYS_MAP[days]||[7,14,28];
+    testDays.forEach(d=>{
+      const schedDate=addDays(normalizeDate(e.date||''),d);
+      if(schedDate>today) return; // not yet due
+      dueCount++;
+      const res=e['tr_'+d]||{};
+      if(res.testDate&&res.testDate<=schedDate) onTimeCount++;
+    });
   });
-  const onTime=due.filter(e=>{
-    const tdays=getTestDays(e.days);
-    return tdays.some(d=>{const res=e['tr_'+d]||{};return res.ave&&res.testDate&&res.testDate<=addDays(normalizeDate(e.date||''),d);});
-  }).length;
-  const kpi3=due.length?((onTime/due.length)*100).toFixed(1):null;
+  const due={length:dueCount};
+  const onTime=onTimeCount;
+  const kpi3=dueCount?((onTimeCount/dueCount)*100).toFixed(1):null;
   
   document.getElementById('kpi-cards').innerHTML=`
     <div class="kpi-card"><div class="kpi-label">Total Poured</div><div class="kpi-value">${entries.length}</div><div class="kpi-sub">Entries this month</div></div>
@@ -3015,8 +3022,9 @@ function renderKPI(){
   document.getElementById('kpi2-bar').style.background=kpi2pass>=95?'var(--green)':kpi2pass>=80?'var(--orange)':'var(--red)';
   
   document.getElementById('kpi3-val').textContent=kpi3!==null?kpi3+'%':'N/A';
-  document.getElementById('kpi3-sub').textContent=`${onTime} on time / ${due.length} due`;
+  document.getElementById('kpi3-sub').textContent=`${onTimeCount} on time / ${dueCount} due`;
   document.getElementById('kpi3-bar').style.width=(kpi3||0)+'%';
+  document.getElementById('kpi3-bar').style.background=kpi3>=100?'var(--green)':kpi3>=80?'var(--orange)':'var(--red)';
   
   // Render Rejection Log
   const rejEntries=entries.filter(e=>e.rejected);
