@@ -668,11 +668,11 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         </div>
 
         <!-- KPI 2 CARD -->
-        <div class="panel" style="margin:0;border-bottom:3px solid #1565C0">
-          <div class="panel-header" style="font-size:12px;background:#1565C0">KPI 2 — Hardened Concrete Acc. Rate</div>
+        <div class="panel" style="margin:0;border-bottom:3px solid #37474F">
+          <div class="panel-header" style="font-size:12px;background:#37474F">KPI 2 — Hardened Concrete Acc. Rate</div>
           <div class="panel-body">
             <div style="font-size:11px;color:#666;margin-bottom:6px">Formula: (Passed ÷ Total Tested) × 100% | Target: ≥95%</div>
-            <div style="font-size:36px;font-weight:700;color:#1565C0" id="kpi2-val">—</div>
+            <div style="font-size:36px;font-weight:700;color:#37474F" id="kpi2-val">—</div>
             <div style="font-size:11px;color:#666;margin-top:4px" id="kpi2-sub">Pass rate this month</div>
             <div style="margin-top:10px">
               <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi2-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div></div>
@@ -682,11 +682,11 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         </div>
 
         <!-- KPI 3 CARD -->
-        <div class="panel" style="margin:0;border-bottom:3px solid #2E7D32">
-          <div class="panel-header" style="font-size:12px;background:#2E7D32">KPI 3 — On-Time Testing Rate</div>
+        <div class="panel" style="margin:0;border-bottom:3px solid #546E7A">
+          <div class="panel-header" style="font-size:12px;background:#546E7A">KPI 3 — On-Time Testing Rate</div>
           <div class="panel-body">
             <div style="font-size:11px;color:#666;margin-bottom:6px">Formula: (On-Time ÷ Total Due) × 100% | Target: 100%</div>
-            <div style="font-size:36px;font-weight:700;color:#2E7D32" id="kpi3-val">—</div>
+            <div style="font-size:36px;font-weight:700;color:#546E7A" id="kpi3-val">—</div>
             <div style="font-size:11px;color:#666;margin-top:4px" id="kpi3-sub">On-time testing this month</div>
             <div style="margin-top:10px">
               <div style="height:8px;background:#eee;border-radius:4px;overflow:hidden"><div id="kpi3-bar" style="height:100%;background:var(--red);transition:width .4s;width:0%"></div></div>
@@ -721,7 +721,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px;background:#1565C0;display:flex;align-items:center;justify-content:space-between">
             ❌ KPI 2 — Failed Log
-            <button class="btn btn-sm no-print" style="background:#fff;color:#1565C0;border:none;padding:2px 8px" onclick="printFailedLog()">🖨 Print</button>
+            <button class="btn btn-sm no-print" style="background:#fff;color:#37474F;border:none;padding:2px 8px" onclick="printFailedLog()">🖨 Print</button>
           </div>
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
@@ -732,14 +732,14 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             </table>
           </div>
           <div id="failed-log-empty" style="text-align:center;padding:14px;color:#999;font-size:12px">No failed tests. ✅</div>
-          <div id="failed-log-summary" style="padding:8px 12px;background:#EFF5FF;border-top:1px solid #90CAF9;font-size:11px;font-weight:600;color:#1565C0"></div>
+          <div id="failed-log-summary" style="padding:8px 12px;background:#ECEFF1;border-top:1px solid #B0BEC5;font-size:11px;font-weight:600;color:#37474F"></div>
         </div>
 
         <!-- KPI 3 DELAY LOG -->
         <div class="panel" style="margin:0">
           <div class="panel-header" style="font-size:12px;background:#2E7D32;display:flex;align-items:center;justify-content:space-between">
             ⏰ KPI 3 — Delay Testing Log
-            <button class="btn btn-sm no-print" style="background:#fff;color:#2E7D32;border:none;padding:2px 8px" onclick="printDelayLog()">🖨 Print</button>
+            <button class="btn btn-sm no-print" style="background:#fff;color:#546E7A;border:none;padding:2px 8px" onclick="printDelayLog()">🖨 Print</button>
           </div>
           <div class="table-wrap" style="max-height:280px;overflow-y:auto">
             <table class="data-table" style="font-size:10px">
@@ -750,7 +750,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             </table>
           </div>
           <div id="delay-log-empty" style="text-align:center;padding:14px;color:#999;font-size:12px">No delays. ✅</div>
-          <div id="delay-log-summary" style="padding:8px 12px;background:#F1F8E9;border-top:1px solid #A5D6A7;font-size:11px;font-weight:600;color:#2E7D32"></div>
+          <div id="delay-log-summary" style="padding:8px 12px;background:#ECEFF1;border-top:1px solid #B0BEC5;font-size:11px;font-weight:600;color:#2E7D32"></div>
         </div>
       </div>
 
@@ -771,9 +771,9 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
         <!-- KPI 2 CHART -->
         <div class="panel" style="margin:0" id="kpi2-chart-panel">
-          <div class="panel-header" style="font-size:12px;background:#1565C0;display:flex;align-items:center;justify-content:space-between">
+          <div class="panel-header" style="font-size:12px;background:#37474F;display:flex;align-items:center;justify-content:space-between">
             📊 KPI 2 — <span id="kpi2-chart-month-label">Chart</span>
-            <button class="btn btn-sm no-print" onclick="printKpi2Chart()" style="background:#fff;color:#1565C0;border:1px solid #1565C0;font-size:10px;padding:2px 8px">🖨 PPT</button>
+            <button class="btn btn-sm no-print" onclick="printKpi2Chart()" style="background:#fff;color:#37474F;border:1px solid #37474F;font-size:10px;padding:2px 8px">🖨 PPT</button>
           </div>
           <div class="panel-body" style="padding:12px">
             <div style="position:relative;height:260px"><canvas id="chart-kpi2-combo"></canvas></div>
@@ -783,9 +783,9 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
 
         <!-- KPI 3 CHART -->
         <div class="panel" style="margin:0" id="kpi3-chart-panel">
-          <div class="panel-header" style="font-size:12px;background:#2E7D32;display:flex;align-items:center;justify-content:space-between">
+          <div class="panel-header" style="font-size:12px;background:#546E7A;display:flex;align-items:center;justify-content:space-between">
             📊 KPI 3 — <span id="kpi3-chart-month-label">Chart</span>
-            <button class="btn btn-sm no-print" onclick="printKpi3Chart()" style="background:#fff;color:#2E7D32;border:1px solid #2E7D32;font-size:10px;padding:2px 8px">🖨 PPT</button>
+            <button class="btn btn-sm no-print" onclick="printKpi3Chart()" style="background:#fff;color:#546E7A;border:1px solid #546E7A;font-size:10px;padding:2px 8px">🖨 PPT</button>
           </div>
           <div class="panel-body" style="padding:12px">
             <div style="position:relative;height:260px"><canvas id="chart-kpi3-combo"></canvas></div>
@@ -1321,7 +1321,7 @@ function renderKpi2ComboChart(entries){
     type:'doughnut',
     data:{
       labels:['Passed ('+passPct+'%)','Failed ('+failPct+'%)'],
-      datasets:[{data:[passCount,failCount],backgroundColor:['#1565C0','#C62828'],borderColor:['#fff','#fff'],borderWidth:3,hoverOffset:8}]
+      datasets:[{data:[passCount,failCount],backgroundColor:['#6B1A1A','#546E7A'],borderColor:['#fff','#fff'],borderWidth:3,hoverOffset:8}]
     },
     options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
       plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:16,usePointStyle:true,pointStyle:'rectRounded'}},
@@ -1332,7 +1332,7 @@ function renderKpi2ComboChart(entries){
     if(chart.canvas.id!=='chart-kpi2-combo') return;
     const {ctx,chartArea:{width,height,left,top}}=chart;
     ctx.save();
-    ctx.font='bold 28px Arial';ctx.fillStyle='#1565C0';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font='bold 28px Arial';ctx.fillStyle='#6B1A1A';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(passPct+'%',left+width/2,top+height/2-10);
     ctx.font='11px Arial';ctx.fillStyle='#666';
     ctx.fillText('Passed',left+width/2,top+height/2+16);
@@ -1374,7 +1374,7 @@ function renderKpi3ComboChart(entries){
     type:'doughnut',
     data:{
       labels:['On-Time ('+onTimePct+'%)','Late ('+latePct+'%)'],
-      datasets:[{data:[onTimeCount,lateCount],backgroundColor:['#2E7D32','#E65100'],borderColor:['#fff','#fff'],borderWidth:3,hoverOffset:8}]
+      datasets:[{data:[onTimeCount,lateCount],backgroundColor:['#6B1A1A','#546E7A'],borderColor:['#fff','#fff'],borderWidth:3,hoverOffset:8}]
     },
     options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
       plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:16,usePointStyle:true,pointStyle:'rectRounded'}},
@@ -1385,7 +1385,7 @@ function renderKpi3ComboChart(entries){
     if(chart.canvas.id!=='chart-kpi3-combo') return;
     const {ctx,chartArea:{width,height,left,top}}=chart;
     ctx.save();
-    ctx.font='bold 28px Arial';ctx.fillStyle='#2E7D32';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font='bold 28px Arial';ctx.fillStyle='#6B1A1A';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(onTimePct+'%',left+width/2,top+height/2-10);
     ctx.font='11px Arial';ctx.fillStyle='#666';
     ctx.fillText('On-Time',left+width/2,top+height/2+16);
