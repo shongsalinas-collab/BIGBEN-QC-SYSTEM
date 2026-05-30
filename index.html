@@ -2818,6 +2818,15 @@ function renderKPI(){
       options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10}}},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw;}}}}}
     });
   }
+
+  // Render KPI combo charts
+  setTimeout(()=>{
+    renderKpi1ComboChart();
+    renderFailedLog(entries, kpi2pass);
+    renderDelayLog(entries, kpi3);
+    renderKpi2ComboChart(entries);
+    renderKpi3ComboChart(entries);
+  },150);
 }
 
 function renderAll(){
