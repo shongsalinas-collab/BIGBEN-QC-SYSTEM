@@ -35,7 +35,7 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .page.active{display:block}
 
 /* ===== COSTING SHEET ===== */
-.sheet-wrap{background:#fff;border:1px solid #bbb;max-width:1100px}
+.sheet-wrap{background:#fff;max-width:1100px;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
 
 /* Top bar */
 .sheet-topbar{background:#6B1A1A;color:#fff;padding:5px 10px;
@@ -44,14 +44,14 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .sheet-topbar span{font-size:11px;opacity:.8}
 
 /* Main sheet grid: left + right */
-.sheet-main{display:grid;grid-template-columns:1fr 230px;border-bottom:1px solid #bbb}
+.sheet-main{display:grid;grid-template-columns:1fr 230px}
 
 /* ===== LEFT SECTION ===== */
-.sheet-left{border-right:1px solid #bbb}
+.sheet-left{border-right:1px solid #F0EDE8}
 
 /* Project info rows */
 .proj-table{width:100%;border-collapse:collapse}
-.proj-table td{padding:3px 8px;border-bottom:1px solid #E5E5E5;font-size:12.5px;vertical-align:middle}
+.proj-table td{padding:4px 10px;border-bottom:1px solid #F5F2EE;font-size:12.5px;vertical-align:middle}
 .proj-table .lbl{color:#333;width:130px;white-space:nowrap}
 .proj-table .inp-cell{min-width:200px}
 .proj-table input.pi{border:none;border-bottom:1.5px solid #999;background:transparent;
@@ -61,7 +61,7 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .proj-label-val{font-size:12px;color:#333;padding:3px 8px}
 
 /* Design Mix row */
-.dm-row{background:#F0F0F0;border-top:1px solid #bbb;border-bottom:1px solid #bbb;
+.dm-row{background:#F7F4F0;border-top:none;border-bottom:none;
   padding:4px 8px;font-size:12.5px;display:flex;align-items:center;gap:8px}
 .dm-row .dm-lbl{color:#333;width:120px}
 .dm-row .dm-val{font-weight:700;color:#000}
@@ -72,16 +72,16 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .dm-selects select:focus{border-bottom-color:#6B1A1A}
 
 /* Section header */
-.sec-lbl{background:#333;color:#fff;padding:4px 8px;font-size:12px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.5px}
+.sec-lbl{background:#6B1A1A;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px}
 
 /* Material table */
 .mat-table{width:100%;border-collapse:collapse}
-.mat-table th{background:#F0F0F0;padding:3px 6px;font-size:11px;font-weight:700;
-  text-align:center;border:1px solid #ccc;color:#333;letter-spacing:.3px}
+.mat-table th{background:#F7F4F0;padding:5px 8px;font-size:11px;font-weight:700;
+  text-align:center;border:none;border-bottom:2px solid #E0D8D0;color:#555;letter-spacing:.3px}
 .mat-table th.lh{text-align:left}
 .mat-table th.orange{color:#E65100;font-weight:800}
-.mat-table td{padding:2px 6px;border:1px solid #ddd;font-size:12.5px;vertical-align:middle}
+.mat-table td{padding:4px 8px;border:none;border-bottom:1px solid #F5F2EE;font-size:12.5px;vertical-align:middle}
 .mat-table td.mat-lbl{color:#333;font-weight:600;white-space:nowrap}
 .mat-table input.mi{border:none;border-bottom:1.5px solid #999;background:transparent;
   font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:#000;
@@ -89,15 +89,15 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 .mat-table input.mi:focus{border-bottom-color:#6B1A1A;background:#FFF9F9}
 .auto{color:#E65100;font-weight:700;font-size:12px;text-align:center;white-space:nowrap}
 .unit-lbl{color:#555;font-size:11.5px;text-align:center}
-.mat-total-row td{background:#D0D0D0;font-weight:800;font-size:13px;padding:4px 8px;border:1px solid #bbb}
+.mat-total-row td{background:#F0EDE8;font-weight:800;font-size:13px;padding:6px 10px;border:none;border-top:2px solid #D0C8C0}
 
 /* ===== RIGHT SECTION ===== */
 .sheet-right{display:flex;flex-direction:column}
 
 /* Price inputs top */
-.prices-top{border-bottom:1px solid #bbb}
-.pt-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #E5E5E5;
-  padding:2px 8px;align-items:center;min-height:26px}
+.prices-top{border-bottom:1px solid #F0EDE8}
+.pt-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #F5F2EE;
+  padding:3px 10px;align-items:center;min-height:28px}
 .pt-row:last-child{border-bottom:none}
 .pt-lbl{font-size:12px;color:#333}
 .pt-inp{border:none;border-bottom:1.5px solid #999;background:transparent;
@@ -107,7 +107,7 @@ body{font-family:'Barlow',sans-serif;background:#E8E8E8;color:#111;font-size:13p
 
 /* Summary bottom */
 .sum-table{width:100%;border-collapse:collapse}
-.sum-table td{padding:3px 8px;border-bottom:1px solid #E5E5E5;font-size:12.5px;vertical-align:middle}
+.sum-table td{padding:4px 10px;border-bottom:1px solid #F5F2EE;font-size:12.5px;vertical-align:middle}
 .sum-table .s-lbl{color:#333;white-space:nowrap}
 .sum-table .s-val{font-weight:700;font-size:13px;text-align:right;color:#000;white-space:nowrap}
 .sum-table .s-inp{border:none;border-bottom:1.5px solid #999;background:transparent;
@@ -407,7 +407,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
 
       <!-- Material Prices (top) -->
       <div class="prices-top">
-        <div style="background:#555;color:#fff;padding:3px 8px;font-size:11px;font-weight:700;letter-spacing:.5px">MATERIAL PRICES</div>
+        <div style="background:#6B1A1A;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;letter-spacing:.8px">MATERIAL PRICES</div>
         <div class="pt-row"><span class="pt-lbl">Cement</span><input class="pt-inp" id="p-cem" type="number" value="190" step="5" oninput="liveUpdate()"></div>
         <div class="pt-row"><span class="pt-lbl">Fly Ash</span><input class="pt-inp" id="p-fa" type="number" value="108" step="5" oninput="liveUpdate()"></div>
         <div class="pt-row"><span class="pt-lbl">Admixture</span><input class="pt-inp" id="p-adm" type="number" value="45" step="5" oninput="liveUpdate()"></div>
@@ -439,7 +439,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
             <td><input class="s-inp" id="p-quoted" type="number" placeholder="0" step="50" oninput="liveUpdate()"></td>
           </tr>
         </table>
-        <table class="sum-table" style="width:100%;border-top:2px solid #bbb">
+        <table class="sum-table" style="width:100%;border-top:1px solid #F0EDE8">
           <tr class="vat-row vat-ex">
             <td class="v-lbl">Vat Ex</td>
             <td class="v-val" id="s-vatex">—</td>
@@ -457,7 +457,7 @@ table.lt{width:100%;border-collapse:collapse;font-size:12px;background:#fff;
             <td style="padding:3px 8px;text-align:right;font-weight:800;color:#E65100;font-size:13px" id="s-margin">—</td>
           </tr>
         </table>
-        <table class="sum-table" style="width:100%;border-top:2px solid #1565C0">
+        <table class="sum-table" style="width:100%;border-top:1px solid #F0EDE8;margin-top:4px">
           <tr style="background:#E3F2FD">
             <td style="padding:4px 8px;font-size:11px;font-weight:700;color:#0D47A1;text-transform:uppercase;letter-spacing:.4px" colspan="2">🎯 Target Profit</td>
           </tr>
