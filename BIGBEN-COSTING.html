@@ -5,154 +5,222 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Big Ben RMC — Costing</title>
 <style>
-/* ===== EXACT SAME CSS AS QC SYSTEM ===== */
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
-:root{--maroon:#6B1A1A;--maroon-light:#8B2222;--maroon-dark:#4A0F0F;--gold:#C9A84C;
-  --green:#2E7D32;--red:#C62828;--blue:#1565C0;--orange:#E65100;
-  --border:#ddd;--bg:#fff;--bg2:#f9f9f9;--bg3:#f0f0f0}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;background:#ECEEF1;color:#1a1a2e}
+:root{
+  --m:#6B1A1A;--ml:#8B2222;--g:#1B6B3A;--b:#1A3A6B;--o:#B85C00;
+  --bg:#fff;--bg2:#F7F8FA;--bd:#E2E5EA;--text:#2C2C3E;--muted:#7A7A96
+}
 
-.app-header{background:var(--maroon);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.app-header h1{font-size:16px;font-weight:700;letter-spacing:.5px}
-.app-header .sub{font-size:11px;opacity:.8;margin-top:2px}
-.logo-box{width:44px;height:44px;background:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--maroon);font-size:14px;flex-shrink:0}
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,#4A0E0E 0%,var(--m) 100%);
+  color:#fff;padding:0 20px;height:52px;display:flex;align-items:center;
+  gap:12px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(107,26,26,.35)}
+.logo{width:34px;height:34px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;letter-spacing:-.5px;flex-shrink:0}
+.hdr-text h1{font-size:14px;font-weight:700;letter-spacing:.3px;line-height:1}
+.hdr-text p{font-size:10px;opacity:.65;margin-top:2px}
+.hdr-chip{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;padding:3px 10px;font-size:10px;font-weight:600;letter-spacing:.3px}
 
-.nav-tabs{background:#fff;border-bottom:2px solid var(--maroon);display:flex;gap:0;overflow-x:auto;position:sticky;top:64px;z-index:90}
-.nav-tab{padding:10px 18px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:#666;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
-.nav-tab.active{color:var(--maroon);border-bottom-color:var(--maroon);background:#fdf8f8}
-.nav-tab:hover{background:#fdf8f8;color:var(--maroon)}
-.tab-content{display:none;padding:16px}
-.tab-content.active{display:block!important}
+/* ── TABS ── */
+.tabs{background:#fff;display:flex;padding:0 20px;gap:2px;
+  border-bottom:1px solid var(--bd);position:sticky;top:52px;z-index:90}
+.tab{padding:9px 16px;font-size:11.5px;font-weight:600;cursor:pointer;
+  border:none;background:none;color:var(--muted);
+  border-bottom:2.5px solid transparent;transition:all .18s;letter-spacing:.2px}
+.tab.active{color:var(--m);border-bottom-color:var(--m)}
+.tab:hover:not(.active){color:var(--m);background:#FDF5F5}
+.tc{display:none;padding:14px 20px}
+.tc.active{display:block}
 
-/* FORM ELEMENTS — box type, exactly like QC System */
-.fg{display:flex;flex-direction:column;gap:3px}
-.fg label{font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em}
-.fg input,.fg select{padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:13px;background:#fff;width:100%}
-.fg input:focus,.fg select:focus{border-color:var(--maroon);outline:none}
+/* ── MAIN GRID ── */
+.sheet{display:grid;grid-template-columns:300px 1fr 240px;gap:12px;align-items:start}
+.col-r{grid-column:3;grid-row:1/span 2;display:flex;flex-direction:column;gap:10px}
+.bot{grid-column:1/span 2;grid-row:2}
 
-/* PANEL — same as QC System */
-.panel{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:0;overflow:hidden}
-.ph{background:var(--maroon);color:#fff;padding:8px 14px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.pb{padding:12px 14px}
+/* ── CARD ── */
+.card{background:#fff;border-radius:8px;overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,.06),0 1px 8px rgba(0,0,0,.04)}
+.card-hdr{background:var(--m);color:#fff;padding:7px 14px;
+  font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  display:flex;justify-content:space-between;align-items:center}
+.card-hdr .sub{font-size:9.5px;opacity:.75;font-weight:400;
+  text-transform:none;letter-spacing:0}
+.card-body{padding:12px 14px}
 
-/* BUTTONS */
-.btn{padding:7px 14px;border:none;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
-.btn-maroon{background:var(--maroon);color:#fff}.btn-maroon:hover{background:var(--maroon-light)}
-.btn-green{background:var(--green);color:#fff}
-.btn-outline{background:#fff;color:var(--maroon);border:1px solid var(--maroon)}
-.btn-sm{padding:4px 10px;font-size:11px}
+/* ── FIELD ── */
+.field{display:flex;flex-direction:column;gap:2px}
+.field label{font-size:10px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select{
+  padding:6px 8px;border:1.5px solid var(--bd);border-radius:5px;
+  font-size:12.5px;font-family:inherit;background:var(--bg);
+  color:var(--text);transition:border-color .15s,box-shadow .15s;width:100%}
+.field input:focus,.field select:focus{
+  border-color:var(--m);outline:none;
+  box-shadow:0 0 0 3px rgba(107,26,26,.08)}
 
-/* GRID LAYOUTS */
+/* ── INLINE ROW (label + input side by side) ── */
+.irow{display:grid;grid-template-columns:95px 1fr;align-items:center;gap:6px;padding:3px 0}
+.irow label{font-size:10.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+.irow input{padding:5px 7px;border:1.5px solid var(--bd);border-radius:5px;
+  font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);
+  transition:border-color .15s;text-align:right;width:100%}
+.irow input:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 3px rgba(107,26,26,.08)}
+.irow .unit{font-size:10px;color:var(--muted);white-space:nowrap;padding-left:2px}
+
+/* ── INLINE GRID (multiple pairs per row) ── */
+.ipairs{display:flex;flex-direction:column;gap:4px}
+.pair-row{display:grid;gap:6px 14px;align-items:center}
+.pair-row.c3{grid-template-columns:repeat(3,85px 65px)}
+.pair-row.c4{grid-template-columns:repeat(4,70px 60px)}
+.pair-row label{font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap}
+.pair-row input{padding:5px 7px;border:1.5px solid var(--bd);border-radius:5px;
+  font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);
+  text-align:right;width:100%;transition:border-color .15s}
+.pair-row input:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 3px rgba(107,26,26,.08)}
+
+/* ── GRIDS ── */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
-.g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px}
 
-/* MAIN SHEET GRID — drawing layout */
-.sheet{display:grid;grid-template-columns:1fr 1fr 260px;grid-template-rows:auto auto;gap:12px;align-items:start}
-.col-right{grid-column:3;grid-row:1/span 2;display:flex;flex-direction:column;gap:12px}
-.bottom-wide{grid-column:1/span 2;grid-row:2}
+/* ── DIVIDER ── */
+.dv{height:1px;background:var(--bd);margin:9px 0}
 
-/* COMPACT TABLE for material per m³ */
-.data-table{width:100%;border-collapse:collapse;font-size:12px}
-.data-table th{background:var(--maroon);color:#fff;padding:6px 10px;text-align:left;font-size:11px;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.data-table th.c{text-align:center}
-.data-table td{padding:5px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
-.data-table tr:hover td{background:#fdf8f8}
-.data-table tfoot td{background:var(--bg2);font-weight:700;font-size:13px;padding:7px 10px;border-top:2px solid var(--border)}
-.ci{padding:4px 6px;border:1px solid var(--border);border-radius:3px;font-size:12px;width:80px;text-align:right;background:#fff;font-family:Arial,sans-serif}
-.ci:focus{border-color:var(--maroon);outline:none}
-.av{color:var(--orange);font-weight:700;text-align:right}
-.cv{font-weight:700;text-align:right}
-.uc{color:#888;font-size:11px;text-align:center}
+/* ── CONTRACT TOGGLE ── */
+.ct{display:grid;grid-template-columns:1fr 1fr;border-radius:6px;overflow:hidden;
+  border:1.5px solid var(--bd);margin-top:3px}
+.ctb{padding:6px;text-align:center;font-size:11px;font-weight:700;
+  cursor:pointer;border:none;background:var(--bg2);color:var(--muted);transition:all .15s}
+.ctb.sc{background:var(--m);color:#fff}
+.ctb.cs{background:var(--b);color:#fff}
 
-/* SUMMARY ROWS */
-.sr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
+/* ── MATERIAL TABLE ── */
+.mt{width:100%;border-collapse:collapse;font-size:12px}
+.mt thead th{background:var(--m);color:#fff;padding:6px 10px;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  white-space:nowrap}
+.mt thead th:not(:first-child){text-align:center}
+.mt tbody td{padding:5px 10px;border-bottom:1px solid #F0F2F5;vertical-align:middle}
+.mt tbody tr:last-child td{border-bottom:none}
+.mt tbody tr:hover td{background:#FBF5F5}
+.mt tfoot td{background:var(--bg2);font-weight:700;padding:7px 10px;
+  border-top:2px solid var(--bd)}
+.mt .ci{padding:4px 6px;border:1.5px solid var(--bd);border-radius:4px;
+  font-size:12px;font-family:inherit;background:#fff;text-align:right;
+  width:80px;transition:border-color .15s}
+.mt .ci:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 2px rgba(107,26,26,.08)}
+.mt .av{color:var(--o);font-weight:700;text-align:right}
+.mt .cv{font-weight:700;text-align:right;color:var(--text)}
+.mt .uc{color:var(--muted);font-size:11px;text-align:center}
+.mt td:not(:first-child){text-align:center}
+
+/* ── SUMMARY ROWS ── */
+.sr{display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid #F0F2F5;font-size:12px}
 .sr:last-child{border-bottom:none}
-.sl{color:#444}
-.sv{font-weight:700}
-.si{padding:4px 6px;border:1px solid var(--border);border-radius:3px;font-size:12px;width:90px;text-align:right;background:#fff;font-family:Arial,sans-serif}
-.si:focus{border-color:var(--maroon);outline:none}
-.fn{font-size:10px;color:#bbb;text-align:right;margin:-3px 0 3px;font-style:italic}
+.sl{color:var(--muted);font-size:11.5px}
+.sv{font-weight:700;font-size:12.5px}
+.si{padding:5px 7px;border:1.5px solid var(--bd);border-radius:5px;
+  font-size:12px;font-family:inherit;background:#fff;text-align:right;width:88px;
+  transition:border-color .15s}
+.si:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 3px rgba(107,26,26,.08)}
+.hint{font-size:9.5px;color:#BCC0C8;text-align:right;margin:-4px 0 3px;font-style:italic}
 
-/* VAT BOXES */
-.vat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.vbox{border-radius:4px;padding:10px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.vbox .vl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.9;margin-bottom:3px}
-.vbox .vv{font-size:17px;font-weight:700}
-.vex{background:var(--green);color:#fff}
-.vin{background:#1B5E20;color:#fff}
+/* ── VAT BOXES ── */
+.vat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.vbox{border-radius:6px;padding:10px 8px;text-align:center}
+.vbox .vl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.85;margin-bottom:3px}
+.vbox .vv{font-size:18px;font-weight:800;letter-spacing:-.5px}
+.vex{background:var(--g);color:#fff}
+.vin{background:#145230;color:#fff}
 
-/* MARGIN BOX */
-.mbox{background:#FFF3E0;border:1px solid #FFCC80;border-radius:4px;padding:10px;margin-top:8px;text-align:center}
-.ml{font-size:10px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-.mv{font-size:22px;font-weight:700;color:var(--orange)}
-.ms{font-size:10px;color:#aaa;margin-top:2px}
+/* ── MARGIN ── */
+.mbox{background:linear-gradient(135deg,#FFF3E0,#FFF8F0);
+  border:1px solid #FFCC80;border-radius:6px;padding:10px;
+  margin-top:8px;text-align:center}
+.mbox .ml{font-size:9.5px;font-weight:700;color:var(--o);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.mbox .mv{font-size:24px;font-weight:800;color:var(--o);letter-spacing:-.5px}
+.mbox .ms{font-size:10px;color:#BBA070;margin-top:2px}
 
-/* CONTRACT TOGGLE */
-.ct-wrap{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:2px}
-.ctb{padding:6px 4px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;border:none;background:var(--bg2);color:#666;transition:all .2s;line-height:1.3}
-.ctb.sc{background:var(--maroon);color:#fff}
-.ctb.cs{background:var(--blue);color:#fff}
+/* ── CS NOTE ── */
+.cs-note{background:#EBF3FF;border-radius:5px;padding:7px 10px;
+  font-size:11px;color:var(--b);margin-top:6px;display:none}
+.cs-note.show{display:block}
 
-/* SECTION DIVIDER */
-.dv{height:1px;background:var(--border);margin:10px 0}
+/* ── BUTTONS ── */
+.btn{padding:7px 16px;border:none;border-radius:6px;font-size:12px;
+  font-weight:600;cursor:pointer;display:inline-flex;align-items:center;
+  gap:5px;transition:all .15s;font-family:inherit}
+.btn-m{background:var(--m);color:#fff}.btn-m:hover{background:var(--ml)}
+.btn-g{background:var(--g);color:#fff}.btn-g:hover{background:#155C30}
+.btn-o{background:#fff;color:var(--m);border:1.5px solid var(--m)}.btn-o:hover{background:#FDF5F5}
+.btn-sm{padding:4px 10px;font-size:11px}
 
-/* BADGE */
-.badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;text-transform:uppercase}
-.b-sc{background:#FDE8E8;color:var(--maroon)}.b-cs{background:#E3F2FD;color:var(--blue)}
-.b-ok{background:#E8F5E9;color:var(--green)}.b-low{background:#FFF3E0;color:var(--orange)}.b-bad{background:#FFEBEE;color:var(--red)}
-.empty{text-align:center;padding:28px;color:#aaa}
+/* ── LOG TABLE ── */
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{background:var(--m);color:#fff;padding:7px 10px;font-size:10px;
+  font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:left}
+.dt td{padding:7px 10px;border-bottom:1px solid var(--bd)}
+.dt tr:hover td{background:#FBF5F5}
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
+.b-sc{background:#FDE8E8;color:var(--m)}.b-cs{background:#E8F0FE;color:var(--b)}
+.b-ok{background:#E6F4EC;color:var(--g)}.b-lo{background:#FFF3E0;color:var(--o)}.b-bd{background:#FFEBEE;color:#C62828}
+.empty{text-align:center;padding:32px;color:var(--muted)}
 
 @media print{
-  .app-header,.nav-tabs,.no-print{display:none!important}
-  .tab-content{display:block!important}
+  .hdr,.tabs,.actions{display:none!important}
+  .tc{display:block!important;padding:0}
   body{background:#fff}
-  .ph,.data-table th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER — same as QC System -->
-<div class="app-header">
-  <div class="logo-box">BB</div>
-  <div>
+<div class="hdr">
+  <div class="logo">BB</div>
+  <div class="hdr-text">
     <h1>BIG BEN READY MIX CONCRETE</h1>
-    <div class="sub">Costing Dashboard — Client Quotation Tool</div>
+    <p>Costing Dashboard — Client Quotation Tool</p>
   </div>
+  <div class="hdr-chip">QC SYSTEM v2.0</div>
 </div>
 
-<!-- NAV TABS — same as QC System -->
-<div class="nav-tabs">
-  <button class="nav-tab active" onclick="showTab('costing',this)">🧮 Costing Sheet</button>
-  <button class="nav-tab" onclick="showTab('log',this)">📁 Quotation Log</button>
+<div class="tabs">
+  <button class="tab active" onclick="showTab('cost',this)">🧮 Costing Sheet</button>
+  <button class="tab" onclick="showTab('log',this)">📁 Quotation Log</button>
 </div>
 
-<!-- ===== COSTING SHEET ===== -->
-<div class="tab-content active" id="tab-costing">
+<!-- ══════════════ COSTING SHEET ══════════════ -->
+<div class="tc active" id="tab-cost">
 <div class="sheet">
 
-  <!-- TOP-LEFT: I. DATA ENTRY + II. CONVERSION -->
-  <div style="display:flex;flex-direction:column;gap:12px">
+  <!-- LEFT COL -->
+  <div style="display:flex;flex-direction:column;gap:10px">
 
-    <div class="panel">
-      <div class="ph">I. Data Entry</div>
-      <div class="pb">
+    <!-- I. DATA ENTRY -->
+    <div class="card">
+      <div class="card-hdr">I. Data Entry</div>
+      <div class="card-body">
         <div class="g2" style="margin-bottom:8px">
-          <div class="fg"><label>Account Executive</label><input type="text" id="f-ae" placeholder="Name"></div>
-          <div class="fg"><label>Client / Contractor</label><input type="text" id="f-client" placeholder="Company"></div>
+          <div class="field"><label>Account Executive</label><input type="text" id="f-ae" placeholder="Name"></div>
+          <div class="field"><label>Client / Contractor</label><input type="text" id="f-client" placeholder="Company"></div>
         </div>
-        <div class="fg" style="margin-bottom:8px"><label>Project Title</label><input type="text" id="f-proj" placeholder="Project name"></div>
-        <div class="fg" style="margin-bottom:8px"><label>Project Location</label><input type="text" id="f-loc" placeholder="City / Municipality"></div>
+        <div class="field" style="margin-bottom:8px"><label>Project Title</label><input type="text" id="f-proj" placeholder="Project name"></div>
+        <div class="field" style="margin-bottom:8px"><label>Project Location</label><input type="text" id="f-loc" placeholder="City / Municipality"></div>
         <div class="dv"></div>
         <div class="g3" style="margin-bottom:8px">
-          <div class="fg"><label>Distance (km)</label><input type="number" id="f-dist" placeholder="0" oninput="calc()"></div>
-          <div class="fg"><label>Toll Fee (₱/trip)</label><input type="number" id="f-toll" placeholder="0" oninput="calc()"></div>
-          <div class="fg"><label>Load / Truck (m³)</label><input type="number" id="f-load" value="8" oninput="calc()"></div>
+          <div class="field"><label>Distance (km)</label><input type="number" id="f-dist" placeholder="0" oninput="calc()"></div>
+          <div class="field"><label>Toll Fee (₱/trip)</label><input type="number" id="f-toll" placeholder="0" oninput="calc()"></div>
+          <div class="field"><label>Load/Truck (m³)</label><input type="number" id="f-load" value="8" oninput="calc()"></div>
         </div>
         <div class="dv"></div>
-        <div class="fg" style="margin-bottom:6px">
+        <div class="field" style="margin-bottom:6px">
           <label>Design Mix</label>
           <div class="g4">
             <select id="f-psi" onchange="autoFill();calc()">
@@ -166,370 +234,356 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
             <select id="f-agg" onchange="autoFill();calc()">
               <option value="G34">G-3/4"</option><option value="G1">G-1"</option><option value="G38">G-3/8"</option>
             </select>
-            <select id="f-mix" onchange="onMixType()">
-              <option value="ord">ORD.</option><option value="pcd">PCD.</option>
-              <option value="scc">SCC.</option><option value="other">Other...</option>
+            <select id="f-mix" onchange="onMix()">
+              <option value="ORD">ORD.</option><option value="PCD">PCD.</option>
+              <option value="SCC">SCC.</option><option value="other">Other…</option>
             </select>
           </div>
-          <input type="text" id="f-mix-other" placeholder="Specify mix type..." style="display:none;margin-top:4px">
+          <input type="text" id="f-mix-other" placeholder="Specify mix type…"
+            style="display:none;margin-top:5px;padding:6px 8px;border:1.5px solid var(--bd);border-radius:5px;font-size:12.5px;font-family:inherit;width:100%">
         </div>
-        <div class="fg">
+        <div class="field">
           <label>Contract Type</label>
-          <div class="ct-wrap">
-            <button class="ctb sc" id="btn-sc" onclick="setContract('SC')">📦 Straight Contract</button>
-            <button class="ctb" id="btn-cs" onclick="setContract('CS')">🏗️ Cement Supply</button>
+          <div class="ct">
+            <button class="ctb sc" id="btn-sc" onclick="setC('SC')">📦 Straight Contract</button>
+            <button class="ctb" id="btn-cs" onclick="setC('CS')">🏗 Cement Supply</button>
           </div>
         </div>
         <div id="acap-wrap" style="display:none;margin-top:8px">
-          <div class="fg"><label>ACAP Bags (per truck)</label><input type="number" id="m-acap" step="0.5" placeholder="e.g. 17" oninput="calc()"></div>
+          <div class="field"><label>ACAP Bags (per truck)</label><input type="number" id="m-acap" step="0.5" placeholder="e.g. 17" oninput="calc()"></div>
+        </div>
+        <div class="cs-note" id="cs-note">Cement supplied by contractor. Cement cost = ₱0. Savings computed from ACAP bags.</div>
+      </div>
+    </div>
+
+    <!-- II. CONVERSION -->
+    <div class="card">
+      <div class="card-hdr">II. Conversion per Material <span class="sub">1 bag = 40 kgs · Admix = (Cem+FA) × %</span></div>
+      <div class="card-body">
+        <div class="ipairs">
+          <div class="pair-row c3">
+            <label>Agg – G1"</label><input type="number" id="uw-g1" value="1709" oninput="calc()">
+            <label>Agg – 3/4"</label><input type="number" id="uw-g34" value="1706" oninput="calc()">
+            <label>Agg – 3/8"</label><input type="number" id="uw-g38" value="1693" oninput="calc()">
+          </div>
+          <div class="pair-row c3">
+            <label>Sand – 4MM</label><input type="number" id="uw-s4" value="1673" oninput="calc()">
+            <label>Sand – 2MM</label><input type="number" id="uw-s2" value="1311" oninput="calc()">
+            <label>Sand – S1</label><input type="number" id="uw-s1" value="1701" oninput="calc()">
+          </div>
+          <div class="pair-row" style="grid-template-columns:85px 65px">
+            <label>Admix %</label><input type="number" id="f-adm-pct" value="1" step="0.1" min="0.1" max="3" oninput="calc()">
+          </div>
+        </div>
+        <div style="font-size:9.5px;color:#BCC0C8;margin-top:6px">Unit weights in kgs/m³</div>
+      </div>
+    </div>
+
+  </div><!-- end left -->
+
+  <!-- MIDDLE COL -->
+  <div style="display:flex;flex-direction:column;gap:10px">
+
+    <!-- III. MATERIAL PRICES -->
+    <div class="card">
+      <div class="card-hdr">III. Material Prices</div>
+      <div class="card-body">
+        <div class="ipairs">
+          <div class="pair-row c4">
+            <label>Cement</label><input type="number" id="p-cem" value="190" step="5" oninput="calc()">
+            <label>Fly Ash</label><input type="number" id="p-fa" value="108" step="5" oninput="calc()">
+            <label>Admixture</label><input type="number" id="p-adm" value="45" step="5" oninput="calc()">
+            <label>Diesel</label><input type="number" id="p-die" value="55" step="1" oninput="calc()">
+          </div>
+          <div class="pair-row c4">
+            <label>Agg – G1"</label><input type="number" id="p-g1" value="1000" step="10" oninput="calc()">
+            <label>Agg – 3/4"</label><input type="number" id="p-g34" value="1115" step="10" oninput="calc()">
+            <label>Agg – 3/8"</label><input type="number" id="p-g38" value="945" step="10" oninput="calc()">
+            <label>Sand – 4MM</label><input type="number" id="p-s4" value="950" step="10" oninput="calc()">
+          </div>
+          <div class="pair-row" style="grid-template-columns:repeat(2,70px 60px)">
+            <label>Sand – 2MM</label><input type="number" id="p-s2" value="1200" step="10" oninput="calc()">
+            <label>Sand – S1</label><input type="number" id="p-s1" value="1100" step="10" oninput="calc()">
+          </div>
+        </div>
+        <div style="font-size:9.5px;color:#BCC0C8;margin-top:6px">Cement & FA: ₱/bag · Admix: ₱/L · Aggregates & Sand: ₱/m³ · Diesel: ₱/L</div>
+      </div>
+    </div>
+
+    <!-- IV. MATERIALS PER m³ -->
+    <div class="card">
+      <div class="card-hdr">IV. Materials per Cubic Meter</div>
+      <div style="padding:0">
+        <table class="mt">
+          <thead>
+            <tr>
+              <th style="width:110px">Material</th>
+              <th style="color:#FFCC80;width:110px">Input (kgs/m³)</th>
+              <th style="color:#FFCC80;width:120px">→ Converted</th>
+              <th style="width:60px">Unit</th>
+              <th style="width:120px">Cost / m³</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="tr-cem"><td>Cement</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-cem" placeholder="310" oninput="calc()"></td>
+              <td class="av" id="c-cem">—</td><td class="uc">bags</td><td class="cv" id="cc-cem">—</td></tr>
+            <tr><td>Fly Ash</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-fa" placeholder="62" oninput="calc()"></td>
+              <td class="av" id="c-fa">—</td><td class="uc">bags</td><td class="cv" id="cc-fa">—</td></tr>
+            <tr><td>Admixture</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-adm" placeholder="3.72" step="0.1" oninput="calc()"></td>
+              <td class="av" id="c-adm">—</td><td class="uc">liters</td><td class="cv" id="cc-adm">—</td></tr>
+            <tr><td>Agg – G1"</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-g1" placeholder="0" oninput="calc()"></td>
+              <td class="av" id="c-g1">—</td><td class="uc">m³</td><td class="cv" id="cc-g1">—</td></tr>
+            <tr><td>Agg – 3/4"</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-g34" placeholder="0" oninput="calc()"></td>
+              <td class="av" id="c-g34">—</td><td class="uc">m³</td><td class="cv" id="cc-g34">—</td></tr>
+            <tr><td>Agg – 3/8"</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-g38" placeholder="0" oninput="calc()"></td>
+              <td class="av" id="c-g38">—</td><td class="uc">m³</td><td class="cv" id="cc-g38">—</td></tr>
+            <tr><td>Sand – 4MM</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-s4" placeholder="0" oninput="calc()"></td>
+              <td class="av" id="c-s4">—</td><td class="uc">m³</td><td class="cv" id="cc-s4">—</td></tr>
+            <tr><td>Sand – 2MM</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-s2" placeholder="0" oninput="calc()"></td>
+              <td class="av" id="c-s2">—</td><td class="uc">m³</td><td class="cv" id="cc-s2">—</td></tr>
+            <tr><td>Sand – S1</td>
+              <td style="text-align:center"><input class="ci" type="number" id="m-s1" placeholder="0" oninput="calc()"></td>
+              <td class="av" id="c-s1">—</td><td class="uc">m³</td><td class="cv" id="cc-s1">—</td></tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" style="text-align:right;color:var(--muted);font-size:12px">Materials Cost / m³</td>
+              <td style="color:var(--m);text-align:right;font-size:15px" id="c-matcost">—</td>
+            </tr>
+          </tfoot>
+        </table>
+        <div id="cs-sav" style="display:none;background:#EBF3FF;padding:7px 14px;font-size:11.5px">
+          <span style="color:var(--b);font-weight:700">Cement Savings: </span>
+          <span style="color:var(--b);font-weight:800;font-size:13px" id="c-csav">₱0.00</span>
+          <span style="color:#90B8E8;margin-left:6px;font-size:10.5px">(ACAP bags × ₱/bag ÷ load)</span>
         </div>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="ph">II. Conversion per Material <span style="font-size:10px;font-weight:400;opacity:.8">— 1 bag = 40 kgs</span></div>
-      <div class="pb" style="padding:10px 14px">
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="display:grid;grid-template-columns:90px 75px 90px 75px 90px 75px;gap:4px 12px;align-items:center">
-            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – G1"</label>
-            <input type="number" id="uw-g1" value="1709" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
-            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/4"</label>
-            <input type="number" id="uw-g34" value="1706" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
-            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/8"</label>
-            <input type="number" id="uw-g38" value="1693" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
-          </div>
-          <div style="display:grid;grid-template-columns:90px 75px 90px 75px 90px 75px;gap:4px 12px;align-items:center">
-            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 4MM</label>
-            <input type="number" id="uw-s4" value="1673" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
-            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 2MM</label>
-            <input type="number" id="uw-s2" value="1311" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
-            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – S1</label>
-            <input type="number" id="uw-s1" value="1701" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
-          </div>
-          <div style="display:grid;grid-template-columns:90px 75px;gap:4px 12px;align-items:center">
-            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Admix %</label>
-            <input type="number" id="f-adm-pct" value="1" step="0.1" min="0.1" max="3" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
-          </div>
-        </div>
-        <div style="font-size:10px;color:#aaa;margin-top:5px">kgs/m³ &nbsp;·&nbsp; Admix = (Cem + FA) kgs × %</div>
-      </div>
-    </div>
+  </div><!-- end middle -->
 
-  </div>
+  <!-- RIGHT COL -->
+  <div class="col-r">
 
-  <!-- TOP-MIDDLE: III. MATERIAL PRICES -->
-  <div class="panel">
-    <div class="ph">III. Material Prices</div>
-    <div class="pb" style="padding:10px 14px">
-      <div style="display:flex;flex-direction:column;gap:5px">
-        <div style="display:grid;grid-template-columns:100px 80px 100px 80px 100px 80px 100px 80px;gap:4px 10px;align-items:center">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Cement</label>
-          <input type="number" id="p-cem" value="190" step="5" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Fly Ash</label>
-          <input type="number" id="p-fa" value="108" step="5" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Admixture</label>
-          <input type="number" id="p-adm" value="45" step="5" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Diesel</label>
-          <input type="number" id="p-die" value="55" step="1" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-        </div>
-        <div style="display:grid;grid-template-columns:100px 80px 100px 80px 100px 80px 100px 80px;gap:4px 10px;align-items:center">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – G1"</label>
-          <input type="number" id="p-g1" value="1000" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/4"</label>
-          <input type="number" id="p-g34" value="1115" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/8"</label>
-          <input type="number" id="p-g38" value="945" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 4MM</label>
-          <input type="number" id="p-s4" value="950" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-        </div>
-        <div style="display:grid;grid-template-columns:100px 80px 100px 80px 100px 80px;gap:4px 10px;align-items:center">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 2MM</label>
-          <input type="number" id="p-s2" value="1200" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – S1</label>
-          <input type="number" id="p-s1" value="1100" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
-        </div>
-      </div>
-      <div style="font-size:10px;color:#aaa;margin-top:6px">Cement & Fly Ash: ₱/bag &nbsp;·&nbsp; Admixture: ₱/L &nbsp;·&nbsp; Aggregates & Sand: ₱/m³ &nbsp;·&nbsp; Diesel: ₱/L</div>
-    </div>
-  </div>
-
-  <!-- RIGHT COLUMN -->
-  <div class="col-right">
-
-    <div class="panel">
-      <div class="ph">V. Cost Summary</div>
-      <div class="pb">
-        <div class="sr"><span class="sl">Materials Cost</span><span class="sv" style="color:var(--maroon)" id="s-mat">—</span></div>
+    <!-- V. COST SUMMARY -->
+    <div class="card">
+      <div class="card-hdr">V. Cost Summary</div>
+      <div class="card-body">
+        <div class="sr"><span class="sl">Materials Cost</span><span class="sv" style="color:var(--m)" id="s-mat">—</span></div>
         <div class="sr"><span class="sl">OCM / FOE</span><input class="si" type="number" id="p-ocm" value="555" step="5" oninput="calc()"></div>
-        <div class="sr"><span class="sl">Toll Fee</span><span class="sv" style="color:var(--orange)" id="s-toll">—</span></div>
-        <div class="fn">(Toll × 2) ÷ load</div>
-        <div class="sr"><span class="sl">Fuel</span><span class="sv" style="color:var(--orange)" id="s-fuel">—</span></div>
-        <div class="fn">(dist × diesel × 2 × 0.85) ÷ load</div>
+        <div class="sr"><span class="sl">Toll Fee</span><span class="sv" style="color:var(--o)" id="s-toll">—</span></div>
+        <div class="hint">(Toll × 2) ÷ load</div>
+        <div class="sr"><span class="sl">Fuel</span><span class="sv" style="color:var(--o)" id="s-fuel">—</span></div>
+        <div class="hint">(dist × diesel × 2 × 0.85) ÷ load</div>
         <div class="sr"><span class="sl">DPWH</span><input class="si" type="number" id="p-dpwh" value="0" step="50" oninput="calc()"></div>
-        <div class="sr"><span class="sl" style="font-weight:700;color:var(--blue)">Target Profit</span>
-          <input class="si" type="number" id="p-target" value="500" step="50" oninput="calc()" style="border-color:var(--blue);color:var(--blue);font-weight:700"></div>
+        <div class="dv"></div>
+        <div class="sr">
+          <span class="sl" style="color:var(--b);font-weight:700">Target Profit / m³</span>
+          <input class="si" type="number" id="p-target" value="500" step="50" oninput="calc()"
+            style="border-color:var(--b);color:var(--b);font-weight:700">
+        </div>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="ph">VI. Price per Cubic Meter</div>
-      <div class="pb">
-        <div class="vat-grid">
+    <!-- VI. PRICE PER m³ -->
+    <div class="card">
+      <div class="card-hdr">VI. Price per Cubic Meter</div>
+      <div class="card-body">
+        <div class="vat">
           <div class="vbox vex"><div class="vl">Vat Exclusive</div><div class="vv" id="s-vatex">—</div></div>
           <div class="vbox vin"><div class="vl">Vat Inclusive</div><div class="vv" id="s-vatin">—</div></div>
         </div>
         <div class="mbox">
           <div class="ml">Profit Margin</div>
           <div class="mv" id="s-margin">—</div>
-          <div class="ms" id="s-margin-sub">Target Profit ÷ Vat Ex</div>
+          <div class="ms" id="s-margin-sub">Target ÷ Vat Ex</div>
         </div>
         <div class="dv"></div>
-        <div class="fg"><label>Est. Total Volume (m³)</label><input type="number" id="f-vol" placeholder="0" oninput="calc()"></div>
-        <div class="sr" id="proj-row" style="display:none;margin-top:6px">
-          <span class="sl">Total Project (VAT In)</span>
-          <span class="sv" style="color:var(--maroon)" id="s-proj">—</span>
+        <div class="field" style="margin-bottom:6px">
+          <label>Est. Total Volume (m³)</label>
+          <input type="number" id="f-vol" placeholder="0" oninput="calc()">
+        </div>
+        <div id="proj-row" style="display:none">
+          <div class="sr"><span class="sl">Total Project (VAT In)</span><span class="sv" style="color:var(--m)" id="s-proj">—</span></div>
         </div>
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-maroon" onclick="calc()">⚡ Compute</button>
-      <button class="btn btn-green" onclick="saveLog()">💾 Save</button>
-      <button class="btn btn-outline" onclick="window.print()">🖨 Print</button>
-      <span id="save-msg" style="font-size:11px;color:var(--green);font-weight:600;align-self:center;display:none">✅ Saved!</span>
+    <!-- ACTIONS -->
+    <div class="actions" style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-m" onclick="calc()">⚡ Compute</button>
+      <button class="btn btn-g" onclick="saveLog()">💾 Save</button>
+      <button class="btn btn-o" onclick="window.print()">🖨</button>
+      <span id="save-msg" style="font-size:11px;color:var(--g);font-weight:700;align-self:center;display:none">✅ Saved!</span>
     </div>
 
-  </div>
+  </div><!-- end right -->
 
-  <!-- BOTTOM WIDE: IV. MATERIALS PER CUBIC METER -->
-  <div class="panel bottom-wide">
-    <div class="ph">IV. Materials per Cubic Meter</div>
-    <div class="pb" style="padding:0">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Material</th>
-            <th class="c" style="color:#FFCC80;width:140px">Input (kgs / m³)</th>
-            <th class="c" style="color:#FFCC80;width:140px">→ Converted</th>
-            <th class="c" style="width:80px">Unit</th>
-            <th class="c" style="width:150px">Cost / m³</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="tr-cem">
-            <td>Cement</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-cem" placeholder="310" oninput="calc()"></td>
-            <td class="av" id="c-cem">—</td><td class="uc">bags</td><td class="cv" id="cc-cem">—</td>
-          </tr>
-          <tr>
-            <td>Fly Ash</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-fa" placeholder="62" oninput="calc()"></td>
-            <td class="av" id="c-fa">—</td><td class="uc">bags</td><td class="cv" id="cc-fa">—</td>
-          </tr>
-          <tr>
-            <td>Admixture</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-adm" placeholder="3.72" step="0.1" oninput="calc()"></td>
-            <td class="av" id="c-adm">—</td><td class="uc">liters</td><td class="cv" id="cc-adm">—</td>
-          </tr>
-          <tr>
-            <td>Agg – G1"</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-g1" placeholder="0" oninput="calc()"></td>
-            <td class="av" id="c-g1">—</td><td class="uc">m³</td><td class="cv" id="cc-g1">—</td>
-          </tr>
-          <tr>
-            <td>Agg – 3/4"</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-g34" placeholder="0" oninput="calc()"></td>
-            <td class="av" id="c-g34">—</td><td class="uc">m³</td><td class="cv" id="cc-g34">—</td>
-          </tr>
-          <tr>
-            <td>Agg – 3/8"</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-g38" placeholder="0" oninput="calc()"></td>
-            <td class="av" id="c-g38">—</td><td class="uc">m³</td><td class="cv" id="cc-g38">—</td>
-          </tr>
-          <tr>
-            <td>Sand – 4MM</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-s4" placeholder="0" oninput="calc()"></td>
-            <td class="av" id="c-s4">—</td><td class="uc">m³</td><td class="cv" id="cc-s4">—</td>
-          </tr>
-          <tr>
-            <td>Sand – 2MM</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-s2" placeholder="0" oninput="calc()"></td>
-            <td class="av" id="c-s2">—</td><td class="uc">m³</td><td class="cv" id="cc-s2">—</td>
-          </tr>
-          <tr>
-            <td>Sand – S1</td>
-            <td style="text-align:center"><input class="ci" type="number" id="m-s1" placeholder="0" oninput="calc()"></td>
-            <td class="av" id="c-s1">—</td><td class="uc">m³</td><td class="cv" id="cc-s1">—</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="4" style="text-align:right;color:#555">Materials Cost / m³</td>
-            <td style="color:var(--maroon);text-align:right" id="c-matcost">—</td>
-          </tr>
-        </tfoot>
-      </table>
-      <div id="cs-row" style="display:none;background:#E3F2FD;padding:8px 14px;font-size:12px">
-        <span style="color:var(--blue);font-weight:700">Cement Savings: </span>
-        <span style="color:var(--blue);font-weight:700;font-size:14px" id="c-csav">₱0.00</span>
-        <span style="color:#90CAF9;margin-left:6px;font-size:11px">(ACAP bags × ₱/bag ÷ load)</span>
-      </div>
-    </div>
-  </div>
-
-</div>
+</div><!-- end sheet -->
 </div>
 
-<!-- ===== LOG TAB ===== -->
-<div class="tab-content" id="tab-log">
+<!-- ══════════════ LOG TAB ══════════════ -->
+<div class="tc" id="tab-log">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <b>Quotation Log — <span id="log-cnt">0</span> entries</b>
+    <b style="font-size:13px">Quotation Log — <span id="log-cnt">0</span> entries</b>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 Export CSV</button>
-      <button class="btn btn-sm" style="background:#FFEBEE;color:var(--red)" onclick="clearAll()">🗑 Clear All</button>
+      <button class="btn btn-o btn-sm" onclick="exportCSV()">📥 Export CSV</button>
+      <button class="btn btn-sm" style="background:#FFEBEE;color:#C62828" onclick="clearAll()">🗑 Clear All</button>
     </div>
   </div>
-  <div class="panel" style="overflow-x:auto">
-    <table class="data-table">
+  <div class="card" style="overflow-x:auto">
+    <table class="dt">
       <thead>
-        <tr><th>#</th><th>Date</th><th>Client</th><th>Project</th><th>Type</th><th>Mix</th><th>Mat Cost/m³</th><th>Vat Ex</th><th>Vat In</th><th>Target Profit</th><th>Margin</th><th></th></tr>
+        <tr><th>#</th><th>Date</th><th>Client</th><th>Project</th><th>Type</th><th>Mix</th><th>Mat Cost</th><th>Vat Ex</th><th>Vat In</th><th>Target</th><th>Margin</th><th></th></tr>
       </thead>
-      <tbody id="log-body"><tr><td colspan="12" class="empty">No entries yet.</td></tr></tbody>
+      <tbody id="log-body"><tr><td colspan="12" class="empty">No entries yet. Compute and save a costing to begin.</td></tr></tbody>
     </table>
   </div>
 </div>
 
 <script>
 const PSI_CEM={'1500':200,'2000':220,'2500':260,'3000':310,'3500':350,'4000':390,'4500':420,'5000':440,'6000':520};
-let contract='SC', log=JSON.parse(localStorage.getItem('bb_v10')||'[]'), last=null;
+let C='SC', LOG=JSON.parse(localStorage.getItem('bb_v11')||'[]'), last=null;
 
 document.addEventListener('DOMContentLoaded',()=>{ autoFill(); calc(); renderLog(); });
 
 function showTab(n,el){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
   if(n==='log') renderLog();
 }
-function onMixType(){
-  const v=gs('f-mix');
-  document.getElementById('f-mix-other').style.display=v==='other'?'block':'none';
+function onMix(){
+  document.getElementById('f-mix-other').style.display = gs('f-mix')==='other'?'block':'none';
 }
 function gv(id){return parseFloat(document.getElementById(id).value)||0;}
 function gs(id){return(document.getElementById(id).value||'').trim();}
 function sv(id,v){document.getElementById(id).value=v;}
 function st(id,v){document.getElementById(id).textContent=v;}
 
-function setContract(t){
-  contract=t;
+function setC(t){
+  C=t;
   document.getElementById('btn-sc').className='ctb'+(t==='SC'?' sc':'');
   document.getElementById('btn-cs').className='ctb'+(t==='CS'?' cs':'');
   document.getElementById('acap-wrap').style.display=t==='CS'?'block':'none';
-  document.getElementById('cs-row').style.display=t==='CS'?'block':'none';
+  document.getElementById('cs-sav').style.display=t==='CS'?'block':'none';
+  document.getElementById('cs-note').className='cs-note'+(t==='CS'?' show':'');
   document.getElementById('tr-cem').style.opacity=t==='CS'?'0.35':'1';
   calc();
 }
 
 function autoFill(){
-  const psi=gs('f-psi'), cemKgs=PSI_CEM[psi]||310, faKgs=Math.round(cemKgs*0.2);
-  const admPct=gv('f-adm-pct')/100;
-  sv('m-cem',cemKgs); sv('m-fa',faKgs);
-  sv('m-adm',((cemKgs+faKgs)*admPct).toFixed(2));
+  const psi=gs('f-psi'), cem=PSI_CEM[psi]||310, fa=Math.round(cem*.2);
+  sv('m-cem',cem); sv('m-fa',fa);
+  sv('m-adm',((cem+fa)*(gv('f-adm-pct')/100)).toFixed(2));
   calc();
 }
 
 function calc(){
-  const cem=gv('m-cem'), fa=gv('m-fa'), admL=gv('m-adm');
+  const cem=gv('m-cem'), fa=gv('m-fa'), adm=gv('m-adm');
   const g1=gv('m-g1'), g34=gv('m-g34'), g38=gv('m-g38');
   const s4=gv('m-s4'), s2=gv('m-s2'), s1=gv('m-s1');
   const uwG1=gv('uw-g1'), uwG34=gv('uw-g34'), uwG38=gv('uw-g38');
   const uwS4=gv('uw-s4'), uwS2=gv('uw-s2'), uwS1=gv('uw-s1');
-  const pCem=gv('p-cem'), pFa=gv('p-fa'), pAdm=gv('p-adm');
+  const pCem=gv('p-cem'), pFa=gv('p-fa'), pAdm=gv('p-adm'), pDie=gv('p-die');
   const pG1=gv('p-g1'), pG34=gv('p-g34'), pG38=gv('p-g38');
-  const pS4=gv('p-s4'), pS2=gv('p-s2'), pS1=gv('p-s1'), pDie=gv('p-die');
+  const pS4=gv('p-s4'), pS2=gv('p-s2'), pS1=gv('p-s1');
   const load=gv('f-load')||8, dist=gv('f-dist'), toll=gv('f-toll'), acap=gv('m-acap');
   const ocm=gv('p-ocm'), dpwh=gv('p-dpwh'), target=gv('p-target'), vol=gv('f-vol');
 
-  const cemBags=cem/40, faBags=fa/40;
-  const g1m=uwG1>0?g1/uwG1:0, g34m=uwG34>0?g34/uwG34:0, g38m=uwG38>0?g38/uwG38:0;
-  const s4m=uwS4>0?s4/uwS4:0, s2m=uwS2>0?s2/uwS2:0, s1m=uwS1>0?s1/uwS1:0;
+  const cemB=cem/40, faB=fa/40;
+  const g1m=uwG1?g1/uwG1:0, g34m=uwG34?g34/uwG34:0, g38m=uwG38?g38/uwG38:0;
+  const s4m=uwS4?s4/uwS4:0, s2m=uwS2?s2/uwS2:0, s1m=uwS1?s1/uwS1:0;
 
-  const cCem=contract==='SC'?cemBags*pCem:0;
-  const cFa=faBags*pFa, cAdm=admL*pAdm;
+  const cCem=C==='SC'?cemB*pCem:0;
+  const cFa=faB*pFa, cAdm=adm*pAdm;
   const cG1=g1m*pG1, cG34=g34m*pG34, cG38=g38m*pG38;
   const cS4=s4m*pS4, cS2=s2m*pS2, cS1=s1m*pS1;
-  const matCost=cCem+cFa+cAdm+cG1+cG34+cG38+cS4+cS2+cS1;
+  const mat=cCem+cFa+cAdm+cG1+cG34+cG38+cS4+cS2+cS1;
 
-  const cemSav=contract==='CS'?(acap*pCem)/load:0;
-  const tollM3=(toll*2)/load;
-  const fuelM3=(dist*pDie*2*0.85)/load;
-  const vatEx=matCost+ocm+tollM3+fuelM3+dpwh+target;
+  const cemSav=C==='CS'?(acap*pCem)/load:0;
+  const tollM=(toll*2)/load;
+  const fuelM=(dist*pDie*2*.85)/load;
+  const vatEx=mat+ocm+tollM+fuelM+dpwh+target;
   const vatIn=vatEx*1.12;
-  const margin=vatEx>0?target/vatEx:0;
+  const margin=vatEx?target/vatEx:0;
 
-  st('c-cem',  cem>0?f2(cemBags)+' bags':'—'); st('cc-cem',cem>0?(contract==='SC'?'₱'+f(cCem):'₱0 (CS)'):'—');
-  st('c-fa',   fa>0?f2(faBags)+' bags':'—');   st('cc-fa', fa>0?'₱'+f(cFa):'—');
-  st('c-adm',  admL>0?f2(admL)+' L':'—');      st('cc-adm',admL>0?'₱'+f(cAdm):'—');
-  st('c-g1',   g1>0?f4(g1m)+' m³':'—');        st('cc-g1', cG1>0?'₱'+f(cG1):'—');
-  st('c-g34',  g34>0?f4(g34m)+' m³':'—');      st('cc-g34',cG34>0?'₱'+f(cG34):'—');
-  st('c-g38',  g38>0?f4(g38m)+' m³':'—');      st('cc-g38',cG38>0?'₱'+f(cG38):'—');
-  st('c-s4',   s4>0?f4(s4m)+' m³':'—');        st('cc-s4', cS4>0?'₱'+f(cS4):'—');
-  st('c-s2',   s2>0?f4(s2m)+' m³':'—');        st('cc-s2', cS2>0?'₱'+f(cS2):'—');
-  st('c-s1',   s1>0?f4(s1m)+' m³':'—');        st('cc-s1', cS1>0?'₱'+f(cS1):'—');
-  st('c-matcost','₱'+f(matCost)); st('c-csav','₱'+f(cemSav));
-  st('s-mat',  '₱'+f(matCost)); st('s-toll','₱'+f(tollM3)); st('s-fuel','₱'+f(fuelM3));
-  st('s-vatex','₱'+f(vatEx));   st('s-vatin','₱'+f(vatIn));
+  // Update IV
+  st('c-cem',  cem?f2(cemB)+' bags':'—'); st('cc-cem',cem?(C==='SC'?'₱'+f(cCem):'₱0 (CS)'):'—');
+  st('c-fa',   fa?f2(faB)+' bags':'—');   st('cc-fa', fa?'₱'+f(cFa):'—');
+  st('c-adm',  adm?f2(adm)+' L':'—');     st('cc-adm',adm?'₱'+f(cAdm):'—');
+  st('c-g1',   g1?f4(g1m)+' m³':'—');     st('cc-g1', cG1?'₱'+f(cG1):'—');
+  st('c-g34',  g34?f4(g34m)+' m³':'—');   st('cc-g34',cG34?'₱'+f(cG34):'—');
+  st('c-g38',  g38?f4(g38m)+' m³':'—');   st('cc-g38',cG38?'₱'+f(cG38):'—');
+  st('c-s4',   s4?f4(s4m)+' m³':'—');     st('cc-s4', cS4?'₱'+f(cS4):'—');
+  st('c-s2',   s2?f4(s2m)+' m³':'—');     st('cc-s2', cS2?'₱'+f(cS2):'—');
+  st('c-s1',   s1?f4(s1m)+' m³':'—');     st('cc-s1', cS1?'₱'+f(cS1):'—');
+  st('c-matcost','₱'+f(mat)); st('c-csav','₱'+f(cemSav));
+
+  // Update V+VI
+  st('s-mat',  '₱'+f(mat));
+  st('s-toll', '₱'+f(tollM));
+  st('s-fuel', '₱'+f(fuelM));
+  st('s-vatex','₱'+f(vatEx));
+  st('s-vatin','₱'+f(vatIn));
   st('s-margin',(margin*100).toFixed(2)+'%');
   st('s-margin-sub','₱'+f(target)+' ÷ ₱'+f(vatEx));
-  document.getElementById('proj-row').style.display=vol>0?'flex':'none';
-  if(vol>0) st('s-proj','₱'+fM(vol*vatIn));
+  document.getElementById('proj-row').style.display=vol?'block':'none';
+  if(vol) st('s-proj','₱'+fM(vol*vatIn));
 
-  const mixType=gs('f-mix')==='other'?gs('f-mix-other'):gs('f-mix').toUpperCase();
+  const mixType=gs('f-mix')==='other'?gs('f-mix-other'):gs('f-mix');
   const aggLbl=gs('f-agg')==='G1'?'G-1"':gs('f-agg')==='G34'?'G-3/4"':'G-3/8"';
   last={
     date:new Date().toISOString().split('T')[0],
     ae:gs('f-ae'),client:gs('f-client'),project:gs('f-proj'),location:gs('f-loc'),
-    psi:gs('f-psi'),days:gs('f-days'),agg:gs('f-agg'),mixType,contract,
-    cem,fa,admL,g1,g34,g38,s4,s2,s1,cemBags,faBags,g1m,g34m,g38m,s4m,s2m,s1m,
+    psi:gs('f-psi'),days:gs('f-days'),agg:gs('f-agg'),mixType,contract:C,
+    cem,fa,adm,g1,g34,g38,s4,s2,s1,cemB,faB,g1m,g34m,g38m,s4m,s2m,s1m,
     cCem,cFa,cAdm,cG1,cG34,cG38,cS4,cS2,cS1,
-    matCost,tollM3,fuelM3,ocm,dpwh,target,cemSav,vatEx,vatIn,margin,vol,
+    mat,tollM,fuelM,ocm,dpwh,target,cemSav,vatEx,vatIn,margin,vol,
     mixLbl:`${gs('f-psi')} PSI ${gs('f-days')}D ${aggLbl} ${mixType}`
   };
 }
 
 function saveLog(){
-  if(!last||last.matCost===0){alert('Mag-compute muna!');return;}
-  log.unshift({...last,id:Date.now()});
-  localStorage.setItem('bb_v10',JSON.stringify(log)); renderLog();
+  if(!last||!last.mat){alert('Mag-compute muna!');return;}
+  LOG.unshift({...last,id:Date.now()});
+  localStorage.setItem('bb_v11',JSON.stringify(LOG)); renderLog();
   const m=document.getElementById('save-msg');
   m.style.display='inline'; setTimeout(()=>m.style.display='none',2500);
 }
 function renderLog(){
   const b=document.getElementById('log-body');
-  document.getElementById('log-cnt').textContent=log.length;
-  if(!log.length){b.innerHTML='<tr><td colspan="12" class="empty">No entries yet.</td></tr>';return;}
-  b.innerHTML=log.map((e,i)=>{
-    const mc=e.margin>=0.15?'b-ok':e.margin>=0.08?'b-low':'b-bad';
+  document.getElementById('log-cnt').textContent=LOG.length;
+  if(!LOG.length){b.innerHTML='<tr><td colspan="12" class="empty">No entries yet.</td></tr>';return;}
+  b.innerHTML=LOG.map((e,i)=>{
+    const mc=e.margin>=.15?'b-ok':e.margin>=.08?'b-lo':'b-bd';
     return `<tr>
-      <td>${log.length-i}</td><td>${e.date}</td>
+      <td>${LOG.length-i}</td><td>${e.date}</td>
       <td><b>${e.client||'—'}</b></td>
       <td style="font-size:11px">${e.project||'—'}<br><span style="color:#aaa">${e.location||''}</span></td>
       <td><span class="badge ${e.contract==='SC'?'b-sc':'b-cs'}">${e.contract}</span></td>
       <td style="font-size:11px">${e.mixLbl}</td>
-      <td>₱${f(e.matCost)}</td><td>₱${f(e.vatEx)}</td><td>₱${f(e.vatIn)}</td>
+      <td>₱${f(e.mat)}</td><td>₱${f(e.vatEx)}</td><td>₱${f(e.vatIn)}</td>
       <td>₱${f(e.target)}</td>
       <td><span class="badge ${mc}">${(e.margin*100).toFixed(1)}%</span></td>
-      <td><button class="btn btn-sm" style="background:#FFEBEE;color:var(--red)" onclick="delEntry(${i})">🗑</button></td>
+      <td><button class="btn btn-sm" style="background:#FFEBEE;color:#C62828" onclick="del(${i})">🗑</button></td>
     </tr>`;
   }).join('');
 }
-function delEntry(i){if(confirm('Delete?')){log.splice(i,1);localStorage.setItem('bb_v10',JSON.stringify(log));renderLog();}}
-function clearAll(){if(confirm('Clear all?')){log=[];localStorage.setItem('bb_v10','[]');renderLog();}}
+function del(i){if(confirm('Delete?')){LOG.splice(i,1);localStorage.setItem('bb_v11',JSON.stringify(LOG));renderLog();}}
+function clearAll(){if(confirm('Clear all?')){LOG=[];localStorage.setItem('bb_v11','[]');renderLog();}}
 function exportCSV(){
-  if(!log.length){alert('Walang entries!');return;}
+  if(!LOG.length){alert('Walang entries!');return;}
   const h=['#','Date','AE','Client','Project','Location','Type','Mix','MatCost','VatEx','VatIn','Target','Margin%'];
-  const rows=log.map((e,i)=>[log.length-i,e.date,e.ae,e.client,e.project,e.location,e.contract,e.mixLbl,e.matCost?.toFixed(2),e.vatEx?.toFixed(2),e.vatIn?.toFixed(2),e.target,(e.margin*100).toFixed(2)+'%']);
+  const rows=LOG.map((e,i)=>[LOG.length-i,e.date,e.ae,e.client,e.project,e.location,e.contract,e.mixLbl,e.mat?.toFixed(2),e.vatEx?.toFixed(2),e.vatIn?.toFixed(2),e.target,(e.margin*100).toFixed(2)+'%']);
   const csv=[h,...rows].map(r=>r.map(v=>`"${v??''}"`).join(',')).join('\n');
   const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download=`BigBen_${new Date().toISOString().split('T')[0]}.csv`; a.click();
