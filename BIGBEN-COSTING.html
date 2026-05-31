@@ -162,11 +162,20 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
     <div class="note">Design Mix (PSI · Days · Agg · Type)</div>
     <div class="dm">
       <input type="number" id="f-psi" placeholder="PSI" value="3000" onchange="autoFill();calc()">
-      <select id="f-days">
-        <option value="7">7D</option><option value="14">14D</option><option value="28" selected>28D</option>
+      <select id="f-days" onchange="onDays()">
+        <option value="28" selected>28</option>
+        <option value="21">21</option>
+        <option value="14">14</option>
+        <option value="7">07</option>
+        <option value="3">03</option>
+        <option value="1">01</option>
+        <option value="other">Other</option>
       </select>
-      <select id="f-agg" onchange="autoFill();calc()">
-        <option value="G34">3/4"</option><option value="G1">G1"</option><option value="G38">3/8"</option>
+      <select id="f-agg" onchange="onAgg()">
+        <option value="G1">G1"</option>
+        <option value="G34" selected>3/4"</option>
+        <option value="G38">3/8"</option>
+        <option value="other">Other</option>
       </select>
       <select id="f-mix" onchange="onMix()">
         <option value="ORD">ORD</option><option value="PCD">PCD</option>
@@ -331,6 +340,14 @@ function showTab(n,el){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
   if(n==='log') renderLog();
+}
+function onDays(){
+  document.getElementById('f-days-other').style.display = gs('f-days')==='other'?'block':'none';
+}
+function onAgg(){
+  const v = gs('f-agg');
+  document.getElementById('f-agg-other').style.display = v==='other'?'block':'none';
+  if(v!=='other'){ autoFill(); calc(); }
 }
 function onMix(){ document.getElementById('f-mix-other').style.display=gs('f-mix')==='other'?'block':'none'; }
 function gv(id){return parseFloat(document.getElementById(id).value)||0;}
