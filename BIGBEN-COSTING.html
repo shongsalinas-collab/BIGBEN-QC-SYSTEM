@@ -155,20 +155,20 @@ body{font-family:Arial,sans-serif;font-size:12px;background:#f0f0f0;color:#111}
       <div class="dv"></div>
       <div class="note">Design (PSI, Agg, Days, Workability)</div>
       <div class="dm">
-        <select id="f-psi" onchange="autoFill();calc()" style="width:55px;flex:none">
+        <select id="f-psi" onchange="autoFill();calc()" style="width:52px;flex:none">
           <option>1500</option><option>2000</option><option>2500</option>
           <option selected>3000</option><option>3500</option><option>4000</option>
           <option>4500</option><option>5000</option><option>6000</option>
         </select>
-        <select id="f-days" style="width:60px;flex:none">
-          <option value="7">7 Days</option><option value="14">14 Days</option><option value="28" selected>28 Days</option>
+        <select id="f-days" style="width:52px;flex:none">
+          <option value="7">7D</option><option value="14">14D</option><option value="28" selected>28D</option>
         </select>
-        <select id="f-agg" onchange="autoFill();calc()" style="width:58px;flex:none">
-          <option value="G34">G-3/4"</option><option value="G1">G-1"</option><option value="G38">G-3/8"</option>
+        <select id="f-agg" onchange="autoFill();calc()" style="width:52px;flex:none">
+          <option value="G34">3/4"</option><option value="G1">G1"</option><option value="G38">3/8"</option>
         </select>
-        <select id="f-mix" onchange="onMix()" style="flex:1">
+        <select id="f-mix" onchange="onMix()" style="width:52px;flex:none">
           <option value="ORD">ORD.</option><option value="PCD">PCD.</option>
-          <option value="SCC">SCC.</option><option value="other">Other…</option>
+          <option value="SCC">SCC.</option><option value="other">···</option>
         </select>
       </div>
       <input type="text" id="f-mix-other" placeholder="Specify…"
