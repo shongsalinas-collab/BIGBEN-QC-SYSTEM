@@ -161,24 +161,38 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
     <div class="dv"></div>
     <div class="note">Design Mix (PSI · Days · Agg · Type)</div>
     <div class="dm">
-      <select id="f-psi" onchange="autoFill();calc()">
-        <option>1500</option><option>2000</option><option>2500</option>
-        <option selected>3000</option><option>3500</option><option>4000</option>
-        <option>4500</option><option>5000</option><option>6000</option>
+      <input type="number" id="f-psi" placeholder="PSI" onchange="autoFill();calc()"
+        style="width:46px;padding:1px 4px;border:1px solid var(--bd);background:#fff;font-size:10px;font-family:Arial,sans-serif;color:#111;height:18px;text-align:center">
+      <select id="f-days" onchange="onDays()">
+        <option value="28" selected>28 Days</option>
+        <option value="21">21 Days</option>
+        <option value="14">14 Days</option>
+        <option value="7">07 Days</option>
+        <option value="3">03 Days</option>
+        <option value="1">01 Day</option>
+        <option value="other">Other…</option>
       </select>
-      <select id="f-days">
-        <option value="7">7D</option><option value="14">14D</option><option value="28" selected>28D</option>
-      </select>
-      <select id="f-agg" onchange="autoFill();calc()">
-        <option value="G34">3/4"</option><option value="G1">G1"</option><option value="G38">3/8"</option>
+      <select id="f-agg" onchange="onAgg()">
+        <option value="G1">Agg – G1"</option>
+        <option value="G34" selected>Agg – 3/4"</option>
+        <option value="G38">Agg – 3/8"</option>
+        <option value="other">Other…</option>
       </select>
       <select id="f-mix" onchange="onMix()">
-        <option value="ORD">ORD</option><option value="PCD">PCD</option>
-        <option value="SCC">SCC</option><option value="other">···</option>
+        <option value="PCD">PCD.</option>
+        <option value="ORD" selected>ORD.</option>
+        <option value="SCC">SCC.</option>
+        <option value="other">Other…</option>
       </select>
     </div>
-    <input type="text" id="f-mix-other" placeholder="Specify…"
-      style="display:none;width:100%;padding:1px 4px;border:1px solid var(--bd);font-size:10px;height:18px;margin-bottom:2px">
+    <div id="dm-other-wrap" style="display:flex;flex-direction:column;gap:2px;margin-bottom:2px">
+      <input type="text" id="f-days-other" placeholder="Specify days…"
+        style="display:none;width:100%;padding:1px 4px;border:1px solid var(--bd);font-size:10px;height:18px;font-family:Arial,sans-serif">
+      <input type="text" id="f-agg-other" placeholder="Specify aggregate…"
+        style="display:none;width:100%;padding:1px 4px;border:1px solid var(--bd);font-size:10px;height:18px;font-family:Arial,sans-serif">
+      <input type="text" id="f-mix-other" placeholder="Specify workability…"
+        style="display:none;width:100%;padding:1px 4px;border:1px solid var(--bd);font-size:10px;height:18px;font-family:Arial,sans-serif">
+    </div>
     <div class="note" style="margin-top:2px">Contract</div>
     <div class="ct">
       <button class="ctb sc" id="btn-sc" onclick="setC('SC')">📦 Straight</button>
@@ -336,7 +350,17 @@ function showTab(n,el){
   document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
   if(n==='log') renderLog();
 }
-function onMix(){ document.getElementById('f-mix-other').style.display=gs('f-mix')==='other'?'block':'none'; }
+function onDays(){
+  document.getElementById('f-days-other').style.display = gs('f-days')==='other'?'block':'none';
+}
+function onAgg(){
+  const v = gs('f-agg');
+  document.getElementById('f-agg-other').style.display = v==='other'?'block':'none';
+  if(v!=='other'){ autoFill(); calc(); }
+}
+function onMix(){
+  document.getElementById('f-mix-other').style.display = gs('f-mix')==='other'?'block':'none';
+}
 function gv(id){return parseFloat(document.getElementById(id).value)||0;}
 function gs(id){return(document.getElementById(id).value||'').trim();}
 function sv(id,v){document.getElementById(id).value=v;}
@@ -353,7 +377,7 @@ function setC(t){
 }
 
 function autoFill(){
-  const psi=gs('f-psi'), cem=PSI_CEM[psi]||310, fa=Math.round(cem*.2);
+  const psi=gv('f-psi')||3000, cem=PSI_CEM[String(psi)]||310, fa=Math.round(cem*.2);
   sv('m-cem',cem); sv('m-fa',fa);
   sv('m-adm',((cem+fa)*(gv('f-adm-pct')/100)).toFixed(2));
   calc();
@@ -403,13 +427,13 @@ function calc(){
   if(vol) st('s-proj','₱'+fM(vol*vatIn));
 
   const mixType=gs('f-mix')==='other'?gs('f-mix-other'):gs('f-mix');
-  const aggLbl=gs('f-agg')==='G1'?'G-1"':gs('f-agg')==='G34'?'G-3/4"':'G-3/8"';
+  const aggLbl=gs('f-agg')==='G1'?'G-1"':gs('f-agg')==='G34'?'G-3/4"':gs('f-agg')==='G38'?'G-3/8"':gs('f-agg-other');
   last={date:new Date().toISOString().split('T')[0],ae:gs('f-ae'),client:gs('f-client'),
     project:gs('f-proj'),location:gs('f-loc'),psi:gs('f-psi'),days:gs('f-days'),
     agg:gs('f-agg'),mixType,contract:C,cem,fa,adm,g1,g34,g38,s4,s2,s1,
     cemB,faB,g1m,g34m,g38m,s4m,s2m,s1m,cCem,cFa,cAdm,cG1,cG34,cG38,cS4,cS2,cS1,
     mat,tollM,fuelM,ocm,dpwh,target,cemSav,vatEx,vatIn,margin,vol,
-    mixLbl:`${gs('f-psi')} PSI ${gs('f-days')}D ${aggLbl} ${mixType}`};
+    mixLbl:`${gv('f-psi')||gs('f-psi')} PSI — ${gs('f-days')==='other'?gs('f-days-other'):gs('f-days')+'D'} — ${gs('f-agg')==='other'?gs('f-agg-other'):aggLbl} — ${mixType}`};
 }
 
 function saveLog(){
