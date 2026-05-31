@@ -49,7 +49,7 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
 .g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px}
 
 /* MAIN SHEET GRID — drawing layout */
-.sheet{display:grid;grid-template-columns:1fr 1fr 220px;grid-template-rows:auto auto;gap:12px;align-items:start}
+.sheet{display:grid;grid-template-columns:1fr 1fr 260px;grid-template-rows:auto auto;gap:12px;align-items:start}
 .col-right{grid-column:3;grid-row:1/span 2;display:flex;flex-direction:column;gap:12px}
 .bottom-wide{grid-column:1/span 2;grid-row:2}
 
@@ -188,16 +188,30 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
 
     <div class="panel">
       <div class="ph">II. Conversion per Material <span style="font-size:10px;font-weight:400;opacity:.8">— 1 bag = 40 kgs</span></div>
-      <div class="pb">
-        <div class="g2">
-          <div class="fg"><label>Agg – G1" (kgs/m³)</label><input type="number" id="uw-g1" value="1709" oninput="calc()"></div>
-          <div class="fg"><label>Agg – 3/4" (kgs/m³)</label><input type="number" id="uw-g34" value="1706" oninput="calc()"></div>
-          <div class="fg"><label>Agg – 3/8" (kgs/m³)</label><input type="number" id="uw-g38" value="1693" oninput="calc()"></div>
-          <div class="fg"><label>Sand – 4MM (kgs/m³)</label><input type="number" id="uw-s4" value="1673" oninput="calc()"></div>
-          <div class="fg"><label>Sand – 2MM (kgs/m³)</label><input type="number" id="uw-s2" value="1311" oninput="calc()"></div>
-          <div class="fg"><label>Sand – S1 (kgs/m³)</label><input type="number" id="uw-s1" value="1701" oninput="calc()"></div>
-          <div class="fg"><label>Admix % of (Cem+FA)</label><input type="number" id="f-adm-pct" value="1" step="0.1" min="0.1" max="3" oninput="calc()"></div>
+      <div class="pb" style="padding:10px 14px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:grid;grid-template-columns:90px 75px 90px 75px 90px 75px;gap:4px 12px;align-items:center">
+            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – G1"</label>
+            <input type="number" id="uw-g1" value="1709" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
+            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/4"</label>
+            <input type="number" id="uw-g34" value="1706" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
+            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/8"</label>
+            <input type="number" id="uw-g38" value="1693" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
+          </div>
+          <div style="display:grid;grid-template-columns:90px 75px 90px 75px 90px 75px;gap:4px 12px;align-items:center">
+            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 4MM</label>
+            <input type="number" id="uw-s4" value="1673" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
+            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 2MM</label>
+            <input type="number" id="uw-s2" value="1311" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
+            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – S1</label>
+            <input type="number" id="uw-s1" value="1701" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
+          </div>
+          <div style="display:grid;grid-template-columns:90px 75px;gap:4px 12px;align-items:center">
+            <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Admix %</label>
+            <input type="number" id="f-adm-pct" value="1" step="0.1" min="0.1" max="3" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right;width:100%">
+          </div>
         </div>
+        <div style="font-size:10px;color:#aaa;margin-top:5px">kgs/m³ &nbsp;·&nbsp; Admix = (Cem + FA) kgs × %</div>
       </div>
     </div>
 
@@ -206,19 +220,36 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
   <!-- TOP-MIDDLE: III. MATERIAL PRICES -->
   <div class="panel">
     <div class="ph">III. Material Prices</div>
-    <div class="pb">
-      <div class="g2">
-        <div class="fg"><label>Cement (₱ / bag)</label><input type="number" id="p-cem" value="190" step="5" oninput="calc()"></div>
-        <div class="fg"><label>Fly Ash (₱ / bag)</label><input type="number" id="p-fa" value="108" step="5" oninput="calc()"></div>
-        <div class="fg"><label>Admixture (₱ / L)</label><input type="number" id="p-adm" value="45" step="5" oninput="calc()"></div>
-        <div class="fg"><label>Diesel (₱ / L)</label><input type="number" id="p-die" value="55" step="1" oninput="calc()"></div>
-        <div class="fg"><label>Agg – G1" (₱ / m³)</label><input type="number" id="p-g1" value="1000" step="10" oninput="calc()"></div>
-        <div class="fg"><label>Agg – 3/4" (₱ / m³)</label><input type="number" id="p-g34" value="1115" step="10" oninput="calc()"></div>
-        <div class="fg"><label>Agg – 3/8" (₱ / m³)</label><input type="number" id="p-g38" value="945" step="10" oninput="calc()"></div>
-        <div class="fg"><label>Sand – 4MM (₱ / m³)</label><input type="number" id="p-s4" value="950" step="10" oninput="calc()"></div>
-        <div class="fg"><label>Sand – 2MM (₱ / m³)</label><input type="number" id="p-s2" value="1200" step="10" oninput="calc()"></div>
-        <div class="fg"><label>Sand – S1 (₱ / m³)</label><input type="number" id="p-s1" value="1100" step="10" oninput="calc()"></div>
+    <div class="pb" style="padding:10px 14px">
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:grid;grid-template-columns:100px 80px 100px 80px 100px 80px 100px 80px;gap:4px 10px;align-items:center">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Cement</label>
+          <input type="number" id="p-cem" value="190" step="5" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Fly Ash</label>
+          <input type="number" id="p-fa" value="108" step="5" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Admixture</label>
+          <input type="number" id="p-adm" value="45" step="5" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Diesel</label>
+          <input type="number" id="p-die" value="55" step="1" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+        </div>
+        <div style="display:grid;grid-template-columns:100px 80px 100px 80px 100px 80px 100px 80px;gap:4px 10px;align-items:center">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – G1"</label>
+          <input type="number" id="p-g1" value="1000" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/4"</label>
+          <input type="number" id="p-g34" value="1115" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Agg – 3/8"</label>
+          <input type="number" id="p-g38" value="945" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 4MM</label>
+          <input type="number" id="p-s4" value="950" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+        </div>
+        <div style="display:grid;grid-template-columns:100px 80px 100px 80px 100px 80px;gap:4px 10px;align-items:center">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – 2MM</label>
+          <input type="number" id="p-s2" value="1200" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+          <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em">Sand – S1</label>
+          <input type="number" id="p-s1" value="1100" step="10" oninput="calc()" style="padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:#fff;text-align:right">
+        </div>
       </div>
+      <div style="font-size:10px;color:#aaa;margin-top:6px">Cement & Fly Ash: ₱/bag &nbsp;·&nbsp; Admixture: ₱/L &nbsp;·&nbsp; Aggregates & Sand: ₱/m³ &nbsp;·&nbsp; Diesel: ₱/L</div>
     </div>
   </div>
 
@@ -279,10 +310,10 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
         <thead>
           <tr>
             <th>Material</th>
-            <th class="c" style="color:#FFCC80">Input (kgs / m³)</th>
-            <th class="c" style="color:#FFCC80">→ Converted</th>
-            <th class="c">Unit</th>
-            <th class="c">Cost / m³</th>
+            <th class="c" style="color:#FFCC80;width:140px">Input (kgs / m³)</th>
+            <th class="c" style="color:#FFCC80;width:140px">→ Converted</th>
+            <th class="c" style="width:80px">Unit</th>
+            <th class="c" style="width:150px">Cost / m³</th>
           </tr>
         </thead>
         <tbody>
