@@ -159,31 +159,53 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
     <div class="lr"><label>Toll Fee (₱/trip)</label><input type="number" id="f-toll" placeholder="0" oninput="calc()"></div>
     <div class="lr"><label>Load/Truck (m³)</label><input type="number" id="f-load" value="8" oninput="calc()"></div>
     <div class="dv"></div>
-    <div class="note">Design Mix (PSI · Days · Agg · Type)</div>
-    <div class="dm">
-      <input type="number" id="f-psi" placeholder="PSI" value="3000" onchange="autoFill();calc()">
-      <select id="f-days" onchange="onDays()">
-        <option value="28" selected>28</option>
-        <option value="21">21</option>
-        <option value="14">14</option>
-        <option value="7">07</option>
-        <option value="3">03</option>
-        <option value="1">01</option>
-        <option value="other">Other</option>
-      </select>
-      <select id="f-agg" onchange="onAgg()">
-        <option value="G1">G1"</option>
-        <option value="G34" selected>3/4"</option>
-        <option value="G38">3/8"</option>
-        <option value="other">Other</option>
-      </select>
-      <select id="f-mix" onchange="onMix()">
-        <option value="ORD">ORD</option><option value="PCD">PCD</option>
-        <option value="SCC">SCC</option><option value="other">···</option>
-      </select>
+    <div class="note">Design Mix</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:3px">
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-size:9px;color:#aaa">PSI</span>
+        <input type="number" id="f-psi" placeholder="e.g. 3000" value="3000" oninput="autoFill();calc()"
+          style="padding:2px 4px;border:1px solid var(--bd);background:#fff;font-size:11px;font-family:Arial,sans-serif;color:#111;width:100%;height:20px">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-size:9px;color:#aaa">Days</span>
+        <select id="f-days" onchange="onDays()"
+          style="padding:2px 3px;border:1px solid var(--bd);background:#fff;font-size:11px;font-family:Arial,sans-serif;color:#111;width:100%;height:20px">
+          <option value="28" selected>28 Days</option>
+          <option value="21">21 Days</option>
+          <option value="14">14 Days</option>
+          <option value="7">07 Days</option>
+          <option value="3">03 Days</option>
+          <option value="1">01 Day</option>
+          <option value="other">Other…</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-size:9px;color:#aaa">Aggregate Size</span>
+        <select id="f-agg" onchange="onAgg()"
+          style="padding:2px 3px;border:1px solid var(--bd);background:#fff;font-size:11px;font-family:Arial,sans-serif;color:#111;width:100%;height:20px">
+          <option value="G1">G1" (25mm)</option>
+          <option value="G34" selected>3/4" (20mm)</option>
+          <option value="G38">3/8" (10mm)</option>
+          <option value="other">Other…</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-size:9px;color:#aaa">Workability</span>
+        <select id="f-mix" onchange="onMix()"
+          style="padding:2px 3px;border:1px solid var(--bd);background:#fff;font-size:11px;font-family:Arial,sans-serif;color:#111;width:100%;height:20px">
+          <option value="ORD" selected>ORD.</option>
+          <option value="PCD">PCD.</option>
+          <option value="SCC">SCC.</option>
+          <option value="other">Other…</option>
+        </select>
+      </div>
     </div>
-    <input type="text" id="f-mix-other" placeholder="Specify…"
-      style="display:none;width:100%;padding:1px 4px;border:1px solid var(--bd);font-size:10px;height:18px;margin-bottom:2px">
+    <input type="text" id="f-days-other" placeholder="Specify days…"
+      style="display:none;width:100%;padding:2px 4px;border:1px solid var(--bd);font-size:10px;height:18px;margin-bottom:2px;font-family:Arial,sans-serif">
+    <input type="text" id="f-agg-other" placeholder="Specify aggregate size…"
+      style="display:none;width:100%;padding:2px 4px;border:1px solid var(--bd);font-size:10px;height:18px;margin-bottom:2px;font-family:Arial,sans-serif">
+    <input type="text" id="f-mix-other" placeholder="Specify workability…"
+      style="display:none;width:100%;padding:2px 4px;border:1px solid var(--bd);font-size:10px;height:18px;margin-bottom:2px;font-family:Arial,sans-serif">
     <div class="note" style="margin-top:2px">Contract</div>
     <div class="ct">
       <button class="ctb sc" id="btn-sc" onclick="setC('SC')">📦 Straight</button>
@@ -342,12 +364,12 @@ function showTab(n,el){
   if(n==='log') renderLog();
 }
 function onDays(){
-  document.getElementById('f-days-other').style.display = gs('f-days')==='other'?'block':'none';
+  document.getElementById('f-days-other').style.display=gs('f-days')==='other'?'block':'none';
 }
 function onAgg(){
-  const v = gs('f-agg');
-  document.getElementById('f-agg-other').style.display = v==='other'?'block':'none';
-  if(v!=='other'){ autoFill(); calc(); }
+  const v=gs('f-agg');
+  document.getElementById('f-agg-other').style.display=v==='other'?'block':'none';
+  if(v!=='other'){autoFill();calc();}
 }
 function onMix(){ document.getElementById('f-mix-other').style.display=gs('f-mix')==='other'?'block':'none'; }
 function gv(id){return parseFloat(document.getElementById(id).value)||0;}
