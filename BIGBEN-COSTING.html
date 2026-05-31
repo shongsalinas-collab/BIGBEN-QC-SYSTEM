@@ -30,10 +30,8 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
 /* SHEET — 6 sections in a tight grid */
 .sheet{
   display:grid;
-  grid-template-columns:190px 175px 190px 1fr 165px 155px;
-  grid-template-rows:1fr;
+  grid-template-columns:190px 170px 185px minmax(0,340px) 170px 160px;
   gap:8px;
-  flex:1;
   align-items:start;
 }
 
@@ -73,7 +71,7 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
 .note{font-size:8.5px;color:#aaa;margin-bottom:2px;line-height:1.2}
 
 /* MATERIAL TABLE — ultra compact */
-.mt{width:100%;border-collapse:collapse;font-size:10px}
+.mt{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
 .mt .th td{background:var(--m);color:#fff;padding:3px 5px;font-weight:700;
   font-size:9px;text-transform:uppercase;letter-spacing:.2px;border:1px solid #888;
   white-space:nowrap;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -119,7 +117,6 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
 .btn-o{background:#fff;color:var(--m);border:1px solid var(--m)}
 
 /* LOG TAB */
-
 .dt{width:100%;border-collapse:collapse;font-size:11px}
 .dt th{background:var(--m);color:#fff;padding:5px 8px;font-size:10px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .dt td{padding:5px 8px;border-bottom:1px solid #e0e0e0}
@@ -225,7 +222,7 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
     <div class="sec">IV. Materials per Cubic Meter</div>
     <table class="mt">
       <tr class="th">
-        <td>Material</td><td>KGS/CUM</td><td>Converted/Unit</td><td>Cost/M³</td>
+        <td style="width:72px">Material</td><td style="width:62px">KGS</td><td style="width:80px">Converted</td><td style="width:65px">Cost/M³</td>
       </tr>
       <tr id="tr-cem"><td>Cement</td>
         <td><input class="ci" type="number" id="m-cem" placeholder="310" oninput="calc()"></td>
@@ -308,12 +305,12 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
   </div>
 
 </div><!-- end sheet -->
-</div><!-- end costing tc -->
+</div>
 
 <!-- COST LOG -->
-<div style="padding:0 12px 12px" id="tab-log">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-top:4px;border-top:2px solid var(--m)">
-    <b style="font-size:12px;color:var(--m)">📋 Cost Log — <span id="log-cnt">0</span> entries</b>
+<div style="padding:0 12px 16px">
+  <div style="border-top:2px solid #6B1A1A;padding-top:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+    <b style="font-size:12px;color:#6B1A1A">📋 Cost Log — <span id="log-cnt">0</span> entries</b>
     <div style="display:flex;gap:6px">
       <button class="btn btn-o" style="font-size:10px" onclick="exportCSV()">📥 CSV</button>
       <button class="btn" style="background:#FFEBEE;color:#C62828;font-size:10px" onclick="clearAll()">🗑 Clear</button>
@@ -337,7 +334,7 @@ function showTab(n,el){
   document.querySelectorAll('.tc,.log-tc').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
-  renderLog();
+  if(n==='log') renderLog();
 }
 function onMix(){ document.getElementById('f-mix-other').style.display=gs('f-mix')==='other'?'block':'none'; }
 function gv(id){return parseFloat(document.getElementById(id).value)||0;}
