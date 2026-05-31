@@ -30,7 +30,7 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
 /* SHEET — 6 sections in a tight grid */
 .sheet{
   display:grid;
-  grid-template-columns:190px 175px 190px 1fr 165px 155px;
+  grid-template-columns:190px 170px 185px minmax(0,340px) 170px 160px;
   grid-template-rows:1fr;
   gap:8px;
   flex:1;
@@ -74,7 +74,7 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
 .note{font-size:8.5px;color:#aaa;margin-bottom:2px;line-height:1.2}
 
 /* MATERIAL TABLE — ultra compact */
-.mt{width:100%;border-collapse:collapse;font-size:10px}
+.mt{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
 .mt .th td{background:var(--m);color:#fff;padding:3px 5px;font-weight:700;
   font-size:9px;text-transform:uppercase;letter-spacing:.2px;border:1px solid #888;
   white-space:nowrap;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -228,7 +228,7 @@ body{font-family:Arial,sans-serif;font-size:11px;background:#f0f0f0;color:#111;
     <div class="sec">IV. Materials per Cubic Meter</div>
     <table class="mt">
       <tr class="th">
-        <td>Material</td><td>KGS/CUM</td><td>Converted/Unit</td><td>Cost/M³</td>
+        <td style="width:72px">Material</td><td style="width:62px">KGS</td><td style="width:80px">Converted</td><td style="width:65px">Cost/M³</td>
       </tr>
       <tr id="tr-cem"><td>Cement</td>
         <td><input class="ci" type="number" id="m-cem" placeholder="310" oninput="calc()"></td>
