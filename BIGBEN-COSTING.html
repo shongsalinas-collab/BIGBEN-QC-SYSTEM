@@ -6,464 +6,381 @@
 <title>Big Ben RMC — Costing</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;background:#ECEEF1;color:#1a1a2e}
-:root{
-  --m:#6B1A1A;--ml:#8B2222;--g:#1B6B3A;--b:#1A3A6B;--o:#B85C00;
-  --bg:#fff;--bg2:#F7F8FA;--bd:#E2E5EA;--text:#2C2C3E;--muted:#7A7A96
-}
+body{font-family:Arial,sans-serif;font-size:12px;background:#f0f0f0;color:#222}
+:root{--m:#6B1A1A;--ml:#8B2222;--g:#2E7D32;--b:#1565C0;--o:#E65100;--bd:#bbb;--bg:#fff}
 
-/* ── HEADER ── */
-.hdr{background:linear-gradient(135deg,#4A0E0E 0%,var(--m) 100%);
-  color:#fff;padding:0 20px;height:52px;display:flex;align-items:center;
-  gap:12px;position:sticky;top:0;z-index:100;
-  box-shadow:0 2px 8px rgba(107,26,26,.35)}
-.logo{width:34px;height:34px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
-  border-radius:6px;display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:13px;letter-spacing:-.5px;flex-shrink:0}
-.hdr-text h1{font-size:14px;font-weight:700;letter-spacing:.3px;line-height:1}
-.hdr-text p{font-size:10px;opacity:.65;margin-top:2px}
-.hdr-chip{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  border-radius:20px;padding:3px 10px;font-size:10px;font-weight:600;letter-spacing:.3px}
+/* HEADER */
+.hdr{background:var(--m);color:#fff;padding:8px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{width:34px;height:34px;background:#fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--m);font-size:12px;flex-shrink:0}
+.hdr h1{font-size:14px;font-weight:700;letter-spacing:.3px}
+.hdr p{font-size:10px;opacity:.7}
 
-/* ── TABS ── */
-.tabs{background:#fff;display:flex;padding:0 20px;gap:2px;
-  border-bottom:1px solid var(--bd);position:sticky;top:52px;z-index:90}
-.tab{padding:9px 16px;font-size:11.5px;font-weight:600;cursor:pointer;
-  border:none;background:none;color:var(--muted);
-  border-bottom:2.5px solid transparent;transition:all .18s;letter-spacing:.2px}
-.tab.active{color:var(--m);border-bottom-color:var(--m)}
-.tab:hover:not(.active){color:var(--m);background:#FDF5F5}
-.tc{display:none;padding:14px 20px}
-.tc.active{display:block}
+/* TABS */
+.nav-tabs{background:#fff;border-bottom:2px solid var(--m);display:flex;position:sticky;top:50px;z-index:90}
+.nav-tab{padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:none;color:#888;border-bottom:3px solid transparent;transition:all .2s}
+.nav-tab.active{color:var(--m);border-bottom-color:var(--m);background:#fdf8f8}
+.nav-tab:hover{background:#fdf8f8;color:var(--m)}
+.tab-content{display:none;padding:12px 16px}
+.tab-content.active{display:block!important}
 
-/* ── MAIN GRID ── */
-.sheet{display:grid;grid-template-columns:300px 1fr 240px;gap:12px;align-items:start}
-.col-r{grid-column:3;grid-row:1/span 2;display:flex;flex-direction:column;gap:10px}
-.bot{grid-column:1/span 2;grid-row:2}
+/* MAIN SHEET — 3 col */
+.sheet{display:grid;grid-template-columns:260px 260px 1fr;gap:16px;align-items:start}
 
-/* ── CARD ── */
-.card{background:#fff;border-radius:8px;overflow:hidden;
-  box-shadow:0 1px 3px rgba(0,0,0,.06),0 1px 8px rgba(0,0,0,.04)}
-.card-hdr{background:var(--m);color:#fff;padding:7px 14px;
-  font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
-  display:flex;justify-content:space-between;align-items:center}
-.card-hdr .sub{font-size:9.5px;opacity:.75;font-weight:400;
-  text-transform:none;letter-spacing:0}
-.card-body{padding:12px 14px}
+/* SECTION */
+.sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--m);margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid var(--m)}
 
-/* ── FIELD ── */
-.field{display:flex;flex-direction:column;gap:2px}
-.field label{font-size:10px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.5px}
-.field input,.field select{
-  padding:6px 8px;border:1.5px solid var(--bd);border-radius:5px;
-  font-size:12.5px;font-family:inherit;background:var(--bg);
-  color:var(--text);transition:border-color .15s,box-shadow .15s;width:100%}
-.field input:focus,.field select:focus{
-  border-color:var(--m);outline:none;
-  box-shadow:0 0 0 3px rgba(107,26,26,.08)}
+/* EXCEL-STYLE ROWS — label left, box right */
+.row{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:6px;margin-bottom:5px}
+.row label{font-size:11px;color:#333;white-space:nowrap}
+.row input,.row select{
+  padding:3px 6px;border:1px solid var(--bd);background:#fff;
+  font-size:11px;font-family:Arial,sans-serif;color:#111;width:100%;height:22px}
+.row input:focus,.row select:focus{border-color:var(--m);outline:none;background:#FFFEF0}
 
-/* ── INLINE ROW (label + input side by side) ── */
-.irow{display:grid;grid-template-columns:95px 1fr;align-items:center;gap:6px;padding:3px 0}
-.irow label{font-size:10.5px;font-weight:600;color:var(--muted);white-space:nowrap}
-.irow input{padding:5px 7px;border:1.5px solid var(--bd);border-radius:5px;
-  font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);
-  transition:border-color .15s;text-align:right;width:100%}
-.irow input:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 3px rgba(107,26,26,.08)}
-.irow .unit{font-size:10px;color:var(--muted);white-space:nowrap;padding-left:2px}
+/* wide label variant */
+.row.w label{grid-column:1/span 2;font-size:11px;color:#555;margin-bottom:2px}
+.row.w-inp{grid-template-columns:1fr}
 
-/* ── INLINE GRID (multiple pairs per row) ── */
-.ipairs{display:flex;flex-direction:column;gap:4px}
-.pair-row{display:grid;gap:6px 14px;align-items:center}
-.pair-row.c3{grid-template-columns:repeat(3,85px 65px)}
-.pair-row.c4{grid-template-columns:repeat(4,70px 60px)}
-.pair-row label{font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap}
-.pair-row input{padding:5px 7px;border:1.5px solid var(--bd);border-radius:5px;
-  font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);
-  text-align:right;width:100%;transition:border-color .15s}
-.pair-row input:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 3px rgba(107,26,26,.08)}
+/* DESIGN MIX inline dropdowns */
+.dm-wrap{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.dm-wrap select{padding:3px 4px;border:1px solid var(--bd);background:#fff;
+  font-size:11px;font-family:Arial,sans-serif;color:#111;height:22px;flex:1;min-width:50px}
+.dm-wrap select:focus{border-color:var(--m);outline:none}
 
-/* ── GRIDS ── */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
-
-/* ── DIVIDER ── */
-.dv{height:1px;background:var(--bd);margin:9px 0}
-
-/* ── CONTRACT TOGGLE ── */
-.ct{display:grid;grid-template-columns:1fr 1fr;border-radius:6px;overflow:hidden;
-  border:1.5px solid var(--bd);margin-top:3px}
-.ctb{padding:6px;text-align:center;font-size:11px;font-weight:700;
-  cursor:pointer;border:none;background:var(--bg2);color:var(--muted);transition:all .15s}
+/* CONTRACT TOGGLE */
+.ct{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--bd);overflow:hidden;margin-bottom:5px}
+.ctb{padding:4px 6px;text-align:center;cursor:pointer;font-size:10px;font-weight:700;
+  border:none;background:#f5f5f5;color:#888;transition:all .15s;line-height:1.3}
 .ctb.sc{background:var(--m);color:#fff}
 .ctb.cs{background:var(--b);color:#fff}
 
-/* ── MATERIAL TABLE ── */
-.mt{width:100%;border-collapse:collapse;font-size:12px}
-.mt thead th{background:var(--m);color:#fff;padding:6px 10px;
-  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
-  white-space:nowrap}
-.mt thead th:not(:first-child){text-align:center}
-.mt tbody td{padding:5px 10px;border-bottom:1px solid #F0F2F5;vertical-align:middle}
-.mt tbody tr:last-child td{border-bottom:none}
-.mt tbody tr:hover td{background:#FBF5F5}
-.mt tfoot td{background:var(--bg2);font-weight:700;padding:7px 10px;
-  border-top:2px solid var(--bd)}
-.mt .ci{padding:4px 6px;border:1.5px solid var(--bd);border-radius:4px;
-  font-size:12px;font-family:inherit;background:#fff;text-align:right;
-  width:80px;transition:border-color .15s}
-.mt .ci:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 2px rgba(107,26,26,.08)}
-.mt .av{color:var(--o);font-weight:700;text-align:right}
-.mt .cv{font-weight:700;text-align:right;color:var(--text)}
-.mt .uc{color:var(--muted);font-size:11px;text-align:center}
-.mt td:not(:first-child){text-align:center}
+/* MATERIAL TABLE — excel style */
+.mt-wrap{margin-top:4px}
+.mt{width:100%;border-collapse:collapse;font-size:11px}
+.mt .th-row td{background:var(--m);color:#fff;padding:4px 8px;font-weight:700;
+  font-size:10px;text-align:center;border:1px solid #999;white-space:nowrap;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.mt .th-row td:first-child{text-align:left;width:90px}
+.mt td{padding:2px 4px;border:1px solid #ddd;height:22px;vertical-align:middle}
+.mt td:first-child{font-size:11px;color:#333;padding-left:6px;background:#fafafa;white-space:nowrap}
+.mt input.ci{width:100%;border:none;background:transparent;font-size:11px;
+  font-family:Arial,sans-serif;text-align:right;padding:0 4px;height:20px;outline:none}
+.mt input.ci:focus{background:#FFFEF0}
+.mt .av{text-align:center;font-weight:700;color:var(--o);font-size:11px}
+.mt .cv{text-align:right;font-weight:700;font-size:11px}
+.mt .uc{text-align:center;color:#888;font-size:10px}
+.mt .tot td{background:#F0EDE8;font-weight:700}
+.mt .tot td:first-child{text-align:right;padding-right:8px;color:#555}
 
-/* ── SUMMARY ROWS ── */
-.sr{display:flex;justify-content:space-between;align-items:center;
-  padding:6px 0;border-bottom:1px solid #F0F2F5;font-size:12px}
-.sr:last-child{border-bottom:none}
-.sl{color:var(--muted);font-size:11.5px}
-.sv{font-weight:700;font-size:12.5px}
-.si{padding:5px 7px;border:1.5px solid var(--bd);border-radius:5px;
-  font-size:12px;font-family:inherit;background:#fff;text-align:right;width:88px;
-  transition:border-color .15s}
-.si:focus{border-color:var(--m);outline:none;box-shadow:0 0 0 3px rgba(107,26,26,.08)}
-.hint{font-size:9.5px;color:#BCC0C8;text-align:right;margin:-4px 0 3px;font-style:italic}
+/* SUMMARY TABLE */
+.st{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px}
+.st td{padding:3px 6px;border:1px solid #ddd;height:22px;vertical-align:middle}
+.st .lbl{background:#fafafa;color:#333;width:100px;white-space:nowrap}
+.st .val{font-weight:700;text-align:right;white-space:nowrap}
+.st .auto{color:var(--o);font-weight:700;text-align:right}
+.st input.si{width:100%;border:none;background:transparent;font-size:11px;
+  font-family:Arial,sans-serif;text-align:right;padding:0 4px;height:18px;outline:none}
+.st input.si:focus{background:#FFFEF0}
+.st .hint{color:#bbb;font-size:9px;font-style:italic;background:#fafafa;
+  text-align:right;padding:1px 6px;border:1px solid #ddd;border-top:none}
+.st .target td{background:#EBF3FF}
+.st .target .lbl{color:var(--b);font-weight:700}
 
-/* ── VAT BOXES ── */
-.vat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.vbox{border-radius:6px;padding:10px 8px;text-align:center}
-.vbox .vl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.85;margin-bottom:3px}
-.vbox .vv{font-size:18px;font-weight:800;letter-spacing:-.5px}
-.vex{background:var(--g);color:#fff}
-.vin{background:#145230;color:#fff}
+/* VAT ROWS */
+.vat-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px}
+.vat-tbl td{padding:3px 6px;border:1px solid #ddd;height:22px;vertical-align:middle}
+.vat-tbl .vex td{background:var(--g);color:#fff;font-weight:700}
+.vat-tbl .vin td{background:#1B5E20;color:#fff;font-weight:700}
+.vat-tbl .mgn td{background:#FFF3E0;color:var(--o);font-weight:700}
+.vat-tbl .val{text-align:right;font-size:13px;font-weight:800}
 
-/* ── MARGIN ── */
-.mbox{background:linear-gradient(135deg,#FFF3E0,#FFF8F0);
-  border:1px solid #FFCC80;border-radius:6px;padding:10px;
-  margin-top:8px;text-align:center}
-.mbox .ml{font-size:9.5px;font-weight:700;color:var(--o);
-  text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
-.mbox .mv{font-size:24px;font-weight:800;color:var(--o);letter-spacing:-.5px}
-.mbox .ms{font-size:10px;color:#BBA070;margin-top:2px}
+/* BLANK INPUT CELL */
+.bl{background:#fff}
 
-/* ── CS NOTE ── */
-.cs-note{background:#EBF3FF;border-radius:5px;padding:7px 10px;
-  font-size:11px;color:var(--b);margin-top:6px;display:none}
-.cs-note.show{display:block}
-
-/* ── BUTTONS ── */
-.btn{padding:7px 16px;border:none;border-radius:6px;font-size:12px;
-  font-weight:600;cursor:pointer;display:inline-flex;align-items:center;
-  gap:5px;transition:all .15s;font-family:inherit}
+/* BUTTONS */
+.btn{padding:5px 14px;border:none;font-size:11px;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;font-family:Arial,sans-serif}
 .btn-m{background:var(--m);color:#fff}.btn-m:hover{background:var(--ml)}
-.btn-g{background:var(--g);color:#fff}.btn-g:hover{background:#155C30}
-.btn-o{background:#fff;color:var(--m);border:1.5px solid var(--m)}.btn-o:hover{background:#FDF5F5}
-.btn-sm{padding:4px 10px;font-size:11px}
+.btn-g{background:var(--g);color:#fff}
+.btn-o{background:#fff;color:var(--m);border:1px solid var(--m)}
 
-/* ── LOG TABLE ── */
-.dt{width:100%;border-collapse:collapse;font-size:12px}
-.dt th{background:var(--m);color:#fff;padding:7px 10px;font-size:10px;
-  font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:left}
-.dt td{padding:7px 10px;border-bottom:1px solid var(--bd)}
-.dt tr:hover td{background:#FBF5F5}
-.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
-.b-sc{background:#FDE8E8;color:var(--m)}.b-cs{background:#E8F0FE;color:var(--b)}
-.b-ok{background:#E6F4EC;color:var(--g)}.b-lo{background:#FFF3E0;color:var(--o)}.b-bd{background:#FFEBEE;color:#C62828}
-.empty{text-align:center;padding:32px;color:var(--muted)}
+/* LOG */
+.data-table{width:100%;border-collapse:collapse;font-size:11px}
+.data-table th{background:var(--m);color:#fff;padding:5px 8px;font-size:10px;text-align:left;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.data-table td{padding:5px 8px;border-bottom:1px solid #e0e0e0}
+.data-table tr:hover td{background:#fdf8f8}
+.badge{display:inline-block;padding:1px 6px;font-size:10px;font-weight:700;border-radius:2px}
+.b-sc{background:#FDE8E8;color:var(--m)}.b-cs{background:#E3F2FD;color:var(--b)}
+.b-ok{background:#E8F5E9;color:var(--g)}.b-lo{background:#FFF3E0;color:var(--o)}.b-bd{background:#FFEBEE;color:#C62828}
+.empty{text-align:center;padding:28px;color:#aaa}
+.dv{height:8px}
 
-@media print{
-  .hdr,.tabs,.actions{display:none!important}
-  .tc{display:block!important;padding:0}
-  body{background:#fff}
-}
+@media print{.hdr,.nav-tabs,.actions{display:none!important}.tab-content{display:block!important}body{background:#fff}}
 </style>
 </head>
 <body>
 
 <div class="hdr">
   <div class="logo">BB</div>
-  <div class="hdr-text">
+  <div>
     <h1>BIG BEN READY MIX CONCRETE</h1>
     <p>Costing Dashboard — Client Quotation Tool</p>
   </div>
-  <div class="hdr-chip">QC SYSTEM v2.0</div>
 </div>
 
-<div class="tabs">
-  <button class="tab active" onclick="showTab('cost',this)">🧮 Costing Sheet</button>
-  <button class="tab" onclick="showTab('log',this)">📁 Quotation Log</button>
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('costing',this)">🧮 Costing Sheet</button>
+  <button class="nav-tab" onclick="showTab('log',this)">📁 Quotation Log</button>
 </div>
 
-<!-- ══════════════ COSTING SHEET ══════════════ -->
-<div class="tc active" id="tab-cost">
+<div class="tab-content active" id="tab-costing">
 <div class="sheet">
 
-  <!-- LEFT COL -->
-  <div style="display:flex;flex-direction:column;gap:10px">
+  <!-- ══ COL 1: I + II ══ -->
+  <div>
 
     <!-- I. DATA ENTRY -->
-    <div class="card">
-      <div class="card-hdr">I. Data Entry</div>
-      <div class="card-body">
-        <div class="g2" style="margin-bottom:8px">
-          <div class="field"><label>Account Executive</label><input type="text" id="f-ae" placeholder="Name"></div>
-          <div class="field"><label>Client / Contractor</label><input type="text" id="f-client" placeholder="Company"></div>
-        </div>
-        <div class="field" style="margin-bottom:8px"><label>Project Title</label><input type="text" id="f-proj" placeholder="Project name"></div>
-        <div class="field" style="margin-bottom:8px"><label>Project Location</label><input type="text" id="f-loc" placeholder="City / Municipality"></div>
-        <div class="dv"></div>
-        <div class="g3" style="margin-bottom:8px">
-          <div class="field"><label>Distance (km)</label><input type="number" id="f-dist" placeholder="0" oninput="calc()"></div>
-          <div class="field"><label>Toll Fee (₱/trip)</label><input type="number" id="f-toll" placeholder="0" oninput="calc()"></div>
-          <div class="field"><label>Load/Truck (m³)</label><input type="number" id="f-load" value="8" oninput="calc()"></div>
-        </div>
-        <div class="dv"></div>
-        <div class="field" style="margin-bottom:6px">
-          <label>Design Mix</label>
-          <div class="g4">
-            <select id="f-psi" onchange="autoFill();calc()">
-              <option>1500</option><option>2000</option><option>2500</option>
-              <option selected>3000</option><option>3500</option><option>4000</option>
-              <option>4500</option><option>5000</option><option>6000</option>
-            </select>
-            <select id="f-days">
-              <option value="7">7 Days</option><option value="14">14 Days</option><option value="28" selected>28 Days</option>
-            </select>
-            <select id="f-agg" onchange="autoFill();calc()">
-              <option value="G34">G-3/4"</option><option value="G1">G-1"</option><option value="G38">G-3/8"</option>
-            </select>
-            <select id="f-mix" onchange="onMix()">
-              <option value="ORD">ORD.</option><option value="PCD">PCD.</option>
-              <option value="SCC">SCC.</option><option value="other">Other…</option>
-            </select>
-          </div>
-          <input type="text" id="f-mix-other" placeholder="Specify mix type…"
-            style="display:none;margin-top:5px;padding:6px 8px;border:1.5px solid var(--bd);border-radius:5px;font-size:12.5px;font-family:inherit;width:100%">
-        </div>
-        <div class="field">
-          <label>Contract Type</label>
-          <div class="ct">
-            <button class="ctb sc" id="btn-sc" onclick="setC('SC')">📦 Straight Contract</button>
-            <button class="ctb" id="btn-cs" onclick="setC('CS')">🏗 Cement Supply</button>
-          </div>
-        </div>
-        <div id="acap-wrap" style="display:none;margin-top:8px">
-          <div class="field"><label>ACAP Bags (per truck)</label><input type="number" id="m-acap" step="0.5" placeholder="e.g. 17" oninput="calc()"></div>
-        </div>
-        <div class="cs-note" id="cs-note">Cement supplied by contractor. Cement cost = ₱0. Savings computed from ACAP bags.</div>
-      </div>
+    <div class="sec-title">I. Data Entry</div>
+    <div class="row"><label>Account Executive</label><input type="text" id="f-ae" placeholder=""></div>
+    <div class="row"><label>Client</label><input type="text" id="f-client" placeholder=""></div>
+    <div class="row"><label>Project Title</label><input type="text" id="f-proj" placeholder=""></div>
+    <div class="row"><label>Project Location</label><input type="text" id="f-loc" placeholder=""></div>
+    <div class="dv"></div>
+    <div class="row"><label>Distance (km)</label><input type="number" id="f-dist" placeholder="0" oninput="calc()"></div>
+    <div class="row"><label>Toll Fee (₱/trip)</label><input type="number" id="f-toll" placeholder="0" oninput="calc()"></div>
+    <div class="row"><label>Load / Truck (m³)</label><input type="number" id="f-load" value="8" oninput="calc()"></div>
+    <div class="dv"></div>
+    <!-- Design Mix -->
+    <div style="font-size:10px;color:#555;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Design Mix</div>
+    <div class="dm-wrap">
+      <select id="f-psi" onchange="autoFill();calc()" style="width:58px;flex:none">
+        <option>1500</option><option>2000</option><option>2500</option>
+        <option selected>3000</option><option>3500</option><option>4000</option>
+        <option>4500</option><option>5000</option><option>6000</option>
+      </select>
+      <select id="f-days" style="width:62px;flex:none">
+        <option value="7">7 Days</option><option value="14">14 Days</option><option value="28" selected>28 Days</option>
+      </select>
+      <select id="f-agg" onchange="autoFill();calc()" style="width:60px;flex:none">
+        <option value="G34">G-3/4"</option><option value="G1">G-1"</option><option value="G38">G-3/8"</option>
+      </select>
+      <select id="f-mix" onchange="onMix()" style="flex:1">
+        <option value="ORD">ORD.</option><option value="PCD">PCD.</option>
+        <option value="SCC">SCC.</option><option value="other">Other…</option>
+      </select>
     </div>
+    <input type="text" id="f-mix-other" placeholder="Specify…"
+      style="display:none;width:100%;padding:3px 6px;border:1px solid var(--bd);font-size:11px;margin-bottom:4px">
+    <!-- Contract -->
+    <div style="font-size:10px;color:#555;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;margin-top:4px">Contract</div>
+    <div class="ct">
+      <button class="ctb sc" id="btn-sc" onclick="setC('SC')">📦 Straight Contract</button>
+      <button class="ctb" id="btn-cs" onclick="setC('CS')">🏗 Cement Supply</button>
+    </div>
+    <div id="acap-wrap" style="display:none">
+      <div class="row"><label>ACAP Bags/truck</label><input type="number" id="m-acap" step="0.5" placeholder="0" oninput="calc()"></div>
+    </div>
+
+    <div class="dv"></div><div class="dv"></div>
 
     <!-- II. CONVERSION -->
-    <div class="card">
-      <div class="card-hdr">II. Conversion per Material <span class="sub">1 bag = 40 kgs · Admix = (Cem+FA) × %</span></div>
-      <div class="card-body">
-        <div class="ipairs">
-          <div class="pair-row c3">
-            <label>Agg – G1"</label><input type="number" id="uw-g1" value="1709" oninput="calc()">
-            <label>Agg – 3/4"</label><input type="number" id="uw-g34" value="1706" oninput="calc()">
-            <label>Agg – 3/8"</label><input type="number" id="uw-g38" value="1693" oninput="calc()">
-          </div>
-          <div class="pair-row c3">
-            <label>Sand – 4MM</label><input type="number" id="uw-s4" value="1673" oninput="calc()">
-            <label>Sand – 2MM</label><input type="number" id="uw-s2" value="1311" oninput="calc()">
-            <label>Sand – S1</label><input type="number" id="uw-s1" value="1701" oninput="calc()">
-          </div>
-          <div class="pair-row" style="grid-template-columns:85px 65px">
-            <label>Admix %</label><input type="number" id="f-adm-pct" value="1" step="0.1" min="0.1" max="3" oninput="calc()">
-          </div>
-        </div>
-        <div style="font-size:9.5px;color:#BCC0C8;margin-top:6px">Unit weights in kgs/m³</div>
-      </div>
-    </div>
+    <div class="sec-title">II. Conversion per Material</div>
+    <div style="font-size:9.5px;color:#aaa;margin-bottom:6px">Unit weights (kgs/m³) · 1 bag = 40 kgs · Admix = (Cem+FA) × %</div>
+    <div class="row"><label>Agg – G1"</label><input type="number" id="uw-g1" value="1709" oninput="calc()"></div>
+    <div class="row"><label>Agg – 3/4"</label><input type="number" id="uw-g34" value="1706" oninput="calc()"></div>
+    <div class="row"><label>Agg – 3/8"</label><input type="number" id="uw-g38" value="1693" oninput="calc()"></div>
+    <div class="row"><label>Sand – 4MM</label><input type="number" id="uw-s4" value="1673" oninput="calc()"></div>
+    <div class="row"><label>Sand – 2MM</label><input type="number" id="uw-s2" value="1311" oninput="calc()"></div>
+    <div class="row"><label>Sand – S1</label><input type="number" id="uw-s1" value="1701" oninput="calc()"></div>
+    <div class="row"><label>Admixture %</label><input type="number" id="f-adm-pct" value="1" step="0.1" min="0.1" max="3" oninput="calc()"></div>
 
-  </div><!-- end left -->
+  </div>
 
-  <!-- MIDDLE COL -->
-  <div style="display:flex;flex-direction:column;gap:10px">
+  <!-- ══ COL 2: III + IV ══ -->
+  <div>
 
     <!-- III. MATERIAL PRICES -->
-    <div class="card">
-      <div class="card-hdr">III. Material Prices</div>
-      <div class="card-body">
-        <div class="ipairs">
-          <div class="pair-row c4">
-            <label>Cement</label><input type="number" id="p-cem" value="190" step="5" oninput="calc()">
-            <label>Fly Ash</label><input type="number" id="p-fa" value="108" step="5" oninput="calc()">
-            <label>Admixture</label><input type="number" id="p-adm" value="45" step="5" oninput="calc()">
-            <label>Diesel</label><input type="number" id="p-die" value="55" step="1" oninput="calc()">
-          </div>
-          <div class="pair-row c4">
-            <label>Agg – G1"</label><input type="number" id="p-g1" value="1000" step="10" oninput="calc()">
-            <label>Agg – 3/4"</label><input type="number" id="p-g34" value="1115" step="10" oninput="calc()">
-            <label>Agg – 3/8"</label><input type="number" id="p-g38" value="945" step="10" oninput="calc()">
-            <label>Sand – 4MM</label><input type="number" id="p-s4" value="950" step="10" oninput="calc()">
-          </div>
-          <div class="pair-row" style="grid-template-columns:repeat(2,70px 60px)">
-            <label>Sand – 2MM</label><input type="number" id="p-s2" value="1200" step="10" oninput="calc()">
-            <label>Sand – S1</label><input type="number" id="p-s1" value="1100" step="10" oninput="calc()">
-          </div>
-        </div>
-        <div style="font-size:9.5px;color:#BCC0C8;margin-top:6px">Cement & FA: ₱/bag · Admix: ₱/L · Aggregates & Sand: ₱/m³ · Diesel: ₱/L</div>
+    <div class="sec-title">III. Material Prices</div>
+    <div class="row"><label>Cement (₱/bag)</label><input type="number" id="p-cem" value="190" step="5" oninput="calc()"></div>
+    <div class="row"><label>Fly Ash (₱/bag)</label><input type="number" id="p-fa" value="108" step="5" oninput="calc()"></div>
+    <div class="row"><label>Admixture (₱/L)</label><input type="number" id="p-adm" value="45" step="5" oninput="calc()"></div>
+    <div class="row"><label>Agg – G1" (₱/m³)</label><input type="number" id="p-g1" value="1000" step="10" oninput="calc()"></div>
+    <div class="row"><label>Agg – 3/4" (₱/m³)</label><input type="number" id="p-g34" value="1115" step="10" oninput="calc()"></div>
+    <div class="row"><label>Agg – 3/8" (₱/m³)</label><input type="number" id="p-g38" value="945" step="10" oninput="calc()"></div>
+    <div class="row"><label>Sand – 4MM (₱/m³)</label><input type="number" id="p-s4" value="950" step="10" oninput="calc()"></div>
+    <div class="row"><label>Sand – 2MM (₱/m³)</label><input type="number" id="p-s2" value="1200" step="10" oninput="calc()"></div>
+    <div class="row"><label>Sand – S1 (₱/m³)</label><input type="number" id="p-s1" value="1100" step="10" oninput="calc()"></div>
+    <div class="row"><label>Diesel (₱/L)</label><input type="number" id="p-die" value="55" step="1" oninput="calc()"></div>
+
+    <div class="dv"></div>
+
+    <!-- IV. MATERIAL PER CUBIC METER -->
+    <div class="sec-title">IV. Material per Cubic Meter</div>
+    <div class="mt-wrap">
+      <table class="mt">
+        <tr class="th-row">
+          <td>Material</td>
+          <td>KGS / CUM</td>
+          <td>Converted / Unit</td>
+          <td>Cost / M³</td>
+        </tr>
+        <tr id="tr-cem">
+          <td>Cement</td>
+          <td><input class="ci" type="number" id="m-cem" placeholder="310" oninput="calc()"></td>
+          <td class="av" id="c-cem">—</td>
+          <td class="cv" id="cc-cem">—</td>
+        </tr>
+        <tr>
+          <td>Fly Ash</td>
+          <td><input class="ci" type="number" id="m-fa" placeholder="62" oninput="calc()"></td>
+          <td class="av" id="c-fa">—</td>
+          <td class="cv" id="cc-fa">—</td>
+        </tr>
+        <tr>
+          <td>Admixture</td>
+          <td><input class="ci" type="number" id="m-adm" placeholder="3.72" step="0.1" oninput="calc()"></td>
+          <td class="av" id="c-adm">—</td>
+          <td class="cv" id="cc-adm">—</td>
+        </tr>
+        <tr>
+          <td>Agg – G1"</td>
+          <td><input class="ci" type="number" id="m-g1" placeholder="0" oninput="calc()"></td>
+          <td class="av" id="c-g1">—</td>
+          <td class="cv" id="cc-g1">—</td>
+        </tr>
+        <tr>
+          <td>Agg – 3/4"</td>
+          <td><input class="ci" type="number" id="m-g34" placeholder="0" oninput="calc()"></td>
+          <td class="av" id="c-g34">—</td>
+          <td class="cv" id="cc-g34">—</td>
+        </tr>
+        <tr>
+          <td>Agg – 3/8"</td>
+          <td><input class="ci" type="number" id="m-g38" placeholder="0" oninput="calc()"></td>
+          <td class="av" id="c-g38">—</td>
+          <td class="cv" id="cc-g38">—</td>
+        </tr>
+        <tr>
+          <td>Sand – 4MM</td>
+          <td><input class="ci" type="number" id="m-s4" placeholder="0" oninput="calc()"></td>
+          <td class="av" id="c-s4">—</td>
+          <td class="cv" id="cc-s4">—</td>
+        </tr>
+        <tr>
+          <td>Sand – 2MM</td>
+          <td><input class="ci" type="number" id="m-s2" placeholder="0" oninput="calc()"></td>
+          <td class="av" id="c-s2">—</td>
+          <td class="cv" id="cc-s2">—</td>
+        </tr>
+        <tr>
+          <td>Sand – S1</td>
+          <td><input class="ci" type="number" id="m-s1" placeholder="0" oninput="calc()"></td>
+          <td class="av" id="c-s1">—</td>
+          <td class="cv" id="cc-s1">—</td>
+        </tr>
+        <tr class="tot">
+          <td colspan="3">Materials Cost / m³</td>
+          <td class="cv" style="color:var(--m);font-size:13px" id="c-matcost">—</td>
+        </tr>
+      </table>
+      <div id="cs-sav-row" style="display:none;background:#EBF3FF;padding:4px 8px;font-size:11px;border:1px solid #90CAF9;border-top:none">
+        <span style="color:var(--b);font-weight:700">Cement Savings: </span>
+        <span style="color:var(--b);font-weight:800" id="c-csav">₱0.00</span>
+        <span style="color:#90CAF9;margin-left:6px;font-size:10px">(ACAP × ₱ ÷ load)</span>
       </div>
     </div>
 
-    <!-- IV. MATERIALS PER m³ -->
-    <div class="card">
-      <div class="card-hdr">IV. Materials per Cubic Meter</div>
-      <div style="padding:0">
-        <table class="mt">
-          <thead>
-            <tr>
-              <th style="width:110px">Material</th>
-              <th style="color:#FFCC80;width:110px">Input (kgs/m³)</th>
-              <th style="color:#FFCC80;width:120px">→ Converted</th>
-              <th style="width:60px">Unit</th>
-              <th style="width:120px">Cost / m³</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="tr-cem"><td>Cement</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-cem" placeholder="310" oninput="calc()"></td>
-              <td class="av" id="c-cem">—</td><td class="uc">bags</td><td class="cv" id="cc-cem">—</td></tr>
-            <tr><td>Fly Ash</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-fa" placeholder="62" oninput="calc()"></td>
-              <td class="av" id="c-fa">—</td><td class="uc">bags</td><td class="cv" id="cc-fa">—</td></tr>
-            <tr><td>Admixture</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-adm" placeholder="3.72" step="0.1" oninput="calc()"></td>
-              <td class="av" id="c-adm">—</td><td class="uc">liters</td><td class="cv" id="cc-adm">—</td></tr>
-            <tr><td>Agg – G1"</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-g1" placeholder="0" oninput="calc()"></td>
-              <td class="av" id="c-g1">—</td><td class="uc">m³</td><td class="cv" id="cc-g1">—</td></tr>
-            <tr><td>Agg – 3/4"</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-g34" placeholder="0" oninput="calc()"></td>
-              <td class="av" id="c-g34">—</td><td class="uc">m³</td><td class="cv" id="cc-g34">—</td></tr>
-            <tr><td>Agg – 3/8"</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-g38" placeholder="0" oninput="calc()"></td>
-              <td class="av" id="c-g38">—</td><td class="uc">m³</td><td class="cv" id="cc-g38">—</td></tr>
-            <tr><td>Sand – 4MM</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-s4" placeholder="0" oninput="calc()"></td>
-              <td class="av" id="c-s4">—</td><td class="uc">m³</td><td class="cv" id="cc-s4">—</td></tr>
-            <tr><td>Sand – 2MM</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-s2" placeholder="0" oninput="calc()"></td>
-              <td class="av" id="c-s2">—</td><td class="uc">m³</td><td class="cv" id="cc-s2">—</td></tr>
-            <tr><td>Sand – S1</td>
-              <td style="text-align:center"><input class="ci" type="number" id="m-s1" placeholder="0" oninput="calc()"></td>
-              <td class="av" id="c-s1">—</td><td class="uc">m³</td><td class="cv" id="cc-s1">—</td></tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4" style="text-align:right;color:var(--muted);font-size:12px">Materials Cost / m³</td>
-              <td style="color:var(--m);text-align:right;font-size:15px" id="c-matcost">—</td>
-            </tr>
-          </tfoot>
-        </table>
-        <div id="cs-sav" style="display:none;background:#EBF3FF;padding:7px 14px;font-size:11.5px">
-          <span style="color:var(--b);font-weight:700">Cement Savings: </span>
-          <span style="color:var(--b);font-weight:800;font-size:13px" id="c-csav">₱0.00</span>
-          <span style="color:#90B8E8;margin-left:6px;font-size:10.5px">(ACAP bags × ₱/bag ÷ load)</span>
-        </div>
-      </div>
-    </div>
+  </div>
 
-  </div><!-- end middle -->
-
-  <!-- RIGHT COL -->
-  <div class="col-r">
+  <!-- ══ COL 3: V + VI ══ -->
+  <div>
 
     <!-- V. COST SUMMARY -->
-    <div class="card">
-      <div class="card-hdr">V. Cost Summary</div>
-      <div class="card-body">
-        <div class="sr"><span class="sl">Materials Cost</span><span class="sv" style="color:var(--m)" id="s-mat">—</span></div>
-        <div class="sr"><span class="sl">OCM / FOE</span><input class="si" type="number" id="p-ocm" value="555" step="5" oninput="calc()"></div>
-        <div class="sr"><span class="sl">Toll Fee</span><span class="sv" style="color:var(--o)" id="s-toll">—</span></div>
-        <div class="hint">(Toll × 2) ÷ load</div>
-        <div class="sr"><span class="sl">Fuel</span><span class="sv" style="color:var(--o)" id="s-fuel">—</span></div>
-        <div class="hint">(dist × diesel × 2 × 0.85) ÷ load</div>
-        <div class="sr"><span class="sl">DPWH</span><input class="si" type="number" id="p-dpwh" value="0" step="50" oninput="calc()"></div>
-        <div class="dv"></div>
-        <div class="sr">
-          <span class="sl" style="color:var(--b);font-weight:700">Target Profit / m³</span>
-          <input class="si" type="number" id="p-target" value="500" step="50" oninput="calc()"
-            style="border-color:var(--b);color:var(--b);font-weight:700">
-        </div>
-      </div>
+    <div class="sec-title">V. Cost Summary</div>
+    <table class="st">
+      <tr><td class="lbl">Material Cost</td><td class="auto" id="s-mat">—</td></tr>
+      <tr><td class="lbl">OCM / FOE</td><td class="bl"><input class="si" type="number" id="p-ocm" value="555" step="5" oninput="calc()"></td></tr>
+      <tr><td class="lbl">Toll Fee</td><td class="auto" id="s-toll">—</td></tr>
+      <tr><td class="hint" colspan="2">(Toll × 2) ÷ load</td></tr>
+      <tr><td class="lbl">Fuel</td><td class="auto" id="s-fuel">—</td></tr>
+      <tr><td class="hint" colspan="2">(dist × diesel × 2 × 0.85) ÷ load</td></tr>
+      <tr><td class="lbl">DPWH (SOP)</td><td class="bl"><input class="si" type="number" id="p-dpwh" value="0" step="50" oninput="calc()"></td></tr>
+      <tr class="target"><td class="lbl">Target Profit</td><td class="bl"><input class="si" type="number" id="p-target" value="500" step="50" oninput="calc()" style="color:var(--b);font-weight:700"></td></tr>
+    </table>
+
+    <div class="dv"></div>
+
+    <!-- VI. PRICE PER CUBIC METER -->
+    <div class="sec-title">VI. Price per Cubic Meter</div>
+    <table class="vat-tbl">
+      <tr class="vex"><td>VAT Exclusive</td><td class="val" id="s-vatex">—</td></tr>
+      <tr class="vin"><td>VAT Inclusive</td><td class="val" id="s-vatin">—</td></tr>
+      <tr class="mgn"><td>Profit Margin</td><td class="val" id="s-margin">—</td></tr>
+    </table>
+    <div style="font-size:9.5px;color:#bbb;margin-top:4px;font-style:italic" id="s-margin-sub">Target Profit ÷ Vat Ex</div>
+
+    <div class="dv"></div>
+
+    <!-- EST. VOLUME -->
+    <div class="row" style="margin-top:4px"><label>Est. Volume (m³)</label><input type="number" id="f-vol" placeholder="0" oninput="calc()"></div>
+    <div id="proj-row" style="display:none">
+      <table class="st" style="margin-top:4px">
+        <tr style="background:#FDE8E8">
+          <td class="lbl" style="color:var(--m);font-weight:700">Total (VAT In)</td>
+          <td style="font-weight:800;text-align:right;color:var(--m)" id="s-proj">—</td>
+        </tr>
+      </table>
     </div>
 
-    <!-- VI. PRICE PER m³ -->
-    <div class="card">
-      <div class="card-hdr">VI. Price per Cubic Meter</div>
-      <div class="card-body">
-        <div class="vat">
-          <div class="vbox vex"><div class="vl">Vat Exclusive</div><div class="vv" id="s-vatex">—</div></div>
-          <div class="vbox vin"><div class="vl">Vat Inclusive</div><div class="vv" id="s-vatin">—</div></div>
-        </div>
-        <div class="mbox">
-          <div class="ml">Profit Margin</div>
-          <div class="mv" id="s-margin">—</div>
-          <div class="ms" id="s-margin-sub">Target ÷ Vat Ex</div>
-        </div>
-        <div class="dv"></div>
-        <div class="field" style="margin-bottom:6px">
-          <label>Est. Total Volume (m³)</label>
-          <input type="number" id="f-vol" placeholder="0" oninput="calc()">
-        </div>
-        <div id="proj-row" style="display:none">
-          <div class="sr"><span class="sl">Total Project (VAT In)</span><span class="sv" style="color:var(--m)" id="s-proj">—</span></div>
-        </div>
-      </div>
-    </div>
+    <div class="dv"></div><div class="dv"></div>
 
     <!-- ACTIONS -->
-    <div class="actions" style="display:flex;gap:7px;flex-wrap:wrap">
+    <div class="actions" style="display:flex;gap:6px;flex-wrap:wrap">
       <button class="btn btn-m" onclick="calc()">⚡ Compute</button>
       <button class="btn btn-g" onclick="saveLog()">💾 Save</button>
-      <button class="btn btn-o" onclick="window.print()">🖨</button>
+      <button class="btn btn-o" onclick="window.print()">🖨 Print</button>
       <span id="save-msg" style="font-size:11px;color:var(--g);font-weight:700;align-self:center;display:none">✅ Saved!</span>
     </div>
 
-  </div><!-- end right -->
+  </div>
 
 </div><!-- end sheet -->
 </div>
 
-<!-- ══════════════ LOG TAB ══════════════ -->
-<div class="tc" id="tab-log">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <b style="font-size:13px">Quotation Log — <span id="log-cnt">0</span> entries</b>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-o btn-sm" onclick="exportCSV()">📥 Export CSV</button>
-      <button class="btn btn-sm" style="background:#FFEBEE;color:#C62828" onclick="clearAll()">🗑 Clear All</button>
+<!-- LOG TAB -->
+<div class="tab-content" id="tab-log">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <b>Quotation Log — <span id="log-cnt">0</span> entries</b>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-o" style="font-size:11px;padding:4px 10px" onclick="exportCSV()">📥 CSV</button>
+      <button class="btn" style="background:#FFEBEE;color:#C62828;font-size:11px;padding:4px 10px" onclick="clearAll()">🗑 Clear</button>
     </div>
   </div>
-  <div class="card" style="overflow-x:auto">
-    <table class="dt">
+  <div style="background:#fff;border:1px solid #ddd;overflow-x:auto">
+    <table class="data-table">
       <thead>
         <tr><th>#</th><th>Date</th><th>Client</th><th>Project</th><th>Type</th><th>Mix</th><th>Mat Cost</th><th>Vat Ex</th><th>Vat In</th><th>Target</th><th>Margin</th><th></th></tr>
       </thead>
-      <tbody id="log-body"><tr><td colspan="12" class="empty">No entries yet. Compute and save a costing to begin.</td></tr></tbody>
+      <tbody id="log-body"><tr><td colspan="12" class="empty">No entries yet.</td></tr></tbody>
     </table>
   </div>
 </div>
 
 <script>
 const PSI_CEM={'1500':200,'2000':220,'2500':260,'3000':310,'3500':350,'4000':390,'4500':420,'5000':440,'6000':520};
-let C='SC', LOG=JSON.parse(localStorage.getItem('bb_v11')||'[]'), last=null;
+let C='SC', LOG=JSON.parse(localStorage.getItem('bb_v12')||'[]'), last=null;
 
 document.addEventListener('DOMContentLoaded',()=>{ autoFill(); calc(); renderLog(); });
 
 function showTab(n,el){
-  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
   if(n==='log') renderLog();
 }
-function onMix(){
-  document.getElementById('f-mix-other').style.display = gs('f-mix')==='other'?'block':'none';
-}
+function onMix(){ document.getElementById('f-mix-other').style.display=gs('f-mix')==='other'?'block':'none'; }
 function gv(id){return parseFloat(document.getElementById(id).value)||0;}
 function gs(id){return(document.getElementById(id).value||'').trim();}
 function sv(id,v){document.getElementById(id).value=v;}
@@ -474,8 +391,7 @@ function setC(t){
   document.getElementById('btn-sc').className='ctb'+(t==='SC'?' sc':'');
   document.getElementById('btn-cs').className='ctb'+(t==='CS'?' cs':'');
   document.getElementById('acap-wrap').style.display=t==='CS'?'block':'none';
-  document.getElementById('cs-sav').style.display=t==='CS'?'block':'none';
-  document.getElementById('cs-note').className='cs-note'+(t==='CS'?' show':'');
+  document.getElementById('cs-sav-row').style.display=t==='CS'?'block':'none';
   document.getElementById('tr-cem').style.opacity=t==='CS'?'0.35':'1';
   calc();
 }
@@ -516,19 +432,22 @@ function calc(){
   const vatIn=vatEx*1.12;
   const margin=vatEx?target/vatEx:0;
 
-  // Update IV
-  st('c-cem',  cem?f2(cemB)+' bags':'—'); st('cc-cem',cem?(C==='SC'?'₱'+f(cCem):'₱0 (CS)'):'—');
-  st('c-fa',   fa?f2(faB)+' bags':'—');   st('cc-fa', fa?'₱'+f(cFa):'—');
-  st('c-adm',  adm?f2(adm)+' L':'—');     st('cc-adm',adm?'₱'+f(cAdm):'—');
-  st('c-g1',   g1?f4(g1m)+' m³':'—');     st('cc-g1', cG1?'₱'+f(cG1):'—');
-  st('c-g34',  g34?f4(g34m)+' m³':'—');   st('cc-g34',cG34?'₱'+f(cG34):'—');
-  st('c-g38',  g38?f4(g38m)+' m³':'—');   st('cc-g38',cG38?'₱'+f(cG38):'—');
-  st('c-s4',   s4?f4(s4m)+' m³':'—');     st('cc-s4', cS4?'₱'+f(cS4):'—');
-  st('c-s2',   s2?f4(s2m)+' m³':'—');     st('cc-s2', cS2?'₱'+f(cS2):'—');
-  st('c-s1',   s1?f4(s1m)+' m³':'—');     st('cc-s1', cS1?'₱'+f(cS1):'—');
-  st('c-matcost','₱'+f(mat)); st('c-csav','₱'+f(cemSav));
+  // IV
+  const fmtBag=(v,b)=>v?f2(b)+' bags':'—';
+  const fmtM3=(v,m)=>v?f4(m)+' m³':'—';
+  st('c-cem',  cem?f2(cemB)+' bags':'—');  st('cc-cem', cem?(C==='SC'?'₱'+f(cCem):'₱0 (CS)'):'—');
+  st('c-fa',   fa?f2(faB)+' bags':'—');    st('cc-fa',  fa?'₱'+f(cFa):'—');
+  st('c-adm',  adm?f2(adm)+' L':'—');      st('cc-adm', adm?'₱'+f(cAdm):'—');
+  st('c-g1',   g1?f4(g1m)+' m³':'—');      st('cc-g1',  cG1?'₱'+f(cG1):'—');
+  st('c-g34',  g34?f4(g34m)+' m³':'—');    st('cc-g34', cG34?'₱'+f(cG34):'—');
+  st('c-g38',  g38?f4(g38m)+' m³':'—');    st('cc-g38', cG38?'₱'+f(cG38):'—');
+  st('c-s4',   s4?f4(s4m)+' m³':'—');      st('cc-s4',  cS4?'₱'+f(cS4):'—');
+  st('c-s2',   s2?f4(s2m)+' m³':'—');      st('cc-s2',  cS2?'₱'+f(cS2):'—');
+  st('c-s1',   s1?f4(s1m)+' m³':'—');      st('cc-s1',  cS1?'₱'+f(cS1):'—');
+  st('c-matcost','₱'+f(mat));
+  st('c-csav','₱'+f(cemSav));
 
-  // Update V+VI
+  // V + VI
   st('s-mat',  '₱'+f(mat));
   st('s-toll', '₱'+f(tollM));
   st('s-fuel', '₱'+f(fuelM));
@@ -555,7 +474,7 @@ function calc(){
 function saveLog(){
   if(!last||!last.mat){alert('Mag-compute muna!');return;}
   LOG.unshift({...last,id:Date.now()});
-  localStorage.setItem('bb_v11',JSON.stringify(LOG)); renderLog();
+  localStorage.setItem('bb_v12',JSON.stringify(LOG)); renderLog();
   const m=document.getElementById('save-msg');
   m.style.display='inline'; setTimeout(()=>m.style.display='none',2500);
 }
@@ -568,18 +487,18 @@ function renderLog(){
     return `<tr>
       <td>${LOG.length-i}</td><td>${e.date}</td>
       <td><b>${e.client||'—'}</b></td>
-      <td style="font-size:11px">${e.project||'—'}<br><span style="color:#aaa">${e.location||''}</span></td>
+      <td style="font-size:10px">${e.project||'—'}<br><span style="color:#aaa">${e.location||''}</span></td>
       <td><span class="badge ${e.contract==='SC'?'b-sc':'b-cs'}">${e.contract}</span></td>
-      <td style="font-size:11px">${e.mixLbl}</td>
+      <td style="font-size:10px">${e.mixLbl}</td>
       <td>₱${f(e.mat)}</td><td>₱${f(e.vatEx)}</td><td>₱${f(e.vatIn)}</td>
       <td>₱${f(e.target)}</td>
       <td><span class="badge ${mc}">${(e.margin*100).toFixed(1)}%</span></td>
-      <td><button class="btn btn-sm" style="background:#FFEBEE;color:#C62828" onclick="del(${i})">🗑</button></td>
+      <td><button class="btn" style="background:#FFEBEE;color:#C62828;font-size:10px;padding:3px 8px" onclick="del(${i})">🗑</button></td>
     </tr>`;
   }).join('');
 }
-function del(i){if(confirm('Delete?')){LOG.splice(i,1);localStorage.setItem('bb_v11',JSON.stringify(LOG));renderLog();}}
-function clearAll(){if(confirm('Clear all?')){LOG=[];localStorage.setItem('bb_v11','[]');renderLog();}}
+function del(i){if(confirm('Delete?')){LOG.splice(i,1);localStorage.setItem('bb_v12',JSON.stringify(LOG));renderLog();}}
+function clearAll(){if(confirm('Clear all?')){LOG=[];localStorage.setItem('bb_v12','[]');renderLog();}}
 function exportCSV(){
   if(!LOG.length){alert('Walang entries!');return;}
   const h=['#','Date','AE','Client','Project','Location','Type','Mix','MatCost','VatEx','VatIn','Target','Margin%'];
