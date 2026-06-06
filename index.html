@@ -173,7 +173,6 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div style="font-size:10px;font-weight:700;color:var(--maroon);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">📋 Pouring Information</div>
         <div class="form-grid">
           <div class="form-group"><label>Date of Pouring</label><input type="date" id="f-date"></div>
-          <div class="form-group"><label>Time Batched</label><input type="time" id="f-time-batched" title="Time concrete was loaded at plant"></div>
           <div class="form-group"><label>Time Finish</label><input type="time" id="f-time"></div>
           <div class="form-group span2"><label>Client Name</label><input type="text" id="f-client" placeholder="Client name"></div>
           <div class="form-group span2"><label>Location</label><input type="text" id="f-location" placeholder="Address / site location"></div>
@@ -319,7 +318,6 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Client</th>
               <th>Location</th>
               <th>Design</th>
-              <th>Time Batched</th>
               <th>Time Finish</th>
               <th>Structure</th>
               <th>Site Coord.</th>
@@ -350,8 +348,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         <div class="form-group"><label>Max Temperature (°C)</label><input type="number" id="s-max-temp" placeholder="e.g. 32" style="font-size:15px;font-weight:600"></div>
         <div class="form-group"><label>Min Slump (inches)</label><input type="number" id="s-min-slump" step="0.5" placeholder="e.g. 2"></div>
         <div class="form-group"><label>Max Slump (inches)</label><input type="number" id="s-max-slump" step="0.5" placeholder="e.g. 6"></div>
-        <div class="form-group"><label>Max Standby Time (hours)</label><input type="number" id="s-max-standby" placeholder="e.g. 4" style="font-size:15px;font-weight:600"></div>
-      </div>
+        </div>
       <div style="display:flex;gap:8px;margin-top:12px">
         <button class="btn btn-maroon" onclick="saveSettings()">💾 Save Settings</button>
         <button class="btn btn-outline" onclick="loadSettingsUI()">↺ Reset</button>
@@ -1031,10 +1028,8 @@ function checkAutoRejectLogic(actualTemp,actualSlump,standby,settings,slumpMin,s
   if(actualSlump!==null&&actualSlump!==''&&!isNaN(actualSlump)&&(actualSlump<sMin||actualSlump>sMax))
     reasons.push(`Slump ${actualSlump}" out of range ${sMin}"-${sMax}"`);
   // Only check standby if BOTH time batched and time finish are entered
-  const timeBatched=document.getElementById('f-time-batched')?document.getElementById('f-time-batched').value:'';
   const timeFinish=document.getElementById('f-time')?document.getElementById('f-time').value:'';
-  if(standby!==null&&timeBatched&&timeFinish&&parseFloat(standby)>settings.maxStandby)
-    reasons.push(`Overmix ${standby}hrs > ${settings.maxStandby}hrs max`);
+  // Standby/overmix check removed — Time Batched no longer used
   return {rejected:reasons.length>0, reason:reasons[0]||'', detail:reasons.join('; ')};
 }
 
@@ -1044,13 +1039,12 @@ function checkAutoReject(){
   const actualSlumpRaw=document.getElementById('f-actual-slump').value;
   const actualTemp=actualTempRaw!==''?parseFloat(actualTempRaw):null;
   const actualSlump=actualSlumpRaw!==''?parseFloat(actualSlumpRaw):null;
-  const timeBatched=document.getElementById('f-time-batched').value;
   const timeFinish=document.getElementById('f-time').value;
-  const standby=(timeBatched&&timeFinish)?calcStandby(timeBatched,timeFinish):null;
+  const standby=null; // Time Batched removed
   const slumpMin=document.getElementById('f-slump-min').value;
   const slumpMax=document.getElementById('f-slump-max').value;
   // Only trigger if at least one actual value is entered
-  if(!actualTempRaw&&!actualSlumpRaw&&(!timeBatched||!timeFinish)){
+  if(!actualTempRaw&&!actualSlumpRaw){
     document.getElementById('auto-reject-alert').style.display='none';
     return;
   }
@@ -1071,7 +1065,6 @@ function saveSettings(){
   db.settings.maxTemp=document.getElementById('s-max-temp').value;
   db.settings.minSlump=document.getElementById('s-min-slump').value;
   db.settings.maxSlump=document.getElementById('s-max-slump').value;
-  db.settings.maxStandby=document.getElementById('s-max-standby').value;
   save();
   loadSettingsUI();
   document.getElementById('settings-saved').style.display='block';
@@ -1650,12 +1643,10 @@ function loadSettingsUI(){
   document.getElementById('s-max-temp').value=s.maxTemp;
   document.getElementById('s-min-slump').value=s.minSlump;
   document.getElementById('s-max-slump').value=s.maxSlump;
-  document.getElementById('s-max-standby').value=s.maxStandby;
   const tbody=document.getElementById('settings-summary');
   if(tbody) tbody.innerHTML=`
     <tr><td>Temperature</td><td>Max ${s.maxTemp}°C</td><td>Actual > ${s.maxTemp}°C</td></tr>
     <tr><td>Slump (default range)</td><td>${s.minSlump}" – ${s.maxSlump}"</td><td>Actual &lt; min or &gt; max (per-entry range overrides this)</td></tr>
-    <tr><td>Standby Time (Overmix)</td><td>Max ${s.maxStandby} hours</td><td>Standby > ${s.maxStandby} hrs</td></tr>
   `;
 }
 
@@ -1695,9 +1686,8 @@ function addEntry(){
   const aggVal=document.getElementById('f-agg').value;
   const agg=aggVal==='others'?document.getElementById('f-agg-other').value:aggVal;
   const isRejected=document.getElementById('f-rejected').checked;
-  const timeBatched=document.getElementById('f-time-batched').value;
   const timeFinish=document.getElementById('f-time').value;
-  const standby=calcStandby(timeBatched,timeFinish);
+  const standby=null; // Time Batched removed
   const settings=getSettings();
   const actualTemp=null;
   const actualSlump=null;
@@ -1711,7 +1701,7 @@ function addEntry(){
     location:document.getElementById('f-location').value,
     design:document.getElementById('f-design').value,
     agg, days:document.getElementById('f-days').value,
-    timeBatched, time:timeFinish,
+    time:timeFinish,
     standby,
     mixer:document.getElementById('f-mixer').value,
     structure:document.getElementById('f-structure').value,
@@ -1771,7 +1761,6 @@ function editEntry(id){
   if(aggOpts.includes(e.agg)){aggEl.value=e.agg;}
   else if(e.agg){aggEl.value='others';document.getElementById('f-agg-other').value=e.agg;document.getElementById('f-agg-other-wrap').style.display='flex';}
   document.getElementById('f-days').value=e.days||'';
-  document.getElementById('f-time-batched').value=e.timeBatched||'';
   document.getElementById('f-time').value=e.time||'';
   document.getElementById('f-structure').value=e.structure||'';
   document.getElementById('f-coord').value=e.coord||'';
@@ -1809,9 +1798,8 @@ function updateEntry(id){
   const aggVal=document.getElementById('f-agg').value;
   const agg=aggVal==='others'?document.getElementById('f-agg-other').value:aggVal;
   const isRejected=document.getElementById('f-rejected').checked;
-  const timeBatched=document.getElementById('f-time-batched').value;
   const timeFinish=document.getElementById('f-time').value;
-  const standby=calcStandby(timeBatched,timeFinish);
+  const standby=null; // Time Batched removed
   const settings=getSettings();
   const actualTemp=null;
   const actualSlump=null;
@@ -1827,7 +1815,7 @@ function updateEntry(id){
     location:document.getElementById('f-location').value,
     design:document.getElementById('f-design').value,
     agg, days:document.getElementById('f-days').value,
-    timeBatched, time:timeFinish, standby,
+    time:timeFinish, standby,
     structure:document.getElementById('f-structure').value,
     coord:document.getElementById('f-coord').value,
     testingCoord:document.getElementById('f-testing-coord').value,
@@ -1929,7 +1917,6 @@ function renderMaster(){
       <td><strong>${e.client}</strong>${e.rejected?`<br><span class="badge badge-rejected">${e.autoRejected?'AUTO-':''}REJECTED: ${e.rejectReason}</span>`:''}</td>
       <td>${e.location||'—'}</td>
       <td style="font-size:11px"><strong>${e.design||'—'}</strong> ${e.agg||''} ${e.days||''}</td>
-      <td>${fmtTime(e.timeBatched)}</td>
       <td>${fmtTime(e.time)}</td>
       <td>${e.structure||'—'}</td>
       <td>${e.coord||'—'}</td>
