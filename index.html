@@ -3215,6 +3215,18 @@ fbRef.on('value', snapshot => {
     }catch(e){ db = {entries:[]}; }
   }
   ensureArray();
+  // Migration: clear autoRejected entries caused by old standby/overmix logic
+  let migrated = false;
+  db.entries.forEach(e => {
+    if(e.autoRejected && e.rejectReason && e.rejectReason.toLowerCase().includes('overmix')){
+      e.autoRejected = false;
+      e.rejected = false;
+      e.rejectReason = '';
+      e.rejectDetail = '';
+      migrated = true;
+    }
+  });
+  if(migrated){ fbRef.set(db); }
   showOnlineStatus(true);
   if(_skipNextRender){
     _skipNextRender=false;
