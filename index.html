@@ -418,7 +418,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         Mold Collection Schedule
         <span id="mold-header-date" style="font-size:12px;font-weight:400;opacity:.9"></span>
       </div>
-      <div style="overflow-x:auto">
+      <div style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 240px)">
         <table class="data-table" id="mold-table" style="min-width:900px">
           <thead>
             <tr>
@@ -2391,6 +2391,7 @@ function renderTesting(){
       found=true;
       html+=`<div style="margin-bottom:16px">
         <div style="background:#222;color:#fff;padding:6px 12px;font-size:12px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">${DAY_LABELS[idx]}</div>
+        <div style="overflow-x:auto;overflow-y:auto;max-height:380px">
         <table class="data-table" style="font-size:12px">
           <thead><tr>
             <th>DATE</th><th>CLIENT</th><th>LOCATION</th><th>STRUCTURE</th>
@@ -2428,6 +2429,7 @@ function renderTesting(){
             </tr>`;
           }).join('')}</tbody>
         </table>
+        </div>
       </div>`;
     }
   });
@@ -2492,6 +2494,7 @@ function printTesting(){
             <td style="padding:3px 6px;border-bottom:1px solid #ddd">${e['testRemark_'+d]||''}</td>
           </tr>`).join('')}</tbody>
         </table>
+        </div>
       </div>`;
     }
   });
@@ -2609,7 +2612,7 @@ function renderTestMon(){
       <th style="font-size:9px;background:${bg}">Lab No. / Result / Remarks</th>`;
   });
 
-  let html=`<div style="overflow-x:auto">
+  let html=`<div style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 280px)">
   <table class="data-table" style="font-size:10px">
     <thead>
       <tr>
