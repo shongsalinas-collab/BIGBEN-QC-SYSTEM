@@ -46,7 +46,7 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
 
 /* TABLE */
 .data-table{width:100%;border-collapse:collapse;font-size:12px}
-.data-table th{background:var(--maroon);color:#fff;padding:7px 10px;text-align:left;font-size:11px;white-space:nowrap;position:sticky;top:0;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.data-table th{background:var(--maroon);color:#fff;padding:7px 10px;text-align:left;font-size:11px;white-space:nowrap;position:sticky;top:0;z-index:10;print-color-adjust:exact;-webkit-print-color-adjust:exact;position:sticky;top:0;z-index:10}
 .data-table td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
 .data-table tr:hover td{background:#fdf8f8}
 .data-table tr.rejected td{background:#fff5f5}
@@ -310,7 +310,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           <option>Bulacan Area</option>
         </select>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap" style="overflow-y:auto;max-height:calc(100vh - 280px)">
         <table class="data-table" id="master-table">
           <thead>
             <tr>
@@ -499,7 +499,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           <option value="pending">Pending</option>
         </select>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap" style="overflow-y:auto;max-height:calc(100vh - 280px)">
         <table class="data-table" id="mon-table">
           <thead>
             <tr>
@@ -619,7 +619,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <div class="panel">
     <div class="panel-header">
       Testing Monitoring — Compressive Strength Results
-      <div style="display:flex;gap:6px" class="no-print">
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap" class="no-print">
         <select id="testmon-month" onchange="renderTestMon()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none"></select>
         <select id="testmon-result-filter" onchange="renderTestMon()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none">
           <option value="">All</option>
@@ -627,6 +627,13 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           <option value="fail">Fail</option>
           <option value="pending">Pending</option>
         </select>
+        <div style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.15);border-radius:3px;padding:2px 6px">
+          <span style="font-size:11px;opacity:.8">🔍</span>
+          <input type="text" id="testmon-search" placeholder="Search client / location…" oninput="renderTestMon()"
+            style="background:transparent;border:none;outline:none;font-size:11px;color:#fff;width:180px;padding:2px 0"
+            onfocus="this.style.background='rgba(255,255,255,.1)'"
+            onblur="this.style.background='transparent'">
+        </div>
         <button class="btn btn-sm btn-print" onclick="printTestMon()">🖨 Print</button>
       </div>
     </div>
@@ -2565,6 +2572,12 @@ function renderTestMon(){
     });
   }
   if(resultF) rows=rows.filter(e=>getOverallStatus(e)===resultF);
+  const searchEl=document.getElementById('testmon-search');
+  const searchQ=(searchEl?searchEl.value:'').toLowerCase().trim();
+  if(searchQ) rows=rows.filter(e=>{
+    const hay=[e.client,e.location,e.design,e.agg,e.structure,e.coord].join(' ').toLowerCase();
+    return hay.includes(searchQ);
+  });
 
   const container=document.getElementById('testmon-container');
   const empty=document.getElementById('testmon-empty');
