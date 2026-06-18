@@ -1737,6 +1737,18 @@ function addEntry(){
   db.entries.unshift(entry);
   save();
   clearForm();
+  // Auto-switch filter to the month of the new entry so it's visible immediately
+  const entryMonth = entry.date.substring(0,7);
+  const filterEl = document.getElementById('filter-month');
+  if(filterEl){
+    const exists = Array.from(filterEl.options).some(o=>o.value===entryMonth);
+    if(!exists){
+      const d2 = new Date(entryMonth+'-01');
+      const lbl = d2.toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+      filterEl.insertAdjacentHTML('afterbegin',`<option value="${entryMonth}">${lbl}</option>`);
+    }
+    filterEl.value = entryMonth;
+  }
   renderMaster();
   renderMold();
   renderMonitoring();
