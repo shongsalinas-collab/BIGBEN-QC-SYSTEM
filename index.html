@@ -1737,17 +1737,17 @@ function addEntry(){
   db.entries.unshift(entry);
   save();
   clearForm();
-  // Auto-switch filter to the month of the new entry so it's visible immediately
+  // Auto-switch month filter to entry's month so it's visible immediately
   const entryMonth = entry.date.substring(0,7);
-  const filterEl = document.getElementById('filter-month');
-  if(filterEl){
-    const exists = Array.from(filterEl.options).some(o=>o.value===entryMonth);
+  const fEl = document.getElementById('filter-month');
+  if(fEl){
+    const exists = Array.from(fEl.options).some(o=>o.value===entryMonth);
     if(!exists){
-      const d2 = new Date(entryMonth+'-01');
+      const d2 = new Date(entryMonth+'-01T00:00:00');
       const lbl = d2.toLocaleDateString('en-PH',{month:'long',year:'numeric'});
-      filterEl.insertAdjacentHTML('afterbegin',`<option value="${entryMonth}">${lbl}</option>`);
+      fEl.insertAdjacentHTML('afterbegin',`<option value="${entryMonth}">${lbl}</option>`);
     }
-    filterEl.value = entryMonth;
+    fEl.value = entryMonth;
   }
   renderMaster();
   renderMold();
@@ -1922,7 +1922,7 @@ function renderMaster(){
     if(search&&!e.client.toLowerCase().includes(search)&&!e.location.toLowerCase().includes(search)) return false;
     if(areaF&&e.area!==areaF) return false;
     return true;
-  });
+  }).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const tbody=document.getElementById('master-tbody');
   const empty=document.getElementById('master-empty');
   if(!rows.length){tbody.innerHTML='';empty.style.display='block';return;}
