@@ -2230,9 +2230,9 @@ body{font-family:Arial,sans-serif;font-size:10px;padding:16px}
 .title p{font-size:10px;color:#666;margin-top:2px}
 .doc-no{text-align:right;font-size:9px;color:#666}
 .divider{height:2px;background:#6B1A1A;margin:8px 0 12px}
-table.data{width:100%;border-collapse:collapse;font-size:9px}
-table.data th{background:#6B1A1A;color:#fff;padding:5px 6px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-table.data td{padding:4px 6px;border-bottom:1px solid #ddd;vertical-align:middle}
+table.data{width:100%;border-collapse:collapse;font-size:9px;table-layout:fixed}
+table.data th{background:#6B1A1A;color:#fff;padding:5px 6px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;word-wrap:break-word}
+table.data td{padding:4px 6px;border-bottom:1px solid #ddd;vertical-align:top;word-wrap:break-word;white-space:normal}
 table.data tr:nth-child(even) td{background:#fdf8f8;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .footer{margin-top:24px}
 .footer table{width:100%;border-collapse:collapse}
@@ -2493,6 +2493,18 @@ function printTesting(){
       sectionsHtml+=`<div style="margin-bottom:14px">
         <div style="background:#222;color:#fff;padding:5px 10px;font-size:11px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">${d===1?'01 DAYS TESTING':d===3?'03 DAYS TESTING':d===7?'07 DAYS TESTING':d===14?'14 DAYS TESTING':d===21?'21 DAYS TESTING':'28 DAYS TESTING'}</div>
         <table style="width:100%;border-collapse:collapse;font-size:9px">
+          <colgroup>
+            <col style="width:7%"><!--DATE-->
+            <col style="width:14%"><!--CLIENT-->
+            <col style="width:16%"><!--LOCATION-->
+            <col style="width:9%"><!--STRUCTURE-->
+            <col style="width:13%"><!--DESIGN-->
+            <col style="width:10%"><!--SITE COORD-->
+            <col style="width:12%"><!--TESTING COORD-->
+            <col style="width:8%"><!--SAMPLES-->
+            <col style="width:5%"><!--VOL-->
+            <col style="width:6%"><!--REMARKS-->
+          </colgroup>
           <thead><tr style="background:#6B1A1A;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">
             <th style="padding:4px 6px">DATE</th>
             <th style="padding:4px 6px">CLIENT</th>
