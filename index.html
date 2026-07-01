@@ -3458,45 +3458,32 @@ function updateStatusCell(pid, date, p, rec){
 }
 
 function timeCell(pid, date, field, currentVal){
-  const SPECIAL = ['NO_SCHED','MEDICAL','ON_LEAVE'];
+  const SPECIAL = ['MEDICAL','ON_LEAVE'];
   const isSpecial = SPECIAL.includes(currentVal);
   const needsRender = ['schedIn','reschedIn','timeIn'].includes(field);
   const onCh = `saveRecord('${pid}','${date}','${field}',this.value)${needsRender?';renderAttendance()':''}`;
 
-  // Build hour options 12AM-11PM
   let opts = `<option value="">-- Select --</option>
-    <option value="NO_SCHED" ${currentVal==='NO_SCHED'?'selected':''}>No Schedule</option>
     <option value="MEDICAL" ${currentVal==='MEDICAL'?'selected':''}>For Medical</option>
     <option value="ON_LEAVE" ${currentVal==='ON_LEAVE'?'selected':''}>On Leave</option>
     <option disabled>──────</option>`;
 
-  const times = [
-    '12:00 AM','12:30 AM',
-    '01:00 AM','01:30 AM','02:00 AM','02:30 AM',
-    '03:00 AM','03:30 AM','04:00 AM','04:30 AM',
-    '05:00 AM','05:30 AM','06:00 AM','06:30 AM',
-    '07:00 AM','07:30 AM','08:00 AM','08:30 AM',
-    '09:00 AM','09:30 AM','10:00 AM','10:30 AM',
-    '11:00 AM','11:30 AM',
-    '12:00 PM','12:30 PM',
-    '01:00 PM','01:30 PM','02:00 PM','02:30 PM',
-    '03:00 PM','03:30 PM','04:00 PM','04:30 PM',
-    '05:00 PM','05:30 PM','06:00 PM','06:30 PM',
-    '07:00 PM','07:30 PM','08:00 PM','08:30 PM',
-    '09:00 PM','09:30 PM','10:00 PM','10:30 PM',
-    '11:00 PM','11:30 PM'
-  ];
-  times.forEach(t => {
-    opts += `<option value="${t}" ${currentVal===t?'selected':''}>${t}</option>`;
-  });
+  // 24-hour format, every 30 mins
+  for(let h=0; h<24; h++){
+    for(let m=0; m<60; m+=30){
+      const hh = String(h).padStart(2,'0');
+      const mm = String(m).padStart(2,'0');
+      const val = `${hh}:${mm}`;
+      opts += `<option value="${val}" ${currentVal===val?'selected':''}>${val}</option>`;
+    }
+  }
 
-  // Color for special values
-  const specColor = {'NO_SCHED':'#888','MEDICAL':'#1565C0','ON_LEAVE':'#2E7D32'};
-  const selColor = isSpecial ? specColor[currentVal]||'#888' : '#111';
-  const selBg = isSpecial ? (specColor[currentVal]||'#888')+'22' : '#fff';
+  const specColor = {'MEDICAL':'#1565C0','ON_LEAVE':'#2E7D32'};
+  const selColor = isSpecial ? specColor[currentVal] : '#111';
+  const selBg = isSpecial ? specColor[currentVal]+'22' : '#fff';
 
   return `<select onchange="${onCh}"
-    style="font-size:10px;padding:2px 3px;border:1px solid #ddd;border-radius:3px;
+    style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:3px;
     width:100%;color:${selColor};background:${selBg};font-weight:${isSpecial?'700':'400'}">
     ${opts}
   </select>`;
