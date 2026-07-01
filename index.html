@@ -3413,6 +3413,14 @@ function timeToMins(t){
 
 function computeStatus(p, rec){
   const timeIn = rec.timeIn;
+  // Handle special statuses
+  if(timeIn==='MEDICAL') return {label:'FOR MEDICAL', color:'#1565C0', bg:'#E3F2FD'};
+  if(timeIn==='ON_LEAVE') return {label:'ON LEAVE', color:'#2E7D32', bg:'#E8F5E9'};
+  if(timeIn==='NO_SCHED') return {label:'NO SCHEDULE', color:'#888', bg:'#f5f5f5'};
+  if(rec.reschedIn==='MEDICAL'||rec.reschedIn==='ON_LEAVE'||rec.reschedIn==='NO_SCHED'){
+    if(timeIn==='MEDICAL') return {label:'FOR MEDICAL', color:'#1565C0', bg:'#E3F2FD'};
+    if(timeIn==='ON_LEAVE') return {label:'ON LEAVE', color:'#2E7D32', bg:'#E8F5E9'};
+  }
   if(!timeIn) return {label:'—', color:'#888', bg:'transparent'};
 
   // Effective schedule in — use reschedule if set, else default
@@ -3457,36 +3465,68 @@ function updateStatusCell(pid, date, p, rec){
   cell.style.padding = '2px 6px';
 }
 
+// Build a time cell with dropdown options + time picker
+function timeCell(pid, date, field, currentVal, readonly){
+  const SPECIAL = ['NO_SCHED','MEDICAL','ON_LEAVE'];
+  const isSpecial = SPECIAL.includes(currentVal);
+  const specialLabel = {'NO_SCHED':'No Schedule','MEDICAL':'For Medical','ON_LEAVE':'On Leave'};
+  
+  if(readonly){
+    // Schedule In/Out — show time picker (read-only) or special label
+    if(isSpecial){
+      const colors = {'NO_SCHED':'#888','MEDICAL':'#1565C0','ON_LEAVE':'#2E7D32'};
+      return `<div style="display:flex;flex-direction:column;gap:2px;align-items:center">
+        <span style="font-size:10px;font-weight:700;color:${colors[currentVal]||'#888'};padding:2px 6px;background:${colors[currentVal]||'#888'}22;border-radius:3px">${specialLabel[currentVal]||currentVal}</span>
+      </div>`;
+    }
+    return `<input type="time" value="${currentVal||''}" readonly style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px;background:#f9f9f9;cursor:default">`;
+  }
+
+  // Editable — show select + time input
+  const selStyle = "font-size:10px;padding:1px 2px;border:1px solid #ddd;border-radius:3px;width:100%;margin-bottom:2px;background:#fff";
+  const timeStyle = "border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px";
+  const showTime = !isSpecial;
+  const selVal = isSpecial ? currentVal : '';
+
+  return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+    <select onchange="onTimeSelect('${pid}','${date}','${field}',this)" style="${selStyle}">
+      <option value="" ${!isSpecial?'selected':''}>-- Time --</option>
+      <option value="NO_SCHED" ${currentVal==='NO_SCHED'?'selected':''}>No Schedule</option>
+      <option value="MEDICAL" ${currentVal==='MEDICAL'?'selected':''}>For Medical</option>
+      <option value="ON_LEAVE" ${currentVal==='ON_LEAVE'?'selected':''}>On Leave</option>
+    </select>
+    <input type="time" id="tc_${pid}_${field}" value="${isSpecial?'':currentVal||''}"
+      ${isSpecial?'style="'+timeStyle+';display:none"':'style="'+timeStyle+'"'}
+      onchange="saveRecord('${pid}','${date}','${field}',this.value);${field==='reschedIn'||field==='timeIn'?'renderAttendance()':''}">
+  </div>`;
+}
+
+function onTimeSelect(pid, date, field, sel){
+  const val = sel.value;
+  const timeInput = document.getElementById('tc_'+pid+'_'+field);
+  if(val){ 
+    // Special option selected
+    if(timeInput) timeInput.style.display='none';
+    saveRecord(pid, date, field, val);
+    if(field==='reschedIn'||field==='timeIn') renderAttendance();
+  } else {
+    // Time option — show time input
+    if(timeInput) timeInput.style.display='';
+    if(timeInput && timeInput.value) saveRecord(pid, date, field, timeInput.value);
+  }
+}
+
 function buildRow(p, date){
   const rec = getRecord(p.id, date);
   const s = computeStatus(p, rec);
   return `<tr>
     <td style="font-weight:600">${p.name}${p.endDate?`<br><span style="font-size:10px;color:#E65100;font-weight:400">Until ${p.endDate}</span>`:''}</td>
     <td style="font-size:11px;color:#555">${p.position}</td>
-    <td style="text-align:center">
-      <input type="time" value="${p.schedIn||''}" readonly
-        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px;background:#f9f9f9;cursor:default">
-    </td>
-    <td style="text-align:center">
-      <input type="time" value="${p.schedOut||''}" readonly
-        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px;background:#f9f9f9;cursor:default">
-    </td>
-    <td style="text-align:center">
-      <input type="time" value="${rec.reschedIn||''}"
-        onchange="saveRecord('${p.id}','${date}','reschedIn',this.value);renderAttendance()"
-        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
-    </td>
-
-    <td style="text-align:center">
-      <input type="time" value="${rec.timeIn||''}"
-        onchange="saveRecord('${p.id}','${date}','timeIn',this.value);renderAttendance()"
-        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
-    </td>
-    <td style="text-align:center">
-      <input type="time" value="${rec.timeOut||''}"
-        onchange="saveRecord('${p.id}','${date}','timeOut',this.value)"
-        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
-    </td>
+    <td style="text-align:center">${timeCell(p.id,date,'schedIn',p.schedIn||'',true)}</td>
+    <td style="text-align:center">${timeCell(p.id,date,'schedOut',p.schedOut||'',true)}</td>
+    <td style="text-align:center">${timeCell(p.id,date,'reschedIn',rec.reschedIn||'',false)}</td>
+    <td style="text-align:center">${timeCell(p.id,date,'timeIn',rec.timeIn||'',false)}</td>
+    <td style="text-align:center">${timeCell(p.id,date,'timeOut',rec.timeOut||'',false)}</td>
     <td id="att-status-${p.id}" style="text-align:center;font-weight:700;font-size:11px;color:${s.color};background:${s.bg};border-radius:3px;padding:2px 6px">${s.label}</td>
     <td class="no-print" style="text-align:center">
       <button onclick="editPersonnel('${p.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
