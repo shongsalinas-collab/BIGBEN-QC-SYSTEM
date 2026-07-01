@@ -3333,6 +3333,7 @@ function showAddPersonnel(){
   updatePositionOptions();
   document.getElementById('att-schedule').value = '08:00';
   document.getElementById('att-schedout').value = '17:00';
+  document.getElementById('att-enddate').value = '';
   document.getElementById('att-edit-id').value = '';
   document.getElementById('att-modal').style.display = 'flex';
 }
@@ -3350,6 +3351,7 @@ function savePersonnel(){
     position: document.getElementById('att-position').value,
     schedIn: document.getElementById('att-schedule').value,
     schedOut: document.getElementById('att-schedout').value,
+    endDate: document.getElementById('att-enddate').value || null,
   };
   if(editId){
     const idx = attDB.personnel.findIndex(x=>x.id===editId);
@@ -3372,6 +3374,7 @@ function editPersonnel(id){
   document.getElementById('att-position').value = p.position;
   document.getElementById('att-schedule').value = p.schedIn||'08:00';
   document.getElementById('att-schedout').value = p.schedOut||'17:00';
+  document.getElementById('att-enddate').value = p.endDate||'';
   document.getElementById('att-edit-id').value = p.id;
   document.getElementById('att-modal').style.display = 'flex';
 }
@@ -3458,7 +3461,7 @@ function buildRow(p, date){
   const rec = getRecord(p.id, date);
   const s = computeStatus(p, rec);
   return `<tr>
-    <td style="font-weight:600">${p.name}</td>
+    <td style="font-weight:600">${p.name}${p.endDate?`<br><span style="font-size:10px;color:#E65100;font-weight:400">Until ${p.endDate}</span>`:''}</td>
     <td style="font-size:11px;color:#555">${p.position}</td>
     <td style="text-align:center">
       <input type="time" value="${p.schedIn||''}" readonly
@@ -3497,7 +3500,11 @@ function renderAttendance(){
   const dow = new Date(date+'T00:00:00').getDay(); // 0=Sun,6=Sat
 
   // Admin personnel (all days)
-  const adminList = attDB.personnel.filter(p=>p.category==='admin').sort((a,b)=>a.name.localeCompare(b.name));
+  const adminList = attDB.personnel.filter(p=>{
+    if(p.category!=='admin') return false;
+    if(p.endDate && date > p.endDate) return false; // resigned/transferred
+    return true;
+  }).sort((a,b)=>a.name.localeCompare(b.name));
   const adminTbody = document.getElementById('att-admin-tbody');
   if(adminTbody){
     adminTbody.innerHTML = adminList.length
@@ -3506,7 +3513,11 @@ function renderAttendance(){
   }
 
   // Weekly personnel (Mon-Sat only)
-  const weeklyList = attDB.personnel.filter(p=>p.category==='weekly').sort((a,b)=>a.name.localeCompare(b.name));
+  const weeklyList = attDB.personnel.filter(p=>{
+    if(p.category!=='weekly') return false;
+    if(p.endDate && date > p.endDate) return false; // resigned/transferred
+    return true;
+  }).sort((a,b)=>a.name.localeCompare(b.name));
   const weeklyTbody = document.getElementById('att-weekly-tbody');
   const weeklyOff = document.getElementById('att-weekly-off');
   const weeklyTable = document.getElementById('att-weekly-table');
@@ -3648,6 +3659,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
             <div class="form-group">
               <label>Default Schedule (Time Out)</label>
               <input type="time" id="att-schedout" value="17:00">
+            </div>
+            <div class="form-group" style="grid-column:1/span 2">
+              <label>Last Active Date <span style="font-size:10px;color:#999;font-weight:400">(leave blank if currently active — set date of last day when resigned/transferred)</span></label>
+              <input type="date" id="att-enddate" placeholder="yyyy-mm-dd">
             </div>
           </div>
           <div style="display:flex;gap:8px;margin-top:16px">
