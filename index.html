@@ -3460,8 +3460,14 @@ function buildRow(p, date){
   return `<tr>
     <td style="font-weight:600">${p.name}</td>
     <td style="font-size:11px;color:#555">${p.position}</td>
-    <td style="text-align:center;font-weight:600">${p.schedIn||'—'}</td>
-    <td style="text-align:center;font-weight:600">${p.schedOut||'—'}</td>
+    <td style="text-align:center">
+      <input type="time" value="${p.schedIn||''}" readonly
+        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px;background:#f9f9f9;cursor:default">
+    </td>
+    <td style="text-align:center">
+      <input type="time" value="${p.schedOut||''}" readonly
+        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px;background:#f9f9f9;cursor:default">
+    </td>
     <td style="text-align:center">
       <input type="time" value="${rec.reschedIn||''}"
         onchange="saveRecord('${p.id}','${date}','reschedIn',this.value);renderAttendance()"
