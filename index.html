@@ -1667,6 +1667,7 @@ function showTab(name){
   if(name==='mold') renderMold();
   if(name==='testing') renderTesting();
   if(name==='master') renderMaster();
+  if(name==='attendance'){ renderAttendance(); }
 }
 
 function clearForm(){
@@ -3214,7 +3215,6 @@ function renderKPI(){
 
 function renderAll(){
   renderMaster();initMoldDateSelector();initTestingDateSelector();renderMonitoring();renderTestMon();renderKPI();loadSettingsUI();
-  if(document.getElementById('att-date')) renderAttendance();
   // Render KPI charts if KPI tab is active
   const activeTab=document.querySelector('.tab-content.active');
   if(activeTab&&activeTab.id==='tab-kpi'){
