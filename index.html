@@ -158,6 +158,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <button class="nav-tab" onclick="showTab('testing')">🧪 Sheet 4: Testing Schedule</button>
   <button class="nav-tab" onclick="showTab('testmon')">📊 Sheet 5: Testing Monitoring</button>
   <button class="nav-tab" onclick="showTab('kpi')">📈 KPI Dashboard</button>
+  <button class="nav-tab" onclick="showTab('attendance')">👥 Attendance</button>
   <button class="nav-tab" onclick="showTab('settings')">⚙️ Settings</button>
 </div>
 
@@ -3299,6 +3300,416 @@ fbRef.on('value', snapshot => {
 database.ref('.info/connected').on('value', snap => {
   showOnlineStatus(snap.val() === true);
 });
+
+// ============================================================
+// ATTENDANCE MONITORING
+// ============================================================
+const attRef = database.ref('attendance');
+let attDB = { personnel: [], records: {} };
+
+attRef.on('value', snap => {
+  const d = snap.val();
+  if(d){ attDB = d; if(!attDB.personnel) attDB.personnel=[]; if(!attDB.records) attDB.records={}; }
+  if(document.getElementById('tab-attendance').classList.contains('active')) renderAttendance();
+});
+
+function saveAtt(){ attRef.set(attDB); }
+
+const ADMIN_POSITIONS = ['QC Officer','QC Associate','Testing Coordinator','Laboratory Technician'];
+const WEEKLY_POSITIONS = ['QA Slump','Lab. Aide','Site Coordinator','Mold Collector'];
+
+function updatePositionOptions(){
+  const cat = document.getElementById('att-category').value;
+  const sel = document.getElementById('att-position');
+  const opts = cat === 'admin' ? ADMIN_POSITIONS : WEEKLY_POSITIONS;
+  sel.innerHTML = opts.map(p=>`<option value="${p}">${p}</option>`).join('');
+}
+
+function showAddPersonnel(){
+  document.getElementById('att-modal-title').textContent = 'Add Personnel';
+  document.getElementById('att-name').value = '';
+  document.getElementById('att-category').value = 'admin';
+  updatePositionOptions();
+  document.getElementById('att-schedule').value = '08:00';
+  document.getElementById('att-schedout').value = '17:00';
+  document.getElementById('att-edit-id').value = '';
+  document.getElementById('att-modal').style.display = 'flex';
+}
+
+function closeAttModal(){ document.getElementById('att-modal').style.display = 'none'; }
+
+function savePersonnel(){
+  const name = document.getElementById('att-name').value.trim();
+  if(!name){ alert('Please enter a name.'); return; }
+  const editId = document.getElementById('att-edit-id').value;
+  const p = {
+    id: editId || Date.now().toString(),
+    name,
+    category: document.getElementById('att-category').value,
+    position: document.getElementById('att-position').value,
+    schedIn: document.getElementById('att-schedule').value,
+    schedOut: document.getElementById('att-schedout').value,
+  };
+  if(editId){
+    const idx = attDB.personnel.findIndex(x=>x.id===editId);
+    if(idx>-1) attDB.personnel[idx] = p;
+  } else {
+    attDB.personnel.push(p);
+  }
+  saveAtt();
+  closeAttModal();
+  renderAttendance();
+}
+
+function editPersonnel(id){
+  const p = attDB.personnel.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('att-modal-title').textContent = 'Edit Personnel';
+  document.getElementById('att-name').value = p.name;
+  document.getElementById('att-category').value = p.category;
+  updatePositionOptions();
+  document.getElementById('att-position').value = p.position;
+  document.getElementById('att-schedule').value = p.schedIn||'08:00';
+  document.getElementById('att-schedout').value = p.schedOut||'17:00';
+  document.getElementById('att-edit-id').value = p.id;
+  document.getElementById('att-modal').style.display = 'flex';
+}
+
+function deletePersonnel(id){
+  if(!confirm('Remove this personnel?')) return;
+  attDB.personnel = attDB.personnel.filter(x=>x.id!==id);
+  saveAtt();
+  renderAttendance();
+}
+
+function getAttDate(){
+  const el = document.getElementById('att-date');
+  if(!el||!el.value) return new Date().toISOString().split('T')[0];
+  return el.value;
+}
+
+function getRecord(pid, date){ return (attDB.records[date]||{})[pid]||{}; }
+
+function saveRecord(pid, date, field, value){
+  if(!attDB.records[date]) attDB.records[date] = {};
+  if(!attDB.records[date][pid]) attDB.records[date][pid] = {};
+  attDB.records[date][pid][field] = value;
+  saveAtt();
+  // Recompute status cell
+  const rec = attDB.records[date][pid];
+  const p = attDB.personnel.find(x=>x.id===pid);
+  if(p){ updateStatusCell(pid, date, p, rec); }
+}
+
+function timeToMins(t){
+  if(!t) return null;
+  const [h,m] = t.split(':').map(Number);
+  return h*60+m;
+}
+
+function computeStatus(p, rec){
+  const timeIn = rec.timeIn;
+  if(!timeIn) return {label:'—', color:'#888', bg:'transparent'};
+
+  // Effective schedule in — use reschedule if set, else default
+  let schedIn = rec.reschedIn || p.schedIn || '08:00';
+  const schedMins = timeToMins(schedIn);
+  const timeInMins = timeToMins(timeIn);
+
+  // If clocked in more than 2 hours early AND no reschedule → treat as scheduled time
+  if(!rec.reschedIn && (schedMins - timeInMins) > 120){
+    return {label:'EARLY (Invalid)', color:'#E65100', bg:'#FFF3E0'};
+  }
+
+  // Within 1 hour before schedule → ON TIME
+  if(timeInMins <= schedMins + 1){ // +1 min grace
+    return {label:'ON TIME', color:'#1B5E20', bg:'#E8F5E9'};
+  }
+
+  // More than 1 minute after schedule → LATE (1 hr rule: schedule+1min = late)
+  // Wait — rule: 1 hour before is the grace. So if scheduled 8:00, 
+  // arriving 7:00-8:00 = ON TIME, arriving 8:01+ = LATE
+  if(timeInMins > schedMins){
+    const lateBy = timeInMins - schedMins;
+    const h = Math.floor(lateBy/60), m = lateBy%60;
+    const lateStr = h>0 ? `${h}h${m>0?m+'m':''}` : `${m}m`;
+    return {label:`LATE (+${lateStr})`, color:'#B71C1C', bg:'#FFEBEE'};
+  }
+
+  return {label:'ON TIME', color:'#1B5E20', bg:'#E8F5E9'};
+}
+
+function updateStatusCell(pid, date, p, rec){
+  const cell = document.getElementById(`att-status-${pid}`);
+  if(!cell) return;
+  const s = computeStatus(p, rec);
+  cell.textContent = s.label;
+  cell.style.color = s.color;
+  cell.style.background = s.bg;
+  cell.style.fontWeight = '700';
+  cell.style.fontSize = '11px';
+  cell.style.textAlign = 'center';
+  cell.style.borderRadius = '3px';
+  cell.style.padding = '2px 6px';
+}
+
+function buildRow(p, date){
+  const rec = getRecord(p.id, date);
+  const s = computeStatus(p, rec);
+  return `<tr>
+    <td style="font-weight:600">${p.name}</td>
+    <td style="font-size:11px;color:#555">${p.position}</td>
+    <td style="text-align:center;font-weight:600">${p.schedIn||'—'}</td>
+    <td style="text-align:center;font-weight:600">${p.schedOut||'—'}</td>
+    <td style="text-align:center">
+      <input type="time" value="${rec.reschedIn||''}"
+        onchange="saveRecord('${p.id}','${date}','reschedIn',this.value);renderAttendance()"
+        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
+    </td>
+    <td style="text-align:center">
+      <input type="time" value="${rec.reschedOut||''}"
+        onchange="saveRecord('${p.id}','${date}','reschedOut',this.value)"
+        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
+    </td>
+    <td style="text-align:center">
+      <input type="time" value="${rec.timeIn||''}"
+        onchange="saveRecord('${p.id}','${date}','timeIn',this.value);renderAttendance()"
+        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
+    </td>
+    <td style="text-align:center">
+      <input type="time" value="${rec.timeOut||''}"
+        onchange="saveRecord('${p.id}','${date}','timeOut',this.value)"
+        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
+    </td>
+    <td id="att-status-${p.id}" style="text-align:center;font-weight:700;font-size:11px;color:${s.color};background:${s.bg};border-radius:3px;padding:2px 6px">${s.label}</td>
+    <td class="no-print" style="text-align:center">
+      <button onclick="editPersonnel('${p.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
+      <button onclick="deletePersonnel('${p.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px" title="Delete">🗑</button>
+    </td>
+  </tr>`;
+}
+
+function renderAttendance(){
+  const date = getAttDate();
+  const dow = new Date(date+'T00:00:00').getDay(); // 0=Sun,6=Sat
+
+  // Admin personnel (all days)
+  const adminList = attDB.personnel.filter(p=>p.category==='admin');
+  const adminTbody = document.getElementById('att-admin-tbody');
+  if(adminTbody){
+    adminTbody.innerHTML = adminList.length
+      ? adminList.map(p=>buildRow(p,date)).join('')
+      : '<tr><td colspan="10" style="text-align:center;padding:16px;color:#999">No admin personnel added yet. Click "+ Add Personnel" to begin.</td></tr>';
+  }
+
+  // Weekly personnel (Mon-Sat only)
+  const weeklyList = attDB.personnel.filter(p=>p.category==='weekly');
+  const weeklyTbody = document.getElementById('att-weekly-tbody');
+  const weeklyOff = document.getElementById('att-weekly-off');
+  const weeklyTable = document.getElementById('att-weekly-table');
+
+  if(dow === 0){ // Sunday
+    if(weeklyTable) weeklyTable.style.display='none';
+    if(weeklyOff) weeklyOff.style.display='block';
+  } else {
+    if(weeklyTable) weeklyTable.style.display='';
+    if(weeklyOff) weeklyOff.style.display='none';
+    if(weeklyTbody){
+      weeklyTbody.innerHTML = weeklyList.length
+        ? weeklyList.map(p=>buildRow(p,date)).join('')
+        : '<tr><td colspan="10" style="text-align:center;padding:16px;color:#999">No weekly personnel added yet.</td></tr>';
+    }
+  }
+}
+
+function printAttendance(){
+  const date = getAttDate();
+  const fmtD = new Date(date+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  const adminList = attDB.personnel.filter(p=>p.category==='admin');
+  const weeklyList = attDB.personnel.filter(p=>p.category==='weekly');
+  const dow = new Date(date+'T00:00:00').getDay();
+
+  const buildPrintRows = (list) => list.map(p=>{
+    const rec = getRecord(p.id, date);
+    const s = computeStatus(p, rec);
+    return `<tr>
+      <td>${p.name}</td>
+      <td>${p.position}</td>
+      <td style="text-align:center">${p.schedIn||'—'}</td>
+      <td style="text-align:center">${p.schedOut||'—'}</td>
+      <td style="text-align:center">${rec.reschedIn||'—'}</td>
+      <td style="text-align:center">${rec.reschedOut||'—'}</td>
+      <td style="text-align:center">${rec.timeIn||'—'}</td>
+      <td style="text-align:center">${rec.timeOut||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:${s.color};background:${s.bg};-webkit-print-color-adjust:exact;print-color-adjust:exact">${s.label}</td>
+    </tr>`;
+  }).join('');
+
+  const tableHdr = `<thead><tr style="background:#6B1A1A;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+    <th>Name</th><th>Position</th><th>Sched In</th><th>Sched Out</th>
+    <th>Re-Sched In</th><th>Re-Sched Out</th><th>Time In</th><th>Time Out</th><th>Status</th>
+  </tr></thead>`;
+
+  const w = window.open('','_blank','width=1000,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Attendance - ${date}</title>
+  <style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;font-size:10px;padding:16px}
+  h1{font-size:14px;font-weight:700;color:#6B1A1A;text-align:center}
+  h2{font-size:11px;text-align:center;margin-bottom:2px}
+  h3{font-size:10px;color:#6B1A1A;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 4px;padding-bottom:3px;border-bottom:2px solid #6B1A1A}
+  .subtitle{font-size:10px;color:#666;text-align:center;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:8px;table-layout:fixed}
+  th{background:#6B1A1A;color:#fff;padding:4px 6px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  td{padding:4px 6px;border-bottom:1px solid #eee;vertical-align:top;word-wrap:break-word}
+  tr:nth-child(even) td{background:#fdf8f8;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .footer{margin-top:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center}
+  .footer div{padding-top:28px;border-top:1px solid #333;font-size:9px}
+  .conf{text-align:center;font-size:8px;color:#999;margin-top:10px}
+  @media print{@page{margin:1cm;size:landscape}}
+  </style></head><body>
+  <h1>BIG BEN READY MIX CONCRETE</h1>
+  <h2>ATTENDANCE MONITORING</h2>
+  <div class="subtitle">${fmtD}</div>
+  <h3>Admin Personnel</h3>
+  <table><colgroup><col style="width:16%"><col style="width:14%"><col style="width:8%"><col style="width:8%"><col style="width:10%"><col style="width:10%"><col style="width:8%"><col style="width:8%"><col style="width:10%"></colgroup>
+  ${tableHdr}<tbody>${buildPrintRows(adminList)}</tbody></table>
+  ${dow!==0?`<h3>Weekly Personnel <span style="font-weight:400;text-transform:none">(Mon–Sat)</span></h3>
+  <table><colgroup><col style="width:16%"><col style="width:14%"><col style="width:8%"><col style="width:8%"><col style="width:10%"><col style="width:10%"><col style="width:8%"><col style="width:8%"><col style="width:10%"></colgroup>
+  ${tableHdr}<tbody>${buildPrintRows(weeklyList)}</tbody></table>`:'<p style="text-align:center;color:#888;padding:10px">Weekly Personnel — Rest Day (Sunday)</p>'}
+  <div class="footer">
+    <div>Prepared by<br><br>Testing Coordinator</div>
+    <div>Checked by<br><br>QC Supervisor</div>
+    <div>Noted by<br><br>R&D Supervisor</div>
+  </div>
+  <div class="conf">STRICTLY CONFIDENTIAL – For use of BIG BEN only. Unauthorized reproduction is strictly prohibited.</div>
+  <script>setTimeout(()=>window.print(),500)<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+// Initialize attendance date to today
+document.addEventListener('DOMContentLoaded', ()=>{
+  const attDateEl = document.getElementById('att-date');
+  if(attDateEl && !attDateEl.value){
+    attDateEl.value = new Date().toISOString().split('T')[0];
+  }
+});
 </script>
 </body>
 </html>
+<!-- ===== ATTENDANCE MONITORING ===== -->
+<div id="tab-attendance" class="tab-content">
+  <div class="panel">
+    <div class="panel-header">
+      👥 Attendance Monitoring
+      <div style="display:flex;gap:8px;align-items:center" class="no-print">
+        <label style="font-size:12px;color:#fff">Date:</label>
+        <input type="date" id="att-date" onchange="renderAttendance()"
+          style="font-size:11px;padding:3px 6px;border-radius:3px;border:none">
+        <button class="btn btn-sm" style="background:#fff;color:var(--maroon)" onclick="printAttendance()">🖨 Print</button>
+        <button class="btn btn-sm" style="background:#C9A84C;color:#fff" onclick="showAddPersonnel()">+ Add Personnel</button>
+      </div>
+    </div>
+    <div class="panel-body" style="padding:0">
+
+      <!-- ADD/EDIT PERSONNEL MODAL -->
+      <div id="att-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:8px;padding:24px;width:460px;max-width:95vw;max-height:90vh;overflow-y:auto">
+          <h3 style="color:var(--maroon);margin-bottom:16px;font-size:15px" id="att-modal-title">Add Personnel</h3>
+          <div class="form-grid-2">
+            <div class="form-group" style="grid-column:1/span 2">
+              <label>Full Name</label>
+              <input type="text" id="att-name" placeholder="e.g. Juan dela Cruz">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="att-category" onchange="updatePositionOptions()">
+                <option value="admin">Admin Personnel</option>
+                <option value="weekly">Weekly Personnel</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Position</label>
+              <select id="att-position">
+                <option value="QC Officer">QC Officer</option>
+                <option value="QC Associate">QC Associate</option>
+                <option value="Testing Coordinator">Testing Coordinator</option>
+                <option value="Laboratory Technician">Laboratory Technician</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Default Schedule (Time In)</label>
+              <input type="time" id="att-schedule" value="08:00">
+            </div>
+            <div class="form-group">
+              <label>Default Schedule (Time Out)</label>
+              <input type="time" id="att-schedout" value="17:00">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <button class="btn btn-maroon" onclick="savePersonnel()">💾 Save</button>
+            <button class="btn btn-outline" onclick="closeAttModal()">Cancel</button>
+          </div>
+          <input type="hidden" id="att-edit-id">
+        </div>
+      </div>
+
+      <!-- ADMIN PERSONNEL TABLE -->
+      <div style="padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--maroon);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid var(--maroon)">
+          Admin Personnel
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table" id="att-admin-table">
+            <thead>
+              <tr>
+                <th style="width:160px">Name</th>
+                <th style="width:140px">Position</th>
+                <th style="width:90px">Schedule In</th>
+                <th style="width:90px">Schedule Out</th>
+                <th style="width:110px">Re-Schedule In</th>
+                <th style="width:110px">Re-Schedule Out</th>
+                <th style="width:100px">Time In</th>
+                <th style="width:100px">Time Out</th>
+                <th style="width:80px">Status</th>
+                <th style="width:70px" class="no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="att-admin-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- WEEKLY PERSONNEL TABLE -->
+        <div style="font-size:12px;font-weight:700;color:var(--maroon);text-transform:uppercase;letter-spacing:.5px;margin:20px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--maroon)">
+          Weekly Personnel <span style="font-size:10px;font-weight:400;color:#888;text-transform:none">(Monday–Saturday)</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table" id="att-weekly-table">
+            <thead>
+              <tr>
+                <th style="width:160px">Name</th>
+                <th style="width:140px">Position</th>
+                <th style="width:90px">Schedule In</th>
+                <th style="width:90px">Schedule Out</th>
+                <th style="width:110px">Re-Schedule In</th>
+                <th style="width:110px">Re-Schedule Out</th>
+                <th style="width:100px">Time In</th>
+                <th style="width:100px">Time Out</th>
+                <th style="width:80px">Status</th>
+                <th style="width:70px" class="no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="att-weekly-tbody"></tbody>
+          </table>
+        </div>
+        <div id="att-weekly-off" style="display:none;text-align:center;padding:16px;color:#888;font-size:13px;background:#f9f9f9;border-radius:4px;margin-top:8px">
+          📅 Weekly Personnel — Rest Day (Sunday)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
