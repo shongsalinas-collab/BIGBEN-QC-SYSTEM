@@ -3467,11 +3467,7 @@ function buildRow(p, date){
         onchange="saveRecord('${p.id}','${date}','reschedIn',this.value);renderAttendance()"
         style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
     </td>
-    <td style="text-align:center">
-      <input type="time" value="${rec.reschedOut||''}"
-        onchange="saveRecord('${p.id}','${date}','reschedOut',this.value)"
-        style="border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px">
-    </td>
+
     <td style="text-align:center">
       <input type="time" value="${rec.timeIn||''}"
         onchange="saveRecord('${p.id}','${date}','timeIn',this.value);renderAttendance()"
@@ -3539,7 +3535,6 @@ function printAttendance(){
       <td style="text-align:center">${p.schedIn||'—'}</td>
       <td style="text-align:center">${p.schedOut||'—'}</td>
       <td style="text-align:center">${rec.reschedIn||'—'}</td>
-      <td style="text-align:center">${rec.reschedOut||'—'}</td>
       <td style="text-align:center">${rec.timeIn||'—'}</td>
       <td style="text-align:center">${rec.timeOut||'—'}</td>
       <td style="text-align:center;font-weight:700;color:${s.color};background:${s.bg};-webkit-print-color-adjust:exact;print-color-adjust:exact">${s.label}</td>
@@ -3548,7 +3543,7 @@ function printAttendance(){
 
   const tableHdr = `<thead><tr style="background:#6B1A1A;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">
     <th>Name</th><th>Position</th><th>Sched In</th><th>Sched Out</th>
-    <th>Re-Sched In</th><th>Re-Sched Out</th><th>Time In</th><th>Time Out</th><th>Status</th>
+    <th>Re-Sched In</th><th>Time In</th><th>Time Out</th><th>Status</th>
   </tr></thead>`;
 
   const w = window.open('','_blank','width=1000,height=700');
@@ -3671,7 +3666,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <th style="width:90px">Schedule In</th>
                 <th style="width:90px">Schedule Out</th>
                 <th style="width:110px">Re-Schedule In</th>
-                <th style="width:110px">Re-Schedule Out</th>
                 <th style="width:100px">Time In</th>
                 <th style="width:100px">Time Out</th>
                 <th style="width:80px">Status</th>
@@ -3695,7 +3689,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 <th style="width:90px">Schedule In</th>
                 <th style="width:90px">Schedule Out</th>
                 <th style="width:110px">Re-Schedule In</th>
-                <th style="width:110px">Re-Schedule Out</th>
                 <th style="width:100px">Time In</th>
                 <th style="width:100px">Time Out</th>
                 <th style="width:80px">Status</th>
