@@ -3491,7 +3491,7 @@ function renderAttendance(){
   const dow = new Date(date+'T00:00:00').getDay(); // 0=Sun,6=Sat
 
   // Admin personnel (all days)
-  const adminList = attDB.personnel.filter(p=>p.category==='admin');
+  const adminList = attDB.personnel.filter(p=>p.category==='admin').sort((a,b)=>a.name.localeCompare(b.name));
   const adminTbody = document.getElementById('att-admin-tbody');
   if(adminTbody){
     adminTbody.innerHTML = adminList.length
@@ -3500,7 +3500,7 @@ function renderAttendance(){
   }
 
   // Weekly personnel (Mon-Sat only)
-  const weeklyList = attDB.personnel.filter(p=>p.category==='weekly');
+  const weeklyList = attDB.personnel.filter(p=>p.category==='weekly').sort((a,b)=>a.name.localeCompare(b.name));
   const weeklyTbody = document.getElementById('att-weekly-tbody');
   const weeklyOff = document.getElementById('att-weekly-off');
   const weeklyTable = document.getElementById('att-weekly-table');
@@ -3658,29 +3658,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
           Admin Personnel
         </div>
         <div style="overflow-x:auto">
-          <table class="data-table" id="att-admin-table" style="table-layout:fixed;width:100%">
+          <table class="data-table" id="att-admin-table">
             <thead>
-              <colgroup>
-                <col style="width:18%">
-                <col style="width:14%">
-                <col style="width:9%">
-                <col style="width:9%">
-                <col style="width:11%">
-                <col style="width:9%">
-                <col style="width:9%">
-                <col style="width:10%">
-                <col style="width:7%" class="no-print">
-              </colgroup>
               <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Schedule In</th>
-                <th>Schedule Out</th>
-                <th>Re-Schedule In</th>
-                <th>Time In</th>
-                <th>Time Out</th>
-                <th>Status</th>
-                <th class="no-print">Actions</th>
+                <th style="width:160px">Name</th>
+                <th style="width:140px">Position</th>
+                <th style="width:90px">Schedule In</th>
+                <th style="width:90px">Schedule Out</th>
+                <th style="width:110px">Re-Schedule In</th>
+                <th style="width:100px">Time In</th>
+                <th style="width:100px">Time Out</th>
+                <th style="width:80px">Status</th>
+                <th style="width:70px" class="no-print">Actions</th>
               </tr>
             </thead>
             <tbody id="att-admin-tbody"></tbody>
@@ -3692,29 +3681,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
           Weekly Personnel <span style="font-size:10px;font-weight:400;color:#888;text-transform:none">(Monday–Saturday)</span>
         </div>
         <div style="overflow-x:auto">
-          <table class="data-table" id="att-weekly-table" style="table-layout:fixed;width:100%">
+          <table class="data-table" id="att-weekly-table">
             <thead>
-              <colgroup>
-                <col style="width:18%">
-                <col style="width:14%">
-                <col style="width:9%">
-                <col style="width:9%">
-                <col style="width:11%">
-                <col style="width:9%">
-                <col style="width:9%">
-                <col style="width:10%">
-                <col style="width:7%" class="no-print">
-              </colgroup>
               <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Schedule In</th>
-                <th>Schedule Out</th>
-                <th>Re-Schedule In</th>
-                <th>Time In</th>
-                <th>Time Out</th>
-                <th>Status</th>
-                <th class="no-print">Actions</th>
+                <th style="width:160px">Name</th>
+                <th style="width:140px">Position</th>
+                <th style="width:90px">Schedule In</th>
+                <th style="width:90px">Schedule Out</th>
+                <th style="width:110px">Re-Schedule In</th>
+                <th style="width:100px">Time In</th>
+                <th style="width:100px">Time Out</th>
+                <th style="width:80px">Status</th>
+                <th style="width:70px" class="no-print">Actions</th>
               </tr>
             </thead>
             <tbody id="att-weekly-tbody"></tbody>
