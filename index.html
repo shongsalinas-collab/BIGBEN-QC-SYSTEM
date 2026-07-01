@@ -3398,8 +3398,20 @@ function saveRecord(pid, date, field, value){
   if(!attDB.records[date]) attDB.records[date] = {};
   if(!attDB.records[date][pid]) attDB.records[date][pid] = {};
   attDB.records[date][pid][field] = value;
+
+  // Auto-fill other columns when schedIn is set to special status
+  const SPECIAL = ['MEDICAL','ON_LEAVE','NO_SCHED'];
+  if(field === 'schedIn' && SPECIAL.includes(value)){
+    const rec = attDB.records[date][pid];
+    // Only auto-fill if column is currently empty or also special
+    ['schedOut','reschedIn','timeIn','timeOut'].forEach(f => {
+      if(!rec[f] || SPECIAL.includes(rec[f])){
+        rec[f] = value;
+      }
+    });
+  }
+
   saveAtt();
-  // Recompute status cell
   const rec = attDB.records[date][pid];
   const p = attDB.personnel.find(x=>x.id===pid);
   if(p){ updateStatusCell(pid, date, p, rec); }
