@@ -3500,11 +3500,16 @@ function renderAttendance(){
   const dow = new Date(date+'T00:00:00').getDay(); // 0=Sun,6=Sat
 
   // Admin personnel (all days)
+  const ADMIN_RANK = {'QC Officer':1,'QC Associate':2,'Testing Coordinator':3,'Laboratory Technician':4};
   const adminList = attDB.personnel.filter(p=>{
     if(p.category!=='admin') return false;
-    if(p.endDate && date > p.endDate) return false; // resigned/transferred
+    if(p.endDate && date > p.endDate) return false;
     return true;
-  }).sort((a,b)=>a.name.localeCompare(b.name));
+  }).sort((a,b)=>{
+    const ra = ADMIN_RANK[a.position]||99, rb = ADMIN_RANK[b.position]||99;
+    if(ra!==rb) return ra-rb;
+    return a.name.localeCompare(b.name);
+  });
   const adminTbody = document.getElementById('att-admin-tbody');
   if(adminTbody){
     adminTbody.innerHTML = adminList.length
@@ -3513,11 +3518,16 @@ function renderAttendance(){
   }
 
   // Weekly personnel (Mon-Sat only)
+  const WEEKLY_RANK = {'Mold Collector':1,'Site Coordinator':2,'Laboratory Technician':3,'QA Slump':4,'Lab. Aide':5};
   const weeklyList = attDB.personnel.filter(p=>{
     if(p.category!=='weekly') return false;
-    if(p.endDate && date > p.endDate) return false; // resigned/transferred
+    if(p.endDate && date > p.endDate) return false;
     return true;
-  }).sort((a,b)=>a.name.localeCompare(b.name));
+  }).sort((a,b)=>{
+    const ra = WEEKLY_RANK[a.position]||99, rb = WEEKLY_RANK[b.position]||99;
+    if(ra!==rb) return ra-rb;
+    return a.name.localeCompare(b.name);
+  });
   const weeklyTbody = document.getElementById('att-weekly-tbody');
   const weeklyOff = document.getElementById('att-weekly-off');
   const weeklyTable = document.getElementById('att-weekly-table');
