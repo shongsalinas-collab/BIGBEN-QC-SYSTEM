@@ -3458,12 +3458,13 @@ function updateStatusCell(pid, date, p, rec){
 }
 
 function timeCell(pid, date, field, currentVal){
-  const SPECIAL = ['MEDICAL','ON_LEAVE'];
+  const SPECIAL = ['MEDICAL','ON_LEAVE','NO_SCHED'];
   const isSpecial = SPECIAL.includes(currentVal);
   const needsRender = ['schedIn','reschedIn','timeIn'].includes(field);
   const onCh = `saveRecord('${pid}','${date}','${field}',this.value)${needsRender?';renderAttendance()':''}`;
 
   let opts = `<option value="">-- Select --</option>
+    <option value="NO_SCHED" ${currentVal==='NO_SCHED'?'selected':''}>No Schedule</option>
     <option value="MEDICAL" ${currentVal==='MEDICAL'?'selected':''}>For Medical</option>
     <option value="ON_LEAVE" ${currentVal==='ON_LEAVE'?'selected':''}>On Leave</option>
     <option disabled>──────</option>`;
@@ -3478,7 +3479,7 @@ function timeCell(pid, date, field, currentVal){
     }
   }
 
-  const specColor = {'MEDICAL':'#1565C0','ON_LEAVE':'#2E7D32'};
+  const specColor = {'NO_SCHED':'#888','MEDICAL':'#1565C0','ON_LEAVE':'#2E7D32'};
   const selColor = isSpecial ? specColor[currentVal] : '#111';
   const selBg = isSpecial ? specColor[currentVal]+'22' : '#fff';
 
