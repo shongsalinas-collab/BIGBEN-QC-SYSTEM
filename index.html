@@ -3457,12 +3457,12 @@ function updateStatusCell(pid, date, p, rec){
   cell.style.padding = '2px 6px';
 }
 
-function timeCell(pid, date, field, currentVal, isDefault){
+function timeCell(pid, date, field, currentVal){
   const SPECIAL = ['NO_SCHED','MEDICAL','ON_LEAVE'];
   const isSpecial = SPECIAL.includes(currentVal);
   const sc = "font-size:10px;padding:1px 2px;border:1px solid #ddd;border-radius:3px;width:100%;margin-bottom:2px";
   const tc = "border:1px solid #ddd;border-radius:3px;font-size:11px;padding:2px 4px;width:90px";
-  const onChange = (field==='reschedIn'||field==='timeIn'||field==='schedIn')
+  const onChange = (field==='reschedIn'||field==='timeIn'||field==='schedIn'||field==='schedOut')
     ? `saveRecord('${pid}','${date}','${field}',this.value);renderAttendance()`
     : `saveRecord('${pid}','${date}','${field}',this.value)`;
   return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px">
@@ -3497,7 +3497,7 @@ function buildRow(p, date){
   return `<tr>
     <td style="font-weight:600">${p.name}${p.endDate?`<br><span style="font-size:10px;color:#E65100;font-weight:400">Until ${p.endDate}</span>`:''}</td>
     <td style="font-size:11px;color:#555">${p.position}</td>
-    <td>${timeCell(p.id,date,'schedIn',rec.schedIn||p.schedIn||'',true)}</td>
+    <td>${timeCell(p.id,date,'schedIn',rec.schedIn||p.schedIn||'',false)}</td>
     <td>${timeCell(p.id,date,'schedOut',rec.schedOut||p.schedOut||'',false)}</td>
     <td>${timeCell(p.id,date,'reschedIn',rec.reschedIn||'',false)}</td>
     <td>${timeCell(p.id,date,'timeIn',rec.timeIn||'',false)}</td>
