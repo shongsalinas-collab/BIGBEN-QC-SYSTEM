@@ -159,6 +159,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
   <button class="nav-tab" onclick="showTab('testmon')">📊 Sheet 5: Testing Monitoring</button>
   <button class="nav-tab" onclick="showTab('kpi')">📈 KPI Dashboard</button>
   <button class="nav-tab" onclick="showTab('attendance')">👥 Attendance</button>
+  <button class="nav-tab" onclick="showTab('fuel')">⛽ Fuel</button>
   <button class="nav-tab" onclick="showTab('settings')">⚙️ Settings</button>
 </div>
 
@@ -336,6 +337,124 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
         </table>
       </div>
       <div id="master-empty" style="text-align:center;padding:24px;color:#999;font-size:13px">No entries yet. Add a pouring entry above.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== FUEL CONSUMPTION ===== -->
+<div id="tab-fuel" class="tab-content">
+  <div class="panel">
+    <div class="panel-header">
+      ⛽ Fuel Consumption
+      <div style="display:flex;gap:8px;align-items:center" class="no-print">
+        <label style="font-size:12px;color:#fff">Month:</label>
+        <select id="fuel-month" onchange="renderFuel()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none"></select>
+        <label style="font-size:12px;color:#fff">Plate No.:</label>
+        <select id="fuel-plate-filter" onchange="renderFuel()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none">
+          <option value="">All Vehicles</option>
+        </select>
+        <button class="btn btn-sm" style="background:#fff;color:var(--maroon)" onclick="printFuel()">🖨 Print</button>
+      </div>
+    </div>
+    <div class="panel-body">
+
+      <!-- SUMMARY CARDS -->
+      <div id="fuel-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px"></div>
+
+      <!-- ADD ENTRY FORM -->
+      <div style="background:#f9f9f9;border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--maroon);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">➕ Add Fuel Entry</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="fuel-date">
+          </div>
+          <div class="form-group">
+            <label>FIS No.</label>
+            <input type="text" id="fuel-fis" placeholder="e.g. FIS-2026-001">
+          </div>
+          <div class="form-group">
+            <label>Customer</label>
+            <select id="fuel-customer">
+              <option value="">-- Select --</option>
+              <option>Asphalt</option>
+              <option>Concrete</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Plate No.</label>
+            <input type="text" id="fuel-plate" placeholder="e.g. ABC 1234" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+          </div>
+          <div class="form-group">
+            <label>Requested By</label>
+            <input type="text" id="fuel-requestby" placeholder="Name of requestor">
+          </div>
+          <div class="form-group">
+            <label>Process</label>
+            <select id="fuel-process" onchange="toggleFuelOther('process')">
+              <option value="">-- Select --</option>
+              <option>Testing</option>
+              <option>Collection</option>
+              <option>Inspection</option>
+              <option>Meeting</option>
+              <option value="other-process">Others (specify)</option>
+            </select>
+          </div>
+          <div class="form-group" id="fuel-process-other-wrap" style="display:none">
+            <label>Specify Process</label>
+            <input type="text" id="fuel-process-other" placeholder="Specify...">
+          </div>
+          <div class="form-group">
+            <label>Vehicle Type</label>
+            <select id="fuel-vtype" onchange="toggleFuelOther('vtype')">
+              <option value="">-- Select --</option>
+              <option>L200</option>
+              <option>L300</option>
+              <option>Strada</option>
+              <option>ELF</option>
+              <option>Hilux</option>
+              <option value="other-vtype">Others (specify)</option>
+            </select>
+          </div>
+          <div class="form-group" id="fuel-vtype-other-wrap" style="display:none">
+            <label>Specify Vehicle Type</label>
+            <input type="text" id="fuel-vtype-other" placeholder="Specify...">
+          </div>
+          <div class="form-group">
+            <label>Liters</label>
+            <input type="number" id="fuel-liters" placeholder="0.00" step="0.01" min="0">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-maroon" onclick="addFuelEntry()">➕ Add Entry</button>
+          <button class="btn btn-outline" onclick="clearFuelForm()">Clear</button>
+          <span id="fuel-save-msg" style="font-size:12px;color:var(--green);font-weight:600;align-self:center;display:none">✅ Saved!</span>
+        </div>
+      </div>
+
+      <!-- FUEL LOG TABLE -->
+      <div style="overflow-x:auto">
+        <table class="data-table" id="fuel-table" style="table-layout:fixed;width:100%">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th style="width:90px">Date</th>
+              <th style="width:110px">FIS No.</th>
+              <th style="width:90px">Customer</th>
+              <th style="width:90px">Plate No.</th>
+              <th style="width:130px">Requested By</th>
+              <th style="width:110px">Process</th>
+              <th style="width:100px">Vehicle Type</th>
+              <th style="width:70px">Liters</th>
+              <th style="width:70px" class="no-print">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="fuel-tbody"></tbody>
+          <tfoot id="fuel-tfoot"></tfoot>
+        </table>
+      </div>
+      <div id="fuel-empty" style="text-align:center;padding:24px;color:#999;font-size:13px;display:none">No fuel entries for this period.</div>
     </div>
   </div>
 </div>
@@ -1668,6 +1787,7 @@ function showTab(name){
   if(name==='testing') renderTesting();
   if(name==='master') renderMaster();
   if(name==='attendance'){ renderAttendance(); }
+  if(name==='fuel'){ renderFuel(); }
 }
 
 function clearForm(){
@@ -3645,6 +3765,266 @@ document.addEventListener('DOMContentLoaded', ()=>{
   if(attDateEl && !attDateEl.value){
     attDateEl.value = new Date().toISOString().split('T')[0];
   }
+});
+
+// ============================================================
+// FUEL CONSUMPTION
+// ============================================================
+const fuelRef = database.ref('fuel');
+let fuelDB = { entries: [] };
+
+fuelRef.on('value', snap => {
+  const d = snap.val();
+  if(d){ fuelDB = d; if(!Array.isArray(fuelDB.entries)) fuelDB.entries = Object.values(fuelDB.entries||{}).filter(Boolean); }
+  else { fuelDB = {entries:[]}; }
+  if(document.getElementById('tab-fuel').classList.contains('active')) renderFuel();
+});
+
+function saveFuel(){ fuelRef.set(fuelDB); }
+
+function toggleFuelOther(type){
+  if(type==='process'){
+    const v = document.getElementById('fuel-process').value;
+    document.getElementById('fuel-process-other-wrap').style.display = v==='other-process'?'block':'none';
+  } else {
+    const v = document.getElementById('fuel-vtype').value;
+    document.getElementById('fuel-vtype-other-wrap').style.display = v==='other-vtype'?'block':'none';
+  }
+}
+
+function getFuelVal(id){ return (document.getElementById(id).value||'').trim(); }
+function gfv(id){ return parseFloat(document.getElementById(id).value)||0; }
+
+function addFuelEntry(){
+  const date = getFuelVal('fuel-date');
+  const fis  = getFuelVal('fuel-fis');
+  const customer = getFuelVal('fuel-customer');
+  const plate = getFuelVal('fuel-plate');
+  const reqby = getFuelVal('fuel-requestby');
+  const procRaw = getFuelVal('fuel-process');
+  const process = procRaw==='other-process' ? getFuelVal('fuel-process-other') : procRaw;
+  const vtRaw = getFuelVal('fuel-vtype');
+  const vtype = vtRaw==='other-vtype' ? getFuelVal('fuel-vtype-other') : vtRaw;
+  const liters = gfv('fuel-liters');
+
+  if(!date){ alert('Please enter a date.'); return; }
+  if(!plate){ alert('Please enter a plate number.'); return; }
+  if(!liters){ alert('Please enter liters.'); return; }
+
+  const entry = { id: Date.now().toString(), date, fis, customer, plate, reqby, process, vtype, liters };
+  fuelDB.entries.push(entry);
+  saveFuel();
+  clearFuelForm();
+  renderFuel();
+
+  // Auto-switch month filter to entry's month
+  const mon = date.substring(0,7);
+  const fuelMonEl = document.getElementById('fuel-month');
+  if(fuelMonEl){
+    const exists = Array.from(fuelMonEl.options).some(o=>o.value===mon);
+    if(!exists){
+      const d2 = new Date(mon+'-01');
+      const lbl = d2.toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+      fuelMonEl.insertAdjacentHTML('afterbegin',`<option value="${mon}">${lbl}</option>`);
+    }
+    fuelMonEl.value = mon;
+  }
+
+  const m = document.getElementById('fuel-save-msg');
+  m.style.display='inline'; setTimeout(()=>m.style.display='none',2000);
+}
+
+function deleteFuelEntry(id){
+  if(!confirm('Delete this entry?')) return;
+  fuelDB.entries = fuelDB.entries.filter(e=>e.id!==id);
+  saveFuel(); renderFuel();
+}
+
+function clearFuelForm(){
+  ['fuel-fis','fuel-plate','fuel-requestby','fuel-liters'].forEach(id=>document.getElementById(id).value='');
+  ['fuel-customer','fuel-process','fuel-vtype'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fuel-process-other-wrap').style.display='none';
+  document.getElementById('fuel-vtype-other-wrap').style.display='none';
+  const dt = document.getElementById('fuel-date');
+  if(!dt.value) dt.value = new Date().toISOString().split('T')[0];
+}
+
+function initFuelMonthDropdown(){
+  const el = document.getElementById('fuel-month');
+  if(!el || el.options.length > 1) return;
+  const today = new Date();
+  const opts = [];
+  for(let i=0;i<12;i++){
+    const d = new Date(today.getFullYear(), today.getMonth()-i, 1);
+    const val = d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0');
+    const lbl = d.toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+    opts.push(`<option value="${val}">${lbl}</option>`);
+  }
+  el.innerHTML = opts.join('');
+}
+
+function renderFuel(){
+  initFuelMonthDropdown();
+
+  const mon = document.getElementById('fuel-month')?.value || '';
+  const plateF = document.getElementById('fuel-plate-filter')?.value || '';
+
+  // Filter entries by month
+  let rows = fuelDB.entries || [];
+  if(mon) rows = rows.filter(e=>e.date&&e.date.startsWith(mon));
+  
+  // Build plate filter options
+  const plateEl = document.getElementById('fuel-plate-filter');
+  if(plateEl){
+    const allPlates = [...new Set((fuelDB.entries||[]).map(e=>e.plate).filter(Boolean))].sort();
+    const curPlate = plateEl.value;
+    plateEl.innerHTML = '<option value="">All Vehicles</option>' +
+      allPlates.map(p=>`<option value="${p}" ${p===curPlate?'selected':''}>${p}</option>`).join('');
+    if(curPlate) plateEl.value = curPlate;
+  }
+
+  // Apply plate filter
+  if(plateF) rows = rows.filter(e=>e.plate===plateF);
+
+  // Sort newest first
+  rows = [...rows].sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  // ── SUMMARY CARDS ──
+  const totalL = rows.reduce((s,e)=>s+(parseFloat(e.liters)||0),0);
+  const monthRows = (fuelDB.entries||[]).filter(e=>e.date&&e.date.startsWith(mon));
+  const monthTotal = monthRows.reduce((s,e)=>s+(parseFloat(e.liters)||0),0);
+
+  // Per vehicle summary
+  const byPlate = {};
+  rows.forEach(e=>{ if(e.plate){ byPlate[e.plate]=(byPlate[e.plate]||0)+(parseFloat(e.liters)||0); }});
+  
+  // Per customer
+  const byCust = {};
+  rows.forEach(e=>{ if(e.customer){ byCust[e.customer]=(byCust[e.customer]||0)+(parseFloat(e.liters)||0); }});
+
+  const summaryEl = document.getElementById('fuel-summary');
+  if(summaryEl){
+    const cardStyle = 'background:#fff;border:1px solid var(--border);border-radius:6px;padding:12px 14px;';
+    const cards = [
+      `<div style="${cardStyle}border-top:3px solid var(--maroon)">
+        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Consumption${plateF?' — '+plateF:''}</div>
+        <div style="font-size:22px;font-weight:700;color:var(--maroon)">${totalL.toFixed(2)} <span style="font-size:13px">L</span></div>
+        <div style="font-size:11px;color:#888;margin-top:2px">${rows.length} entries</div>
+      </div>`,
+      `<div style="${cardStyle}border-top:3px solid #1565C0">
+        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Month Total (All Vehicles)</div>
+        <div style="font-size:22px;font-weight:700;color:#1565C0">${monthTotal.toFixed(2)} <span style="font-size:13px">L</span></div>
+        <div style="font-size:11px;color:#888;margin-top:2px">${monthRows.length} entries this month</div>
+      </div>`,
+      `<div style="${cardStyle}border-top:3px solid #2E7D32">
+        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">By Customer</div>
+        ${Object.entries(byCust).map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span>${k}</span><b>${v.toFixed(2)}L</b></div>`).join('')||'<div style="font-size:12px;color:#aaa">No data</div>'}
+      </div>`,
+      `<div style="${cardStyle}border-top:3px solid #E65100">
+        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">By Vehicle${plateF?' — '+plateF:''}</div>
+        ${Object.entries(byPlate).slice(0,4).map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span>${k}</span><b>${v.toFixed(2)}L</b></div>`).join('')||'<div style="font-size:12px;color:#aaa">No data</div>'}
+        ${Object.keys(byPlate).length>4?`<div style="font-size:10px;color:#aaa">+${Object.keys(byPlate).length-4} more</div>`:''}
+      </div>`,
+    ];
+    summaryEl.innerHTML = cards.join('');
+  }
+
+  // ── TABLE ──
+  const tbody = document.getElementById('fuel-tbody');
+  const tfoot = document.getElementById('fuel-tfoot');
+  const empty = document.getElementById('fuel-empty');
+
+  if(!rows.length){
+    if(tbody) tbody.innerHTML='';
+    if(tfoot) tfoot.innerHTML='';
+    if(empty) empty.style.display='block';
+    return;
+  }
+  if(empty) empty.style.display='none';
+
+  if(tbody){
+    tbody.innerHTML = rows.map((e,i)=>`<tr>
+      <td>${rows.length-i}</td>
+      <td>${e.date||'—'}</td>
+      <td style="font-size:11px">${e.fis||'—'}</td>
+      <td><span style="padding:2px 6px;border-radius:3px;font-size:11px;font-weight:700;background:${e.customer==='Asphalt'?'#FFF3E0':'#E3F2FD'};color:${e.customer==='Asphalt'?'#E65100':'#1565C0'}">${e.customer||'—'}</span></td>
+      <td style="font-weight:700">${e.plate||'—'}</td>
+      <td style="font-size:11px">${e.reqby||'—'}</td>
+      <td style="font-size:11px">${e.process||'—'}</td>
+      <td style="font-size:11px">${e.vtype||'—'}</td>
+      <td style="font-weight:700;text-align:right">${parseFloat(e.liters).toFixed(2)}</td>
+      <td class="no-print" style="text-align:center">
+        <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px">🗑</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  // Footer total
+  if(tfoot){
+    tfoot.innerHTML = `<tr style="background:#f9f9f9;font-weight:700">
+      <td colspan="8" style="text-align:right;padding:7px 10px;color:#555">TOTAL</td>
+      <td style="text-align:right;padding:7px 10px;color:var(--maroon);font-size:14px">${totalL.toFixed(2)} L</td>
+      <td class="no-print"></td>
+    </tr>`;
+  }
+}
+
+function printFuel(){
+  const mon = document.getElementById('fuel-month')?.value||'';
+  const plateF = document.getElementById('fuel-plate-filter')?.value||'';
+  let rows = fuelDB.entries||[];
+  if(mon) rows = rows.filter(e=>e.date&&e.date.startsWith(mon));
+  if(plateF) rows = rows.filter(e=>e.plate===plateF);
+  rows = [...rows].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const totalL = rows.reduce((s,e)=>s+(parseFloat(e.liters)||0),0);
+  const monLbl = mon ? new Date(mon+'-01').toLocaleDateString('en-PH',{month:'long',year:'numeric'}) : 'All';
+
+  const w = window.open('','_blank','width=1000,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Fuel Consumption - ${monLbl}</title>
+  <style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;font-size:10px;padding:18px}
+  h1{font-size:14px;font-weight:700;color:#6B1A1A;text-align:center}
+  h2{font-size:11px;text-align:center;color:#555;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;font-size:9.5px;table-layout:fixed}
+  th{background:#6B1A1A;color:#fff;padding:5px 7px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  td{padding:4px 7px;border-bottom:1px solid #eee;word-wrap:break-word}
+  tr:nth-child(even) td{background:#fdf8f8;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tot td{background:#f0ede8;font-weight:700;border-top:2px solid #6B1A1A;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .footer{margin-top:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center}
+  .footer div{padding-top:28px;border-top:1px solid #333;font-size:9px}
+  .conf{text-align:center;font-size:8px;color:#999;margin-top:10px}
+  @media print{@page{margin:1cm;size:landscape}}
+  </style></head><body>
+  <h1>BIG BEN READY MIX CONCRETE</h1>
+  <h2>FUEL CONSUMPTION REPORT${plateF?' — '+plateF:''}<br>${monLbl}</h2>
+  <table>
+    <colgroup><col style="width:4%"><col style="width:9%"><col style="width:11%"><col style="width:9%"><col style="width:9%"><col style="width:14%"><col style="width:12%"><col style="width:10%"><col style="width:7%"></colgroup>
+    <thead><tr><th>#</th><th>Date</th><th>FIS No.</th><th>Customer</th><th>Plate No.</th><th>Requested By</th><th>Process</th><th>Vehicle Type</th><th>Liters</th></tr></thead>
+    <tbody>${rows.map((e,i)=>`<tr>
+      <td>${rows.length-i}</td><td>${e.date||'—'}</td><td>${e.fis||'—'}</td>
+      <td>${e.customer||'—'}</td><td>${e.plate||'—'}</td><td>${e.reqby||'—'}</td>
+      <td>${e.process||'—'}</td><td>${e.vtype||'—'}</td>
+      <td style="text-align:right;font-weight:700">${parseFloat(e.liters||0).toFixed(2)}</td>
+    </tr>`).join('')}</tbody>
+    <tfoot><tr class="tot"><td colspan="8" style="text-align:right">TOTAL</td><td style="text-align:right">${totalL.toFixed(2)} L</td></tr></tfoot>
+  </table>
+  <div class="footer">
+    <div>Prepared by<br><br>Testing Coordinator</div>
+    <div>Checked by<br><br>QC Supervisor</div>
+    <div>Noted by<br><br>R&D Supervisor</div>
+  </div>
+  <div class="conf">STRICTLY CONFIDENTIAL – For use of BIG BEN only.</div>
+  <script>setTimeout(()=>window.print(),500)<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+// Init fuel date on load
+document.addEventListener('DOMContentLoaded', ()=>{
+  const fd = document.getElementById('fuel-date');
+  if(fd && !fd.value) fd.value = new Date().toISOString().split('T')[0];
 });
 </script>
 </body>
