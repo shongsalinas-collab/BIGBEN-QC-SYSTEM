@@ -350,6 +350,12 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       <div style="display:flex;gap:8px;align-items:center" class="no-print">
         <label style="font-size:12px;color:#fff">Month:</label>
         <select id="fuel-month" onchange="renderFuel()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none"></select>
+        <label style="font-size:12px;color:#fff">Customer:</label>
+        <select id="fuel-cust-filter" onchange="renderFuel()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none">
+          <option value="">All</option>
+          <option value="Asphalt">Asphalt</option>
+          <option value="Concrete">Concrete</option>
+        </select>
         <label style="font-size:12px;color:#fff">Plate No.:</label>
         <select id="fuel-plate-filter" onchange="renderFuel()" style="font-size:11px;padding:3px 6px;border-radius:3px;border:none">
           <option value="">All Vehicles</option>
@@ -3947,6 +3953,7 @@ function renderFuel(){
 
   const mon = document.getElementById('fuel-month')?.value || '';
   const plateF = document.getElementById('fuel-plate-filter')?.value || '';
+  const custF = document.getElementById('fuel-cust-filter')?.value || '';
 
   // Filter entries by month
   let rows = fuelDB.entries || [];
@@ -3964,6 +3971,8 @@ function renderFuel(){
 
   // Apply plate filter
   if(plateF) rows = rows.filter(e=>e.plate===plateF);
+  // Apply customer filter
+  if(custF) rows = rows.filter(e=>e.customer===custF);
 
   // Sort newest first
   rows = [...rows].sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -3986,7 +3995,7 @@ function renderFuel(){
     const cardStyle = 'background:#fff;border:1px solid var(--border);border-radius:6px;padding:12px 14px;';
     const cards = [
       `<div style="${cardStyle}border-top:3px solid var(--maroon)">
-        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Consumption${plateF?' — '+plateF:''}</div>
+        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total Consumption${custF?' — '+custF:''}${plateF?' | '+plateF:''}</div>
         <div style="font-size:22px;font-weight:700;color:var(--maroon)">${totalL.toFixed(2)} <span style="font-size:13px">L</span></div>
         <div style="font-size:11px;color:#888;margin-top:2px">${rows.length} entries</div>
       </div>`,
@@ -4043,9 +4052,11 @@ function renderFuel(){
 function printFuel(){
   const mon = document.getElementById('fuel-month')?.value||'';
   const plateF = document.getElementById('fuel-plate-filter')?.value||'';
+  const custF = document.getElementById('fuel-cust-filter')?.value||'';
   let rows = fuelDB.entries||[];
   if(mon) rows = rows.filter(e=>e.date&&e.date.startsWith(mon));
   if(plateF) rows = rows.filter(e=>e.plate===plateF);
+  if(custF) rows = rows.filter(e=>e.customer===custF);
   rows = [...rows].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const totalL = rows.reduce((s,e)=>s+(parseFloat(e.liters)||0),0);
   const monLbl = mon ? new Date(mon+'-01').toLocaleDateString('en-PH',{month:'long',year:'numeric'}) : 'All';
@@ -4069,7 +4080,7 @@ function printFuel(){
   @media print{@page{margin:1cm;size:landscape}}
   </style></head><body>
   <h1>BIG BEN READY MIX CONCRETE</h1>
-  <h2>FUEL CONSUMPTION REPORT${plateF?' — '+plateF:''}<br>${monLbl}</h2>
+  <h2>FUEL CONSUMPTION REPORT${custF?' — '+custF:''}${plateF?' | '+plateF:''}<br>${monLbl}</h2>
   <table>
     <colgroup><col style="width:4%"><col style="width:9%"><col style="width:11%"><col style="width:9%"><col style="width:9%"><col style="width:14%"><col style="width:12%"><col style="width:10%"><col style="width:7%"></colgroup>
     <thead><tr><th>#</th><th>Date</th><th>FIS No.</th><th>Customer</th><th>Plate No.</th><th>Requested By</th><th>Process</th><th>Vehicle Type</th><th>Liters</th></tr></thead>
