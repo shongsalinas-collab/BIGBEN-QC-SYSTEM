@@ -47,6 +47,7 @@ body{font-family:Arial,sans-serif;font-size:13px;background:#f5f5f5;color:#222}
 /* TABLE */
 .data-table{width:100%;border-collapse:collapse;font-size:12px}
 .data-table th{background:var(--maroon);color:#fff;padding:7px 10px;text-align:left;font-size:11px;white-space:nowrap;position:sticky;top:0;z-index:10;print-color-adjust:exact;-webkit-print-color-adjust:exact;position:sticky;top:0;z-index:10}
+#fuel-table th{position:sticky;top:0;z-index:15;background:var(--maroon);-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .data-table td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
 .data-table tr:hover td{background:#fdf8f8}
 .data-table tr.rejected td{background:#fff5f5}
@@ -446,7 +447,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       </div>
 
       <!-- FUEL LOG TABLE -->
-      <div style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 380px)">
+      <div style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 440px);border:1px solid #eee">
         <table class="data-table" id="fuel-table" style="table-layout:fixed;width:100%">
           <colgroup>
             <col style="width:3%"><!--#-->
