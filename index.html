@@ -438,18 +438,30 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       <!-- FUEL LOG TABLE -->
       <div style="overflow-x:auto">
         <table class="data-table" id="fuel-table" style="table-layout:fixed;width:100%">
+          <colgroup>
+            <col style="width:4%">
+            <col style="width:8%">
+            <col style="width:10%">
+            <col style="width:8%">
+            <col style="width:8%">
+            <col style="width:14%">
+            <col style="width:12%">
+            <col style="width:10%">
+            <col style="width:7%">
+            <col style="width:6%" class="no-print">
+          </colgroup>
           <thead>
             <tr>
-              <th style="width:40px">#</th>
-              <th style="width:90px">Date</th>
-              <th style="width:110px">FIS No.</th>
-              <th style="width:90px">Customer</th>
-              <th style="width:90px">Plate No.</th>
-              <th style="width:130px">Requested By</th>
-              <th style="width:110px">Process</th>
-              <th style="width:100px">Vehicle Type</th>
-              <th style="width:70px;text-align:right">Liters</th>
-              <th style="width:70px" class="no-print">Actions</th>
+              <th>#</th>
+              <th>Date</th>
+              <th>FIS No.</th>
+              <th>Customer</th>
+              <th>Plate No.</th>
+              <th>Requested By</th>
+              <th>Process</th>
+              <th>Vehicle Type</th>
+              <th style="text-align:right">Liters</th>
+              <th class="no-print">Actions</th>
             </tr>
           </thead>
           <tbody id="fuel-tbody"></tbody>
@@ -4030,8 +4042,8 @@ function renderFuel(){
   // Footer total
   if(tfoot){
     tfoot.innerHTML = `<tr style="background:#f9f9f9;font-weight:700">
-      <td colspan="8" style="text-align:right;padding:7px 10px;color:#555;font-weight:700">TOTAL</td>
-      <td style="text-align:right;padding:7px 10px;color:var(--maroon);font-size:14px;font-weight:700">${totalL.toFixed(2)} L</td>
+      <td colspan="8" style="text-align:right;padding:7px 10px;color:#555">TOTAL</td>
+      <td style="text-align:right;padding:7px 10px;color:var(--maroon);font-size:14px">${totalL.toFixed(2)} L</td>
       <td class="no-print"></td>
     </tr>`;
   }
