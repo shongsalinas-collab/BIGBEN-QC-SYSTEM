@@ -4042,8 +4042,8 @@ function renderFuel(){
       <td style="font-size:11px">${e.vtype||'—'}</td>
       <td style="font-weight:700;text-align:center">${parseFloat(e.liters).toFixed(2)}</td>
       <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="editFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
-        <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px" title="Delete">🗑</button>
+        <button onclick="editFuelEntry('${e.id}')" style="border:1px solid var(--maroon);background:#fff;color:var(--maroon);border-radius:3px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:600" title="Edit">✏️ Edit</button>
+        <button onclick="deleteFuelEntry('${e.id}')" style="border:1px solid #B71C1C;background:#fff;color:#B71C1C;border-radius:3px;padding:3px 8px;cursor:pointer;font-size:11px;font-weight:600;margin-left:3px" title="Delete">🗑</button>
       </td>
     </tr>`).join('');
   }
