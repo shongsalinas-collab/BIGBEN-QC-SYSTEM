@@ -448,7 +448,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th style="width:130px">Requested By</th>
               <th style="width:110px">Process</th>
               <th style="width:100px">Vehicle Type</th>
-              <th style="width:70px">Liters</th>
+              <th style="width:70px;text-align:right">Liters</th>
               <th style="width:70px" class="no-print">Actions</th>
             </tr>
           </thead>
@@ -4030,8 +4030,8 @@ function renderFuel(){
   // Footer total
   if(tfoot){
     tfoot.innerHTML = `<tr style="background:#f9f9f9;font-weight:700">
-      <td colspan="8" style="text-align:right;padding:7px 10px;color:#555">TOTAL</td>
-      <td style="text-align:right;padding:7px 10px;color:var(--maroon);font-size:14px">${totalL.toFixed(2)} L</td>
+      <td colspan="8" style="text-align:right;padding:7px 10px;color:#555;font-weight:700">TOTAL</td>
+      <td style="text-align:right;padding:7px 10px;color:var(--maroon);font-size:14px;font-weight:700">${totalL.toFixed(2)} L</td>
       <td class="no-print"></td>
     </tr>`;
   }
