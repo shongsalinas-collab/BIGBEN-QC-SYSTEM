@@ -330,7 +330,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Slip No.</th>
               <th>Volume (m³)</th>
               <th>Remarks</th>
-              <th class="no-print" style="text-align:center">Actions</th>
+              <th class="no-print">Actions</th>
             </tr>
           </thead>
           <tbody id="master-tbody"></tbody>
@@ -473,7 +473,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Process</th>
               <th>Vehicle Type</th>
               <th style="text-align:center">Liters</th>
-              <th class="no-print" style="text-align:center">Actions</th>
+              <th class="no-print">Actions</th>
             </tr>
           </thead>
           <tbody id="fuel-tbody"></tbody>
@@ -4042,9 +4042,11 @@ function renderFuel(){
       <td style="font-size:11px">${e.process||'—'}</td>
       <td style="font-size:11px">${e.vtype||'—'}</td>
       <td style="font-weight:700;text-align:center">${parseFloat(e.liters).toFixed(2)}</td>
-      <td class="no-print" style="text-align:center;white-space:nowrap">
-        <button onclick="editFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
-        <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px" title="Delete">🗑</button>
+      <td class="no-print" style="text-align:center">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+          <button onclick="editFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
+          <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px" title="Delete">🗑</button>
+        </div>
       </td>
     </tr>`).join('');
   }
