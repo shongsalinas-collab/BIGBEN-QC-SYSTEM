@@ -4030,7 +4030,14 @@ function renderFuel(){
   if(custF) rows = rows.filter(e=>e.customer===custF);
 
   // Sort newest first
-  rows = [...rows].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  rows = [...rows].sort((a,b)=>{
+    const dateDiff = new Date(b.date) - new Date(a.date);
+    if(dateDiff !== 0) return dateDiff;
+    // Same date — sort by FRS No. ascending
+    const frsA = (a.frs||'').toString().toLowerCase();
+    const frsB = (b.frs||'').toString().toLowerCase();
+    return frsA.localeCompare(frsB, undefined, {numeric:true});
+  });
 
   // ── SUMMARY CARDS ──
   const totalL = rows.reduce((s,e)=>s+(parseFloat(e.liters)||0),0);
