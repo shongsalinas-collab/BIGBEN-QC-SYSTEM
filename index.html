@@ -360,7 +360,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
     <div class="panel-body">
 
       <!-- SUMMARY CARDS -->
-      <div id="fuel-summary" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px"></div>
+      <div id="fuel-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px"></div>
 
       <!-- ADD ENTRY FORM -->
       <div style="background:#f9f9f9;border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:16px">
@@ -460,7 +460,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>Requested By</th>
               <th>Process</th>
               <th>Vehicle Type</th>
-              <th style="text-align:right">Liters</th>
+              <th style="text-align:center">Liters</th>
               <th class="no-print">Actions</th>
             </tr>
           </thead>
@@ -3995,6 +3995,15 @@ function renderFuel(){
         <div style="font-size:22px;font-weight:700;color:#1565C0">${monthTotal.toFixed(2)} <span style="font-size:13px">L</span></div>
         <div style="font-size:11px;color:#888;margin-top:2px">${monthRows.length} entries this month</div>
       </div>`,
+      `<div style="${cardStyle}border-top:3px solid #2E7D32">
+        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">By Customer</div>
+        ${Object.entries(byCust).map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span>${k}</span><b>${v.toFixed(2)}L</b></div>`).join('')||'<div style="font-size:12px;color:#aaa">No data</div>'}
+      </div>`,
+      `<div style="${cardStyle}border-top:3px solid #E65100">
+        <div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">By Vehicle${plateF?' — '+plateF:''}</div>
+        ${Object.entries(byPlate).slice(0,4).map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:12px"><span>${k}</span><b>${v.toFixed(2)}L</b></div>`).join('')||'<div style="font-size:12px;color:#aaa">No data</div>'}
+        ${Object.keys(byPlate).length>4?`<div style="font-size:10px;color:#aaa">+${Object.keys(byPlate).length-4} more</div>`:''}
+      </div>`,
     ];
     summaryEl.innerHTML = cards.join('');
   }
@@ -4022,7 +4031,7 @@ function renderFuel(){
       <td style="font-size:11px">${e.reqby||'—'}</td>
       <td style="font-size:11px">${e.process||'—'}</td>
       <td style="font-size:11px">${e.vtype||'—'}</td>
-      <td style="font-weight:700;text-align:right">${parseFloat(e.liters).toFixed(2)}</td>
+      <td style="font-weight:700;text-align:center">${parseFloat(e.liters).toFixed(2)}</td>
       <td class="no-print" style="text-align:center;white-space:nowrap">
         <button onclick="editFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
         <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px" title="Delete">🗑</button>
