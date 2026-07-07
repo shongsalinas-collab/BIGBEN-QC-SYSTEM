@@ -381,6 +381,10 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <input type="text" id="fuel-fis" placeholder="e.g. FIS-2026-001">
           </div>
           <div class="form-group">
+            <label>FRS No.</label>
+            <input type="text" id="fuel-frs" placeholder="e.g. FRS-2026-001">
+          </div>
+          <div class="form-group">
             <label>Customer</label>
             <select id="fuel-customer">
               <option value="">-- Select --</option>
@@ -447,7 +451,8 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
           <colgroup>
             <col style="width:4%">
             <col style="width:8%">
-            <col style="width:10%">
+            <col style="width:9%">
+            <col style="width:9%">
             <col style="width:8%">
             <col style="width:8%">
             <col style="width:14%">
@@ -461,6 +466,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
               <th>#</th>
               <th>Date</th>
               <th>FIS No.</th>
+              <th>FRS No.</th>
               <th>Customer</th>
               <th>Plate No.</th>
               <th>Requested By</th>
@@ -3818,6 +3824,7 @@ function gfv(id){ return parseFloat(document.getElementById(id).value)||0; }
 function addFuelEntry(){
   const date = getFuelVal('fuel-date');
   const fis  = getFuelVal('fuel-fis');
+  const frs  = getFuelVal('fuel-frs');
   const customer = getFuelVal('fuel-customer');
   const plate = getFuelVal('fuel-plate');
   const reqby = getFuelVal('fuel-requestby');
@@ -3831,7 +3838,7 @@ function addFuelEntry(){
   if(!plate){ alert('Please enter a plate number.'); return; }
   if(!liters){ alert('Please enter liters.'); return; }
 
-  const entry = { id: Date.now().toString(), date, fis, customer, plate, reqby, process, vtype, liters };
+  const entry = { id: Date.now().toString(), date, fis, frs, customer, plate, reqby, process, vtype, liters };
   fuelDB.entries.push(entry);
   saveFuel();
   clearFuelForm();
@@ -3859,6 +3866,7 @@ function editFuelEntry(id){
   if(!e) return;
   document.getElementById('fuel-date').value = e.date||'';
   document.getElementById('fuel-fis').value = e.fis||'';
+  document.getElementById('fuel-frs').value = e.frs||'';
   document.getElementById('fuel-customer').value = e.customer||'';
   document.getElementById('fuel-plate').value = e.plate||'';
   document.getElementById('fuel-requestby').value = e.reqby||'';
@@ -3903,6 +3911,7 @@ function updateFuelEntry(){
     id,
     date: document.getElementById('fuel-date').value,
     fis:  document.getElementById('fuel-fis').value.trim(),
+    frs:  document.getElementById('fuel-frs').value.trim(),
     customer: document.getElementById('fuel-customer').value,
     plate: document.getElementById('fuel-plate').value.trim().toUpperCase(),
     reqby: document.getElementById('fuel-requestby').value.trim(),
@@ -3923,7 +3932,7 @@ function deleteFuelEntry(id){
 }
 
 function clearFuelForm(){
-  ['fuel-fis','fuel-plate','fuel-requestby','fuel-liters'].forEach(id=>document.getElementById(id).value='');
+  ['fuel-fis','fuel-frs','fuel-plate','fuel-requestby','fuel-liters'].forEach(id=>document.getElementById(id).value='');
   ['fuel-customer','fuel-process','fuel-vtype'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fuel-process-other-wrap').style.display='none';
   document.getElementById('fuel-vtype-other-wrap').style.display='none';
@@ -4026,6 +4035,7 @@ function renderFuel(){
       <td>${rows.length-i}</td>
       <td>${e.date||'—'}</td>
       <td style="font-size:11px">${e.fis||'—'}</td>
+      <td style="font-size:11px">${e.frs||'—'}</td>
       <td><span style="padding:2px 6px;border-radius:3px;font-size:11px;font-weight:700;background:${e.customer==='Asphalt'?'#FFF3E0':'#E3F2FD'};color:${e.customer==='Asphalt'?'#E65100':'#1565C0'}">${e.customer||'—'}</span></td>
       <td style="font-weight:700">${e.plate||'—'}</td>
       <td style="font-size:11px">${e.reqby||'—'}</td>
@@ -4082,15 +4092,15 @@ function printFuel(){
   <h1>BIG BEN READY MIX CONCRETE</h1>
   <h2>FUEL CONSUMPTION REPORT${custF?' — '+custF:''}${plateF?' | '+plateF:''}<br>${monLbl}</h2>
   <table>
-    <colgroup><col style="width:4%"><col style="width:9%"><col style="width:11%"><col style="width:9%"><col style="width:9%"><col style="width:14%"><col style="width:12%"><col style="width:10%"><col style="width:7%"></colgroup>
-    <thead><tr><th>#</th><th>Date</th><th>FIS No.</th><th>Customer</th><th>Plate No.</th><th>Requested By</th><th>Process</th><th>Vehicle Type</th><th>Liters</th></tr></thead>
+    <colgroup><col style="width:4%"><col style="width:8%"><col style="width:9%"><col style="width:9%"><col style="width:8%"><col style="width:9%"><col style="width:14%"><col style="width:12%"><col style="width:10%"><col style="width:7%"></colgroup>
+    <thead><tr><th>#</th><th>Date</th><th>FIS No.</th><th>FRS No.</th><th>Customer</th><th>Plate No.</th><th>Requested By</th><th>Process</th><th>Vehicle Type</th><th>Liters</th></tr></thead>
     <tbody>${rows.map((e,i)=>`<tr>
-      <td>${rows.length-i}</td><td>${e.date||'—'}</td><td>${e.fis||'—'}</td>
+      <td>${rows.length-i}</td><td>${e.date||'—'}</td><td>${e.fis||'—'}</td><td>${e.frs||'—'}</td>
       <td>${e.customer||'—'}</td><td>${e.plate||'—'}</td><td>${e.reqby||'—'}</td>
       <td>${e.process||'—'}</td><td>${e.vtype||'—'}</td>
       <td style="text-align:right;font-weight:700">${parseFloat(e.liters||0).toFixed(2)}</td>
     </tr>`).join('')}</tbody>
-    <tfoot><tr class="tot"><td colspan="8" style="text-align:right">TOTAL</td><td style="text-align:right">${totalL.toFixed(2)} L</td></tr></tfoot>
+    <tfoot><tr class="tot"><td colspan="9" style="text-align:right">TOTAL</td><td style="text-align:right">${totalL.toFixed(2)} L</td></tr></tfoot>
   </table>
   <div class="footer">
     <div>Prepared by<br><br>Testing Coordinator</div>
