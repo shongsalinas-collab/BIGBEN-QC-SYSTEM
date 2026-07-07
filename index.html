@@ -463,7 +463,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
       </div>
 
       <!-- FUEL LOG TABLE -->
-      <div style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 380px)">
+      <div class="table-wrap" style="overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 420px)">
         <table class="data-table" id="fuel-table" style="table-layout:fixed;width:100%">
           <colgroup>
             <col style="width:3%"><!--#-->
@@ -4030,14 +4030,7 @@ function renderFuel(){
   if(custF) rows = rows.filter(e=>e.customer===custF);
 
   // Sort newest first
-  rows = [...rows].sort((a,b)=>{
-    const dateDiff = new Date(b.date) - new Date(a.date);
-    if(dateDiff !== 0) return dateDiff;
-    // Same date — sort by FRS No. ascending
-    const frsA = (a.frs||'').toString().toLowerCase();
-    const frsB = (b.frs||'').toString().toLowerCase();
-    return frsA.localeCompare(frsB, undefined, {numeric:true});
-  });
+  rows = [...rows].sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   // ── SUMMARY CARDS ──
   const totalL = rows.reduce((s,e)=>s+(parseFloat(e.liters)||0),0);
@@ -4095,11 +4088,9 @@ function renderFuel(){
       <td style="font-size:11px">${e.process||'—'}</td>
       <td style="font-size:11px">${e.vtype||'—'}</td>
       <td style="font-weight:700;text-align:center">${parseFloat(e.liters).toFixed(2)}</td>
-      <td class="no-print" style="text-align:center">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-          <button onclick="editFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
-          <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px" title="Delete">🗑</button>
-        </div>
+      <td class="no-print" style="white-space:nowrap;text-align:center">
+        <button class="btn btn-sm" style="background:#1565C0;color:#fff;margin-right:4px" onclick="editFuelEntry('${e.id}')">✏️ Edit</button>
+        <button class="btn btn-sm btn-red" onclick="deleteFuelEntry('${e.id}')">✕</button>
       </td>
     </tr>`).join('');
   }
