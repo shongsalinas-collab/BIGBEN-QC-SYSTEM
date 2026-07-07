@@ -426,9 +426,11 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             <input type="number" id="fuel-liters" placeholder="0.00" step="0.01" min="0">
           </div>
         </div>
+        <input type="hidden" id="fuel-edit-id">
         <div style="display:flex;gap:8px">
-          <button class="btn btn-maroon" onclick="addFuelEntry()">➕ Add Entry</button>
-          <button class="btn btn-outline" onclick="clearFuelForm()">Clear</button>
+          <button class="btn btn-maroon" id="fuel-add-btn" onclick="addFuelEntry()">➕ Add Entry</button>
+          <button class="btn btn-maroon" id="fuel-update-btn" onclick="updateFuelEntry()" style="display:none;background:#1565C0">💾 Update Entry</button>
+          <button class="btn btn-outline" onclick="clearFuelForm()">✕ Cancel</button>
           <span id="fuel-save-msg" style="font-size:12px;color:var(--green);font-weight:600;align-self:center;display:none">✅ Saved!</span>
         </div>
       </div>
@@ -3834,6 +3836,68 @@ function addFuelEntry(){
   m.style.display='inline'; setTimeout(()=>m.style.display='none',2000);
 }
 
+function editFuelEntry(id){
+  const e = fuelDB.entries.find(x=>x.id===id);
+  if(!e) return;
+  document.getElementById('fuel-date').value = e.date||'';
+  document.getElementById('fuel-fis').value = e.fis||'';
+  document.getElementById('fuel-customer').value = e.customer||'';
+  document.getElementById('fuel-plate').value = e.plate||'';
+  document.getElementById('fuel-requestby').value = e.reqby||'';
+  // Process
+  const procOpts = ['Testing','Collection','Inspection','Meeting'];
+  if(procOpts.includes(e.process)){
+    document.getElementById('fuel-process').value = e.process;
+    document.getElementById('fuel-process-other-wrap').style.display='none';
+  } else {
+    document.getElementById('fuel-process').value = 'other-process';
+    document.getElementById('fuel-process-other').value = e.process||'';
+    document.getElementById('fuel-process-other-wrap').style.display='block';
+  }
+  // Vehicle type
+  const vtOpts = ['L200','L300','Strada','ELF','Hilux'];
+  if(vtOpts.includes(e.vtype)){
+    document.getElementById('fuel-vtype').value = e.vtype;
+    document.getElementById('fuel-vtype-other-wrap').style.display='none';
+  } else {
+    document.getElementById('fuel-vtype').value = 'other-vtype';
+    document.getElementById('fuel-vtype-other').value = e.vtype||'';
+    document.getElementById('fuel-vtype-other-wrap').style.display='block';
+  }
+  document.getElementById('fuel-liters').value = e.liters||'';
+  document.getElementById('fuel-edit-id').value = id;
+  document.getElementById('fuel-add-btn').style.display='none';
+  document.getElementById('fuel-update-btn').style.display='inline-flex';
+  // Scroll to form
+  document.getElementById('fuel-fis').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function updateFuelEntry(){
+  const id = document.getElementById('fuel-edit-id').value;
+  if(!id) return;
+  const idx = fuelDB.entries.findIndex(e=>e.id===id);
+  if(idx===-1) return;
+  const procRaw = document.getElementById('fuel-process').value;
+  const process = procRaw==='other-process' ? document.getElementById('fuel-process-other').value.trim() : procRaw;
+  const vtRaw = document.getElementById('fuel-vtype').value;
+  const vtype = vtRaw==='other-vtype' ? document.getElementById('fuel-vtype-other').value.trim() : vtRaw;
+  fuelDB.entries[idx] = {
+    id,
+    date: document.getElementById('fuel-date').value,
+    fis:  document.getElementById('fuel-fis').value.trim(),
+    customer: document.getElementById('fuel-customer').value,
+    plate: document.getElementById('fuel-plate').value.trim().toUpperCase(),
+    reqby: document.getElementById('fuel-requestby').value.trim(),
+    process, vtype,
+    liters: parseFloat(document.getElementById('fuel-liters').value)||0
+  };
+  saveFuel();
+  clearFuelForm();
+  renderFuel();
+  const m = document.getElementById('fuel-save-msg');
+  m.style.display='inline'; setTimeout(()=>m.style.display='none',2000);
+}
+
 function deleteFuelEntry(id){
   if(!confirm('Delete this entry?')) return;
   fuelDB.entries = fuelDB.entries.filter(e=>e.id!==id);
@@ -3845,8 +3909,11 @@ function clearFuelForm(){
   ['fuel-customer','fuel-process','fuel-vtype'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fuel-process-other-wrap').style.display='none';
   document.getElementById('fuel-vtype-other-wrap').style.display='none';
+  document.getElementById('fuel-edit-id').value='';
+  document.getElementById('fuel-add-btn').style.display='inline-flex';
+  document.getElementById('fuel-update-btn').style.display='none';
   const dt = document.getElementById('fuel-date');
-  if(!dt.value) dt.value = new Date().toISOString().split('T')[0];
+  dt.value = new Date().toISOString().split('T')[0];
 }
 
 function initFuelMonthDropdown(){
@@ -3953,8 +4020,9 @@ function renderFuel(){
       <td style="font-size:11px">${e.process||'—'}</td>
       <td style="font-size:11px">${e.vtype||'—'}</td>
       <td style="font-weight:700;text-align:right">${parseFloat(e.liters).toFixed(2)}</td>
-      <td class="no-print" style="text-align:center">
-        <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px">🗑</button>
+      <td class="no-print" style="text-align:center;white-space:nowrap">
+        <button onclick="editFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:var(--maroon);font-size:13px" title="Edit">✏️</button>
+        <button onclick="deleteFuelEntry('${e.id}')" style="border:none;background:none;cursor:pointer;color:#B71C1C;font-size:13px" title="Delete">🗑</button>
       </td>
     </tr>`).join('');
   }
