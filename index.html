@@ -827,6 +827,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--ma
             onblur="this.style.background='transparent'">
         </div>
         <button class="btn btn-sm btn-print" onclick="printTestMon()">🖨 Print</button>
+        <button class="btn btn-sm" style="background:#1D6F42;color:#fff" onclick="exportTestMonExcel()">📥 Excel</button>
       </div>
     </div>
     <div id="testmon-container" style="padding:0"></div>
@@ -4164,6 +4165,66 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const fd = document.getElementById('fuel-date');
   if(fd && !fd.value) fd.value = new Date().toISOString().split('T')[0];
 });
+
+function exportTestMonExcel(){
+  const mon = document.getElementById('testmon-month').value;
+  const resultF = document.getElementById('testmon-result-filter').value;
+  const searchEl = document.getElementById('testmon-search');
+  const searchQ = (searchEl?searchEl.value:'').toLowerCase().trim();
+
+  let rows = db.entries||[];
+  if(mon){
+    const [yr,mo] = mon.split('-').map(Number);
+    rows = rows.filter(e=>{
+      const d = new Date((normalizeDate(e.date)||e.date)+'T00:00:00');
+      return d.getFullYear()===yr && d.getMonth()+1===mo;
+    });
+  }
+  if(resultF) rows = rows.filter(e=>getOverallStatus(e)===resultF);
+  if(searchQ) rows = rows.filter(e=>{
+    const hay = [e.client,e.location,e.design,e.agg,e.structure,e.coord].join(' ').toLowerCase();
+    return hay.includes(searchQ);
+  });
+
+  if(!rows.length){ alert('No data to export.'); return; }
+
+  // Build CSV (Excel-compatible)
+  const DAYS = [1,3,7,14,28];
+  const headers = ['Date','Client','Project','Location','Structure','Design','Total Samples',
+    'Site Coord.','Testing Coord.',
+    ...DAYS.flatMap(d=>[`${String(d).padStart(2,'0')}D Sched`,`${String(d).padStart(2,'0')}D Actual`,`${String(d).padStart(2,'0')}D Result`,`${String(d).padStart(2,'0')}D Avg PSI`]),
+    'Overall Status'
+  ];
+
+  const csvRows = rows.map(e=>{
+    const dayData = DAYS.flatMap(d=>{
+      const key = 'day'+d;
+      const r = (e.results||{})[key]||{};
+      const results = (r.tests||[]).map(t=>t.result||'').filter(Boolean).join('; ');
+      const avg = r.avgPsi ? parseFloat(r.avgPsi).toFixed(1) : '';
+      return [r.schedDate||'', r.actualDate||'', results, avg];
+    });
+    return [
+      e.date||'', e.client||'', e.project||'', e.location||'',
+      e.structure||'', (e.design||'')+(e.agg?' '+e.agg:'')+(e.days?' '+e.days+'D':''),
+      e.samples||'', e.coord||'', e.testingCoord||'',
+      ...dayData,
+      getOverallStatus(e)||''
+    ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
+  });
+
+  const csv = [headers.map(h=>`"${h}"`).join(','), ...csvRows].join('
+');
+  const BOM = '﻿'; // UTF-8 BOM for Excel
+  const blob = new Blob([BOM+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const monLbl = mon ? mon : 'all';
+  a.download = `TestingMonitoring_${monLbl}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 </script>
 </body>
 </html>
