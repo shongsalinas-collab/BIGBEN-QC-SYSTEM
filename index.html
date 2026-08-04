@@ -3994,7 +3994,7 @@ function initFuelMonthDropdown(){
   const el = document.getElementById('fuel-month');
   if(!el || el.options.length > 1) return;
   const today = new Date();
-  const opts = [];
+  const opts = ['<option value="">All Months</option>'];
   for(let i=0;i<12;i++){
     const d = new Date(today.getFullYear(), today.getMonth()-i, 1);
     const val = d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0');
